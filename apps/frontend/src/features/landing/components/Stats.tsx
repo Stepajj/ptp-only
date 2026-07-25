@@ -1,34 +1,39 @@
 import { Container } from "@/components/Container/Container";
+import {
+  StaggerContainer,
+  StaggerItem,
+} from "@/components/motion/StaggerContainer";
 
 import styles from "./Stats.module.css";
+
+const stats = [
+  {
+    value: "6 лет",
+    description: "стабильно работы на рынке",
+  },
+  {
+    value: "73 000",
+    description: "активных пользователей",
+  },
+  {
+    value: "+7%",
+    description: "к биржевому курсу при пополнении",
+  },
+];
 
 export function Stats() {
   return (
     <section>
-    <Container>
-    <div className={styles.stats}>
-  <div className={styles.stat}>
-    <h3 className={styles.value}>6 лет</h3>
-    <p className={styles.description}>
-      стабильно работы на рынке
-    </p>
-  </div>
-
-  <div className={styles.stat}>
-    <h3 className={styles.value}>73 000</h3>
-    <p className={styles.description}>
-      активных пользователей
-    </p>
-  </div>
-
-  <div className={styles.stat}>
-    <h3 className={styles.value}>+7%</h3>
-    <p className={styles.description}>
-      к биржевому курсу при пополнении
-    </p>
-  </div>
-</div>
-</Container>
-</section>
+      <Container>
+        <StaggerContainer className={styles.stats} variant="section">
+          {stats.map((stat) => (
+            <StaggerItem key={stat.value} className={styles.stat}>
+              <h3 className={styles.value}>{stat.value}</h3>
+              <p className={styles.description}>{stat.description}</p>
+            </StaggerItem>
+          ))}
+        </StaggerContainer>
+      </Container>
+    </section>
   );
 }

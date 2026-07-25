@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+
+import { faqTransition } from "@/lib/animations";
 
 import styles from "./Accordion.module.css";
 
@@ -56,10 +59,7 @@ export function Accordion() {
         const isOpen = activeIndex === index;
 
         return (
-          <article
-            key={index}
-            className={styles.item}
-          >
+          <article key={index} className={styles.item}>
             <button
               type="button"
               className={styles.trigger}
@@ -67,32 +67,36 @@ export function Accordion() {
               aria-expanded={isOpen}
               aria-controls={`faq-content-${index}`}
             >
-              <span className={styles.question}>
-                {item.question}
-              </span>
+              <span className={styles.question}>{item.question}</span>
 
-              <span
-                className={`${styles.icon} ${
-                  isOpen ? styles.iconOpen : ""
-                }`}
+              <motion.span
+                className={styles.icon}
                 aria-hidden="true"
+                animate={{ rotate: isOpen ? 45 : 0 }}
+                transition={faqTransition}
               >
                 +
-              </span>
+              </motion.span>
             </button>
 
-            <div
-              id={`faq-content-${index}`}
-              className={`${styles.content} ${
-                isOpen ? styles.contentOpen : ""
-              }`}
-            >
-              <div className={styles.contentInner}>
-                <p className={styles.answer}>
-                  {item.answer}
-                </p>
-              </div>
-            </div>
+            <AnimatePresence initial={false}>
+              {isOpen && (
+                <motion.div
+                  key={`faq-content-${index}`}
+                  id={`faq-content-${index}`}
+                  className={styles.content}
+                  layout
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={faqTransition}
+                >
+                  <div className={styles.contentInner}>
+                    <p className={styles.answer}>{item.answer}</p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </article>
         );
       })}

@@ -67,26 +67,10 @@
     line-height: 1;
 
     transform-origin: center;
-
-    transition:
-        transform .45s cubic-bezier(.22, 1, .36, 1),
-        color .25s ease;
-}
-
-.iconOpen {
-    transform: rotate(45deg);
 }
 
 .content {
-    display: grid;
-    grid-template-rows: 0fr;
-
-    transition:
-        grid-template-rows .45s cubic-bezier(.22, 1, .36, 1);
-}
-
-.contentOpen {
-    grid-template-rows: 1fr;
+    overflow: hidden;
 }
 
 .contentInner {

@@ -1,4 +1,8 @@
 import { Container } from "@/components/Container/Container";
+import {
+  StaggerContainer,
+  StaggerItem,
+} from "@/components/motion/StaggerContainer";
 
 import styles from "./Faq.module.css";
 import { SectionHeader } from "./SectionHeader";
@@ -8,15 +12,17 @@ export function FAQ() {
   return (
     <section className={styles.faq}>
       <Container>
-        <div className={styles.content}>
-          <SectionHeader badge="FAQ">
-            <>
-              Частые вопросы
-            </>
-          </SectionHeader>
+        <StaggerContainer className={styles.content} variant="section">
+          <StaggerItem>
+            <SectionHeader badge="FAQ">
+              <>Частые вопросы</>
+            </SectionHeader>
+          </StaggerItem>
 
-          <Accordion />
-        </div>
+          <StaggerItem>
+            <Accordion />
+          </StaggerItem>
+        </StaggerContainer>
       </Container>
     </section>
   );

@@ -1,4 +1,10 @@
 import { Container } from "@/components/Container/Container";
+import { AnimatedCard } from "@/components/motion/AnimatedCard";
+import {
+  StaggerContainer,
+  StaggerGroup,
+  StaggerItem,
+} from "@/components/motion/StaggerContainer";
 
 import styles from "./SixSteps.module.css";
 import { SectionHeader } from "./SectionHeader";
@@ -41,45 +47,43 @@ export function SixSteps() {
   return (
     <section className={styles.sixSteps}>
       <Container>
-        <SectionHeader
-          badge="КАК ЭТО РАБОТАЕТ"
-          badgeStyle={{ border: "1px solid rgba(61, 128, 245, 0.3)" }}
-        >
-          <>
-            Шесть шагов
-            до прибыли
-            <br />
-          </>
-        </SectionHeader>
-
-        <div className={styles.grid}>
-          {steps.map((step) => (
-            <article
-              key={step.number}
-              className={`${styles.card} ${
-                step.highlight ? styles.highlight : ""
-              }`}
+        <StaggerContainer variant="section">
+          <StaggerItem>
+            <SectionHeader
+              badge="КАК ЭТО РАБОТАЕТ"
+              badgeStyle={{ border: "1px solid rgba(61, 128, 245, 0.3)" }}
             >
-              <div
-                className={
-                  step.highlight
-                    ? styles.numberGradient
-                    : styles.number
-                }
+              <>
+                Шесть шагов
+                до прибыли
+                <br />
+              </>
+            </SectionHeader>
+          </StaggerItem>
+
+          <StaggerGroup className={styles.grid}>
+            {steps.map((step) => (
+              <AnimatedCard
+                key={step.number}
+                className={`${styles.card} ${
+                  step.highlight ? styles.highlight : ""
+                }`}
               >
-                {step.number}
-              </div>
+                <div
+                  className={
+                    step.highlight ? styles.numberGradient : styles.number
+                  }
+                >
+                  {step.number}
+                </div>
 
-              <h3 className={styles.cardTitle}>
-                {step.title}
-              </h3>
+                <h3 className={styles.cardTitle}>{step.title}</h3>
 
-              <p className={styles.cardText}>
-                {step.text}
-              </p>
-            </article>
-          ))}
-        </div>
+                <p className={styles.cardText}>{step.text}</p>
+              </AnimatedCard>
+            ))}
+          </StaggerGroup>
+        </StaggerContainer>
       </Container>
     </section>
   );

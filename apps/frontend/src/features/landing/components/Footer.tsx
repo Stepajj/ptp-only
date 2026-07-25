@@ -1,7 +1,11 @@
 import Image from "next/image";
 
 import { Container } from "@/components/Container/Container";
-
+import {
+  StaggerContainer,
+  StaggerGroup,
+  StaggerItem,
+} from "@/components/motion/StaggerContainer";
 import logo from "@/assets/images/footerLogo.svg";
 
 import styles from "./Footer.module.css";
@@ -18,11 +22,7 @@ const footerColumns = [
   },
   {
     title: "Контакты",
-    links: [
-      "Telegram-bot",
-      "Поддержка",
-      "Telegram-канал",
-    ],
+    links: ["Telegram-bot", "Поддержка", "Telegram-канал"],
   },
   {
     title: "Документы",
@@ -37,16 +37,10 @@ const footerColumns = [
 export function Footer() {
   return (
     <Container>
-    <footer className={styles.footer}>
-      
-        <div className={styles.content}>
-          <div className={styles.brand}>
-            <Image
-              src={logo}
-              alt="Логотип"
-              width={56}
-              height={44}
-            />
+      <StaggerContainer as="footer" className={styles.footer} variant="section">
+        <StaggerGroup className={styles.content}>
+          <StaggerItem className={styles.brand}>
+            <Image src={logo} alt="Логотип" width={56} height={44} />
 
             <p className={styles.description}>
               Сервис по продаже криптовалюты с
@@ -55,34 +49,27 @@ export function Footer() {
               <br />
               криптовалюту без посредников.
             </p>
-          </div>
+          </StaggerItem>
 
           {footerColumns.map((column) => (
-            <nav
-              key={column.title}
-              className={styles.column}
-            >
-              <h3 className={styles.title}>
-                {column.title}
-              </h3>
+            <StaggerItem key={column.title}>
+              <nav className={styles.column}>
+                <h3 className={styles.title}>{column.title}</h3>
 
-              <ul className={styles.list}>
-                {column.links.map((link) => (
-                  <li key={link}>
-                    <a
-                      href="#"
-                      className={styles.link}
-                    >
-                      {link}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+                <ul className={styles.list}>
+                  {column.links.map((link) => (
+                    <li key={link}>
+                      <a href="#" className={styles.link}>
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </StaggerItem>
           ))}
-        </div>
-      
-    </footer>
+        </StaggerGroup>
+      </StaggerContainer>
     </Container>
   );
 }

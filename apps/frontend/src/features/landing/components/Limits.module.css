@@ -152,8 +152,8 @@
 .partnerButton {
     display: flex;
     align-items: center;
-    gap: 10px;
-
+    gap: 13px;
+    justify-content: center;
     flex-shrink: 0;
 
     padding: 17px 30px 17px 25px;
