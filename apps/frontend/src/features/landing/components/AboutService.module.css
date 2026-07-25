@@ -1,0 +1,55 @@
+.aboutServiceSection{
+    display: flex;
+    padding: 80px 50px 110px 50px;
+    justify-content: space-between;
+}
+
+.aboveTitle{
+    
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+
+   
+
+    padding: 8.5px 10px;
+  
+
+  border: 1px solid rgba(61, 128, 245, 0.1);
+    border-radius: 10px;
+    
+    background: #f8fbff00;
+    color: rgba(61, 128, 249, 1);
+
+
+
+
+font-weight: 500;
+
+font-size: 14px;
+
+line-height: 100%;
+letter-spacing: -0.4px;
+
+
+}
+
+.right p{
+
+    max-width: 582px;
+    font-weight: 400;
+    font-size: 14px;
+  
+    line-height: 22px;
+    letter-spacing: -0.4px;
+   
+
+}
+
+.title{
+    margin-top: 19px;
+    font-weight: 500;
+    font-size: 42px;
+    line-height: 100%;
+    letter-spacing: -0.4px;
+}

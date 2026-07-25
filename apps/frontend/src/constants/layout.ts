@@ -1,0 +1,5 @@
+export const LAYOUT = {
+  CONTAINER_MAX_WIDTH: 1238,
+  CONTENT_BORDER_WIDTH: 2,
+  CONTENT_BORDER_COLOR: "rgba(227, 227, 227, 1)",
+} as const;

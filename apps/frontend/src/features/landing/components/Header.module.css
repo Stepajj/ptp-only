@@ -1,0 +1,67 @@
+.header {
+  width: 100%;
+  border-bottom: 1px solid rgba(227, 227, 227, 1);
+}
+
+.inner {
+  display: flex;
+ 
+  align-items: center;
+  margin: 0 auto;
+  padding: 15px 0;
+}
+
+.logo {
+  justify-self: start;
+}
+
+.nav {
+  margin-left: 89px;
+}
+
+.menu {
+  display: flex;
+  gap: 35px;
+}
+
+.menu a {
+  
+font-weight: 400;
+
+font-size: 16px;
+
+line-height: 100%;
+letter-spacing: -0.4px;
+vertical-align: middle;
+color: rgba(3, 6, 29, 0.5);
+
+}
+
+.actions {
+  display: flex;
+  margin-left: auto;
+  gap: 10px;
+
+}
+
+.actions button {
+  padding: 12px 25px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+
+
+.actions :first-child {
+    color: rgba(3, 6, 29, 1);  
+    border: 1px solid rgba(3, 6, 29, 0.1);
+    background: transparent;
+    font-weight: 500;
+}
+.actions :last-child {
+  background: linear-gradient(90deg, #18ADEE 0%, #FA90D9 100%);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: rgba(255, 255, 255, 1);
+}
+
