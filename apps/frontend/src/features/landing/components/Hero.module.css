@@ -149,3 +149,10 @@ letter-spacing: -0.4px;
     color: inherit;
     user-select: none;
 }
+
+.heroImage {
+  width: 1136px;
+  height: 712px;
+  margin-top: 50px;
+  border-radius: 15px;
+}

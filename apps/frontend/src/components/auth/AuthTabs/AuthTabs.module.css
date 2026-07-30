@@ -1,0 +1,63 @@
+.tabs {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  width: 100%;
+  max-width: 460px;
+
+  padding: 5px;
+
+  background: #ffffff;
+  border-radius: 10px;
+
+  box-sizing: border-box;
+
+  user-select: none;
+}
+
+.slider {
+  position: absolute;
+
+  top: 5px;
+  left: 5px;
+
+  width: calc(50% - 5px);
+  height: 45px;
+
+  background: #141417;
+  border-radius: 8px;
+
+  transition:
+    transform .32s cubic-bezier(.22,1,.36,1);
+
+  z-index: 1;
+}
+
+.tab {
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 45px;
+
+  text-decoration: none;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 100%;
+
+  color: rgba(20, 20, 23, 0.6);
+
+  transition: color .22s ease;
+
+  z-index: 2;
+}
+
+.active {
+  color: #ffffff;
+}

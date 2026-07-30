@@ -1,0 +1,15 @@
+.btn{
+    background: linear-gradient(90deg, #18ADEE 0%, #FA90D9 100%);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 13.5px 0px;
+    width: 100%;
+    color: rgba(255, 255, 255, 1);
+    cursor: pointer;
+font-weight: 500;
+
+font-size: 14px;
+
+line-height: 100%;
+letter-spacing: 0%;
+border-radius: 10px;
+}

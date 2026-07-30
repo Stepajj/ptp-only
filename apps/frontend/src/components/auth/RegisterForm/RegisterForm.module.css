@@ -1,0 +1,39 @@
+.formBtnsDwn{
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.title {
+  margin: 0 0 0px;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 100%;
+  color: #141417;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formBtnsDwn {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  margin-top: 4px;
+}
+
+.serverError {
+  margin: 0;
+
+  color: #ef4444;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-size: 12px;
+  line-height: 1.3;
+}

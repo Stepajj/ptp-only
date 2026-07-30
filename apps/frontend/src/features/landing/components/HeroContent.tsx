@@ -1,19 +1,21 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "motion/react";
 
-
 import { MotionButton } from "@/components/motion/MotionButton";
+import heroImage from "@/assets/images/HeroImage.png";
 import { fadeUpInView, heroImageDelay, staggerDelay } from "@/lib/animations";
-import Image from "next/image";
-import HeroImage from "@/assets/images/HeroImage.png";
 
 import styles from "./Hero.module.css";
 
 export function HeroContent() {
   return (
     <>
-      <motion.div className={styles.container} {...fadeUpInView(0 * staggerDelay)}>
+      <motion.div
+        className={styles.container}
+        {...fadeUpInView(0 * staggerDelay)}
+      >
         <div className={styles.item}>
           <span className={styles.dot}></span>
           <span className={styles.text}>БЕЗ KYC</span>
@@ -26,7 +28,7 @@ export function HeroContent() {
       </motion.div>
 
       <motion.h1 className={styles.title} {...fadeUpInView(1 * staggerDelay)}>
-        {" "}Cервис по продаже криптовалюты <br /> с доплатой{" "}
+        Cервис по продаже криптовалюты <br /> с доплатой{" "}
         <span>+7%</span> к курсу
       </motion.h1>
 
@@ -35,7 +37,10 @@ export function HeroContent() {
         покупателей, честный курс и прозрачные параметры.
       </motion.p>
 
-      <motion.div className={styles.actions} {...fadeUpInView(3 * staggerDelay)}>
+      <motion.div
+        className={styles.actions}
+        {...fadeUpInView(3 * staggerDelay)}
+      >
         <MotionButton type="button">Создать аккаунт</MotionButton>
         <MotionButton type="button">Подробнее о сервисе</MotionButton>
       </motion.div>
@@ -46,7 +51,12 @@ export function HeroContent() {
       </motion.p>
 
       <motion.div {...fadeUpInView(heroImageDelay)}>
-         <Image src={HeroImage} alt="Hero Image"  style={{ borderRadius: '15px', width: '1136px', height: '712px', marginTop: '50px'}} />
+        <Image
+          src={heroImage}
+          alt="Интерфейс сервиса ONLYp2p"
+          className={styles.heroImage}
+          priority
+        />
       </motion.div>
     </>
   );

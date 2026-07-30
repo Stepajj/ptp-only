@@ -1,0 +1,17 @@
+.tgBtn{
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    background-color: #fff;
+    width: 100%;
+    padding: 12.5px 0px;
+    cursor: pointer;
+    
+    font-weight: 500;
+
+font-size: 14px;
+color: rgba(0, 0, 0, 1);
+
+line-height: 100%;
+letter-spacing: 0%;
+border-radius: 10px;
+}
