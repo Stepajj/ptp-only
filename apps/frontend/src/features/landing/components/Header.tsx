@@ -6,6 +6,7 @@ import { LAYOUT } from "@/constants/layout";
 import logo from "@/assets/images/logo.svg";
 
 import styles from "./Header.module.css";
+import Link from "next/link";
 
 export function Header() {
   return (
@@ -41,10 +42,19 @@ export function Header() {
           </ul>
         </nav>
 
-        <div className={styles.actions}>
-          <MotionButton type="button">Войти</MotionButton>
-          <MotionButton type="button">Создать аккаунт</MotionButton>
-        </div>
+       <div className={styles.actions}>
+  <Link href="/login" className={styles.actionLink}>
+    <MotionButton type="button" className={styles.loginButton}>
+      Войти
+    </MotionButton>
+  </Link>
+
+  <Link href="/register" className={styles.actionLink}>
+    <MotionButton type="button" className={styles.registerButton}>
+      Создать аккаунт
+    </MotionButton>
+  </Link>
+</div>
       </AnimatedSection>
     </header>
   );

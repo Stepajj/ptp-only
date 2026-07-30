@@ -4,6 +4,8 @@ import logo from '../../../assets/images/logo.svg';
 import CoinsImage from '../../../assets/images/loginIMG.svg';
 import Image from 'next/image';
 import { AuthTabs } from '../AuthTabs/AuthTabs';
+import Link from 'next/link';
+
 
 interface Props {
   children: ReactNode;
@@ -16,7 +18,15 @@ export function AuthLayout({ children }: Props) {
         <div className={styles.pinkBlur} />
         <div className={styles.blueBlur} />
         <header className={styles.logo}>
-          <Image src={logo} alt="Логотип" width={109} height={29} />
+          <Link href="/" className={styles.logoLink}>
+            <Image
+              src={logo}
+              alt="Логотип"
+              width={109}
+              height={29}
+              priority
+            />
+          </Link>
         </header>
 
         <div className={styles.illustration}>

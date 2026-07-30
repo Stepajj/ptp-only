@@ -41,27 +41,31 @@ color: rgba(3, 6, 29, 0.5);
   display: flex;
   margin-left: auto;
   gap: 10px;
-
 }
 
-.actions button {
+.actionLink {
+  display: inline-flex;
+  text-decoration: none;
+}
+
+.loginButton,
+.registerButton {
   padding: 12px 25px;
   border-radius: 10px;
   font-size: 16px;
   cursor: pointer;
 }
 
-
-
-.actions :first-child {
-    color: rgba(3, 6, 29, 1);  
-    border: 1px solid rgba(3, 6, 29, 0.1);
-    background: transparent;
-    font-weight: 500;
+.loginButton {
+  color: rgba(3, 6, 29, 1);
+  background: transparent;
+  border: 1px solid rgba(3, 6, 29, 0.1);
+  font-weight: 500;
 }
-.actions :last-child {
+
+.registerButton {
+  color: rgba(255, 255, 255, 1);
   background: linear-gradient(90deg, #18ADEE 0%, #FA90D9 100%);
   border: 1px solid rgba(0, 0, 0, 0.1);
-  color: rgba(255, 255, 255, 1);
+  font-weight: 500;
 }
-
