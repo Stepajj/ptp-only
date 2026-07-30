@@ -108,7 +108,7 @@ export function LoginForm() {
             {isSubmitting ? 'Вход...' : 'Войти'}
           </GradientButton>
 
-          <TelegramButton type="button" />
+          <TelegramButton  />
         </div>
       </form>
     </>

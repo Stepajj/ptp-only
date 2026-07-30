@@ -100,7 +100,7 @@ export function RegisterForm() {
             {isSubmitting ? 'Создание...' : 'Создать аккаунт'}
           </GradientButton>
 
-          <TelegramButton type="button" />
+          <TelegramButton />
         </div>
       </form>
     </>
