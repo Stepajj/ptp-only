@@ -12,8 +12,11 @@ export function AuthProvider({ children }: Props) {
 
   useEffect(() => {
     async function init() {
-      await bootstrapAuth();
-      setInitialized(true);
+      try {
+        await bootstrapAuth();
+      } finally {
+        setInitialized(true);
+      }
     }
 
     void init();
