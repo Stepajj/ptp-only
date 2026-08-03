@@ -1,7 +1,7 @@
 
+import { IconName } from './icons';
 
-
-export const sidebarItems = [
+export const sidebarItems: Array<{ href: string; title: string; icon: IconName }> = [
   {
     title: 'Кабинет',
     href: '/dashboard',

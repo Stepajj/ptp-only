@@ -1,31 +1,27 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 
-import { AuthInput } from '../AuthInput/AuthInput';
-import { PasswordInput } from '../PasswordInput/PasswordInput';
-import { GradientButton } from '../GradientButton/GradientButton';
-import { TelegramButton } from '../TelegramButton/TelegramButton';
-import styles from '../RegisterForm/RegisterForm.module.css';
-
-import {
-  loginSchema,
-  type LoginFormValues,
-} from '@/features/auth/model/login.schema';
-
+import { AuthInput } from "../AuthInput/AuthInput";
+import { GradientButton } from "../GradientButton/GradientButton";
+import { PasswordInput } from "../PasswordInput/PasswordInput";
+import { TelegramLoginButton } from "../TelegramLoginButton/TelegramLoginButton";
 import {
   login as loginRequest,
   type AuthSessionResponse,
-} from '@/features/auth/api/auth.api';
-
-import { useAuthStore } from '@/features/auth/model/auth.store';
-import { ApiError } from '@/shared/api/http';
+} from "@/features/auth/api/auth.api";
+import {
+  loginSchema,
+  type LoginFormValues,
+} from "@/features/auth/model/login.schema";
+import { useAuthStore } from "@/features/auth/model/auth.store";
+import { ApiError } from "@/shared/api/http";
+import styles from "../RegisterForm/RegisterForm.module.css";
 
 export function LoginForm() {
   const router = useRouter();
-
   const setSession = useAuthStore((state) => state.setSession);
 
   const {
@@ -36,8 +32,8 @@ export function LoginForm() {
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      identifier: '',
-      password: '',
+      identifier: "",
+      password: "",
     },
   });
 
@@ -53,19 +49,19 @@ export function LoginForm() {
         accessToken: response.data.accessToken,
       });
 
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (error) {
       if (error instanceof ApiError) {
-        setError('root', {
-          type: 'server',
+        setError("root", {
+          type: "server",
           message: error.message,
         });
         return;
       }
 
-      setError('root', {
-        type: 'server',
-        message: 'Не удалось выполнить вход',
+      setError("root", {
+        type: "server",
+        message: "Не удалось выполнить вход",
       });
     }
   };
@@ -74,41 +70,32 @@ export function LoginForm() {
     <>
       <h1 className={styles.title}>С возвращением</h1>
 
-      <form
-        className={styles.form}
-        onSubmit={handleSubmit(onSubmit)}
-        noValidate
-      >
+      <form className={styles.form} onSubmit={handleSubmit(onSubmit)} noValidate>
         <AuthInput
           placeholder="Email"
           type="email"
           autoComplete="email"
-          {...register('identifier')}
+          {...register("identifier")}
           error={errors.identifier?.message}
         />
 
         <PasswordInput
           placeholder="Пароль"
           autoComplete="current-password"
-          {...register('password')}
+          {...register("password")}
           error={errors.password?.message}
         />
 
         {errors.root?.message && (
-          <p className={styles.serverError}>
-            {errors.root.message}
-          </p>
+          <p className={styles.serverError}>{errors.root.message}</p>
         )}
 
         <div className={styles.formBtnsDwn}>
-          <GradientButton
-            type="submit"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Вход...' : 'Войти'}
+          <GradientButton type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Вход..." : "Войти"}
           </GradientButton>
 
-          <TelegramButton  />
+          <TelegramLoginButton mode="login" />
         </div>
       </form>
     </>

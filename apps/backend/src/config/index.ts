@@ -51,6 +51,10 @@ export const config = {
     secretKey: env.ONLY_P2P_SECRET_KEY,
     timeoutMs: env.ONLY_P2P_TIMEOUT_MS,
   },
+  telegram: {
+    botToken: env.TELEGRAM_BOT_TOKEN,
+    botUsername: env.TELEGRAM_BOT_USERNAME,
+  },
 } as const;
 
 if (config.isProduction && !config.auth.refreshCookie.secure) {

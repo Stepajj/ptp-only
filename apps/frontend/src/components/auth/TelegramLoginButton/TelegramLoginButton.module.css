@@ -1,0 +1,30 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.widget {
+  width: 100%;
+}
+
+.disabledButton {
+  width: 100%;
+  padding: 12px 0;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+}
+
+.status {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 14px;
+}
+
+.error {
+  color: rgba(255, 84, 84, 1);
+  font-size: 14px;
+}

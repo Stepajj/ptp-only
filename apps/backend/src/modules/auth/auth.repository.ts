@@ -31,6 +31,13 @@ export interface CreateLocalUserInput {
   identifierNormalized: string;
   passwordHash: string;
   language: string;
+  telegram?: {
+    id: string;
+    username: string | null;
+    firstName: string | null;
+    photoUrl: string | null;
+    linkedAt: Date;
+  };
 }
 
 export interface CreateRefreshTokenInput {
@@ -74,6 +81,16 @@ export async function findExternalClientByUserId(userId: string) {
 
 export async function createLocalUser(input: CreateLocalUserInput): Promise<AuthUserRecord> {
   return prisma.$transaction(async (tx) => {
+    const telegramData = input.telegram
+      ? {
+          telegramId: input.telegram.id,
+          telegramUsername: input.telegram.username,
+          telegramFirstName: input.telegram.firstName,
+          telegramPhotoUrl: input.telegram.photoUrl,
+          telegramLinkedAt: input.telegram.linkedAt,
+        }
+      : {};
+
     return tx.user.create({
       data: {
         credential: {
@@ -88,6 +105,7 @@ export async function createLocalUser(input: CreateLocalUserInput): Promise<Auth
             language: input.language,
           },
         },
+        ...telegramData,
       },
       include: userInclude,
     });
@@ -138,6 +156,32 @@ export async function findUserById(userId: string): Promise<AuthUserRecord | nul
   return prisma.user.findUnique({
     where: { id: userId },
     include: userInclude,
+  });
+}
+
+export async function findUserByTelegramId(telegramId: string): Promise<AuthUserRecord | null> {
+  return prisma.user.findUnique({
+    where: { telegramId },
+    include: userInclude,
+  });
+}
+
+export async function updateUserTelegramData(userId: string, data: {
+  telegramId: string;
+  telegramUsername: string | null;
+  telegramFirstName: string | null;
+  telegramPhotoUrl: string | null;
+  telegramLinkedAt: Date;
+}): Promise<void> {
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      telegramId: data.telegramId,
+      telegramUsername: data.telegramUsername,
+      telegramFirstName: data.telegramFirstName,
+      telegramPhotoUrl: data.telegramPhotoUrl,
+      telegramLinkedAt: data.telegramLinkedAt,
+    },
   });
 }
 

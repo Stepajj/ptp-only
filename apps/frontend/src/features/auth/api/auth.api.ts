@@ -29,8 +29,18 @@ export type AuthCredentials = {
   password: string;
 };
 
+export type TelegramAuthPayload = {
+  id: string;
+  username?: string;
+  first_name?: string;
+  photo_url?: string;
+  auth_date: string;
+  hash: string;
+};
+
 export type RegisterPayload = AuthCredentials & {
   language?: string;
+  telegram?: TelegramAuthPayload;
 };
 
 export async function register(payload: RegisterPayload) {
@@ -41,6 +51,10 @@ export async function register(payload: RegisterPayload) {
 
   if (payload.language) {
     body.language = payload.language;
+  }
+
+  if (payload.telegram) {
+    body.telegram = payload.telegram;
   }
 
   return requestJson<AuthSessionResponse>('/auth/register', {
@@ -55,7 +69,20 @@ export async function login(payload: AuthCredentials) {
     body: payload,
   });
 }
+export async function telegramLogin(payload: TelegramAuthPayload) {
+  return requestJson<AuthSessionResponse>("/auth/telegram", {
+    method: "POST",
+    body: payload,
+  });
+}
 
+export async function linkTelegram(payload: TelegramAuthPayload, accessToken: string) {
+  return requestJson<MeResponse>("/auth/link-telegram", {
+    method: "POST",
+    body: payload,
+    accessToken,
+  });
+}
 export async function refresh() {
   return requestJson<AuthSessionResponse>('/auth/refresh', {
     method: 'POST',

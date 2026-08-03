@@ -1,22 +1,31 @@
-'use client';
+"use client";
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { AuthInput } from '../AuthInput/AuthInput';
-import { PasswordInput } from '../PasswordInput/PasswordInput';
-import { GradientButton } from '../GradientButton/GradientButton';
-import { TelegramButton } from '../TelegramButton/TelegramButton';
-import styles from './RegisterForm.module.css';
+import { useForm } from "react-hook-form";
 
-import { registerSchema, type RegisterFormValues } from '@/features/auth/model/register.schema';
-import { register as registerRequest, type AuthSessionResponse } from '@/features/auth/api/auth.api';
-import { useAuthStore } from '@/features/auth/model/auth.store';
-import { ApiError } from '@/shared/api/http';
+import { AuthInput } from "../AuthInput/AuthInput";
+import { GradientButton } from "../GradientButton/GradientButton";
+import { PasswordInput } from "../PasswordInput/PasswordInput";
+import { TelegramLoginButton } from "../TelegramLoginButton/TelegramLoginButton";
+import {
+  register as registerRequest,
+  type AuthSessionResponse,
+  type TelegramAuthPayload,
+} from "@/features/auth/api/auth.api";
+import {
+  registerSchema,
+  type RegisterFormValues,
+} from "@/features/auth/model/register.schema";
+import { useAuthStore } from "@/features/auth/model/auth.store";
+import { ApiError } from "@/shared/api/http";
+import styles from "./RegisterForm.module.css";
 
 export function RegisterForm() {
-    const router = useRouter();
+  const router = useRouter();
   const setSession = useAuthStore((state) => state.setSession);
+  const [telegramPayload, setTelegramPayload] = useState<TelegramAuthPayload>();
 
   const {
     register,
@@ -26,9 +35,9 @@ export function RegisterForm() {
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      identifier: '',
-      password: '',
-      repeatPassword: '',
+      identifier: "",
+      password: "",
+      repeatPassword: "",
     },
   });
 
@@ -37,29 +46,27 @@ export function RegisterForm() {
       const response: AuthSessionResponse = await registerRequest({
         identifier: values.identifier,
         password: values.password,
-        language: 'ru',
+        language: "ru",
+        telegram: telegramPayload,
       });
-      
-      
 
       setSession({
         user: response.data.user,
         accessToken: response.data.accessToken,
       });
-    router.push("/dashboard");
-      // Позже здесь добавим redirect на защищённый роут.
+      router.push("/dashboard");
     } catch (error) {
       if (error instanceof ApiError) {
-        setError('root', {
-          type: 'server',
+        setError("root", {
+          type: "server",
           message: error.message,
         });
         return;
       }
 
-      setError('root', {
-        type: 'server',
-        message: 'Не удалось создать аккаунт',
+      setError("root", {
+        type: "server",
+        message: "Не удалось создать аккаунт",
       });
     }
   };
@@ -73,21 +80,21 @@ export function RegisterForm() {
           placeholder="Email"
           type="email"
           autoComplete="email"
-          {...register('identifier')}
+          {...register("identifier")}
           error={errors.identifier?.message}
         />
 
         <PasswordInput
           placeholder="Пароль"
           autoComplete="new-password"
-          {...register('password')}
+          {...register("password")}
           error={errors.password?.message}
         />
 
         <PasswordInput
           placeholder="Повторите пароль"
           autoComplete="new-password"
-          {...register('repeatPassword')}
+          {...register("repeatPassword")}
           error={errors.repeatPassword?.message}
         />
 
@@ -97,10 +104,14 @@ export function RegisterForm() {
 
         <div className={styles.formBtnsDwn}>
           <GradientButton type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Создание...' : 'Создать аккаунт'}
+            {isSubmitting ? "Создание..." : "Создать аккаунт"}
           </GradientButton>
 
-          <TelegramButton />
+          <TelegramLoginButton
+            mode="register"
+            linked={Boolean(telegramPayload)}
+            onAuth={setTelegramPayload}
+          />
         </div>
       </form>
     </>

@@ -4,8 +4,9 @@ import { config } from "../../config";
 import { createOnlyP2PClient } from "../../integrations/only-p2p/only-p2p.client";
 import { AppError } from "../../shared/errors/app-error";
 import { logger } from "../../shared/logger/logger";
-import type { AuthResponseDto, CurrentUserResponseDto, LoginDto, RegisterDto } from "./auth.dto";
+import type { AuthResponseDto, CurrentUserResponseDto, LoginDto, RegisterDto, TelegramLoginDto } from "./auth.dto";
 import { toPublicUserDto } from "./auth.mapper";
+import { verifyTelegramLogin } from "./services/telegram.service";
 import {
   createLocalUser,
   createRefreshToken as createRefreshTokenRecord,
@@ -21,6 +22,8 @@ import {
   revokeRefreshTokenByHash,
   rotateRefreshToken,
   setPendingOnlyP2pExternalUserId,
+  updateUserTelegramData,
+  findUserByTelegramId,
   type AuthUserRecord,
 } from "./auth.repository";
 import type { IssuedSession, SessionMetadata } from "./auth.types";
@@ -180,6 +183,21 @@ async function completePendingRegistration(
 export async function register(input: RegisterDto, metadata: SessionMetadata): Promise<AuthResult> {
   const identifierNormalized = normalizeIdentifier(input.identifier);
   const existingCredential = await findCredentialByIdentifierNormalized(identifierNormalized);
+  const telegram = input.telegram;
+
+  if (telegram) {
+    verifyTelegramLogin(telegram);
+
+    const existingTelegramOwner = await findUserByTelegramId(telegram.id);
+
+    if (existingTelegramOwner) {
+      throw new AppError({
+        statusCode: 409,
+        code: "TELEGRAM_ID_ALREADY_IN_USE",
+        message: "Telegram account is already linked to another user",
+      });
+    }
+  }
 
   if (existingCredential) {
     const linkedClient = await findExternalClientByUserId(existingCredential.user.id);
@@ -203,13 +221,28 @@ export async function register(input: RegisterDto, metadata: SessionMetadata): P
   const passwordHash = await hashPassword(input.password);
   let user: AuthUserRecord;
 
+  const createLocalUserInput = {
+    identifier: input.identifier.trim(),
+    identifierNormalized,
+    passwordHash,
+    language: input.language,
+  };
+
   try {
-    user = await createLocalUser({
-      identifier: input.identifier.trim(),
-      identifierNormalized,
-      passwordHash,
-      language: input.language,
-    });
+    user = await createLocalUser(
+      telegram
+        ? {
+            ...createLocalUserInput,
+            telegram: {
+              id: telegram.id,
+              username: telegram.username ?? null,
+              firstName: telegram.first_name ?? null,
+              photoUrl: telegram.photo_url ?? null,
+              linkedAt: new Date(),
+            },
+          }
+        : createLocalUserInput,
+    );
   } catch (error) {
     if (isUniqueConstraintError(error)) {
       throwIdentifierAlreadyExists();
@@ -254,6 +287,84 @@ export async function login(input: LoginDto, metadata: SessionMetadata): Promise
 
   const session = await issueSession(credential.user.id, metadata);
   return createAuthResponse(credential.user, session);
+}
+
+export async function telegramLogin(input: TelegramLoginDto, metadata: SessionMetadata): Promise<AuthResult> {
+  verifyTelegramLogin({
+    ...input,
+    username: input.username ?? undefined,
+    first_name: input.first_name ?? undefined,
+    photo_url: input.photo_url ?? undefined,
+  });
+
+  const user = await findUserByTelegramId(input.id);
+
+  if (!user) {
+    throw new AppError({
+      statusCode: 404,
+      code: "TELEGRAM_ACCOUNT_NOT_LINKED",
+      message: "Telegram account is not linked",
+    });
+  }
+
+  ensureActiveUser(user.status);
+
+  const session = await issueSession(user.id, metadata);
+  return createAuthResponse(user, session);
+}
+
+export async function linkTelegram(userId: string, input: TelegramLoginDto): Promise<CurrentUserResponseDto> {
+  verifyTelegramLogin({
+    ...input,
+    username: input.username ?? undefined,
+    first_name: input.first_name ?? undefined,
+    photo_url: input.photo_url ?? undefined,
+  });
+
+  const existingOwner = await findUserByTelegramId(input.id);
+
+  if (existingOwner && existingOwner.id !== userId) {
+    throw new AppError({
+      statusCode: 409,
+      code: "TELEGRAM_ID_ALREADY_IN_USE",
+      message: "Telegram account is already linked to another user",
+    });
+  }
+
+  const user = await findUserById(userId);
+
+  if (!user) {
+    throw new AppError({
+      statusCode: 401,
+      code: "UNAUTHORIZED",
+      message: "Authentication required",
+    });
+  }
+
+  await updateUserTelegramData(userId, {
+    telegramId: input.id,
+    telegramUsername: input.username ?? null,
+    telegramFirstName: input.first_name ?? null,
+    telegramPhotoUrl: input.photo_url ?? null,
+    telegramLinkedAt: new Date(),
+  });
+
+  const updatedUser = await findUserById(userId);
+
+  if (!updatedUser) {
+    throw new AppError({
+      statusCode: 500,
+      code: "USER_UPDATE_FAILED",
+      message: "Failed to update Telegram link",
+    });
+  }
+
+  return {
+    success: true,
+    data: {
+      user: toPublicUserDto(updatedUser),
+    },
+  };
 }
 
 export async function refresh(refreshToken: string, metadata: SessionMetadata): Promise<AuthResult> {

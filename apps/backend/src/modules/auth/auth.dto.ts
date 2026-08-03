@@ -10,10 +10,20 @@ const passwordSchema = z
   .regex(/[A-Z]/, "Password must contain an uppercase letter")
   .regex(/[0-9]/, "Password must contain a digit");
 
+export const telegramLoginSchema = z.object({
+  id: z.string().regex(/^\d+$/).min(1),
+  username: z.string().trim().min(1).max(32).optional(),
+  first_name: z.string().trim().min(1).max(64).optional(),
+  photo_url: z.url().optional(),
+  auth_date: z.string().regex(/^\d+$/).min(1),
+  hash: z.string().regex(/^[a-f0-9]{64}$/i),
+});
+
 export const registerSchema = z.object({
   identifier: identifierSchema,
   password: passwordSchema,
   language: z.string().trim().min(2).max(10).default("ru"),
+  telegram: telegramLoginSchema.optional(),
 });
 
 export const loginSchema = z.object({
@@ -23,6 +33,7 @@ export const loginSchema = z.object({
 
 export type RegisterDto = z.infer<typeof registerSchema>;
 export type LoginDto = z.infer<typeof loginSchema>;
+export type TelegramLoginDto = z.infer<typeof telegramLoginSchema>;
 
 export interface PublicUserDto {
   id: string;
