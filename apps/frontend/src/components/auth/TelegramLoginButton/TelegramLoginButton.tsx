@@ -46,6 +46,14 @@ export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const widgetRef = useRef<HTMLDivElement | null>(null);
 
+console.log({
+  env: process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME,
+  TELEGRAM_BOT_USERNAME,
+  linked,
+  mode,
+  accessToken,
+});
+
   const disabled =
     !TELEGRAM_BOT_USERNAME ||
     linked ||
