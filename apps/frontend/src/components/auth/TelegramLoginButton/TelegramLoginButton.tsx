@@ -24,6 +24,7 @@ interface TelegramWidgetPayload {
   id: number | string;
   username?: string;
   first_name?: string;
+  last_name?: string;
   photo_url?: string;
   auth_date: number | string;
   hash: string;
@@ -37,20 +38,17 @@ declare global {
 
 const TELEGRAM_BOT_USERNAME =
   process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME?.replace(/^@/, "") ?? "";
-const TELEGRAM_ALLOWED_DOMAIN =
-  process.env.NEXT_PUBLIC_TELEGRAM_ALLOWED_DOMAIN?.replace(/^https?:\/\//, "").split(":")[0] ?? "";
 
 export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
   const router = useRouter();
   const accessToken = useAuthStore((state) => state.accessToken);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [domainIsAllowed, setDomainIsAllowed] = useState(true);
   const widgetRef = useRef<HTMLDivElement | null>(null);
 
   const disabled =
     !TELEGRAM_BOT_USERNAME ||
-    !domainIsAllowed ||
+    linked ||
     (mode === "link" && !accessToken);
 
   const buttonText = useMemo(() => {
@@ -67,6 +65,7 @@ export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
         id: String(payload.id),
         username: payload.username,
         first_name: payload.first_name,
+        last_name: payload.last_name,
         photo_url: payload.photo_url,
         auth_date: String(payload.auth_date),
         hash: payload.hash,
@@ -112,16 +111,6 @@ export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
   );
 
   useEffect(() => {
-    if (TELEGRAM_ALLOWED_DOMAIN && window.location.hostname !== TELEGRAM_ALLOWED_DOMAIN) {
-      setDomainIsAllowed(false);
-      setError(
-        `Telegram bot domain должен быть ${TELEGRAM_ALLOWED_DOMAIN}, сейчас открыт ${window.location.hostname}`,
-      );
-      return;
-    }
-
-    setDomainIsAllowed(true);
-
     if (disabled) {
       return;
     }
@@ -134,7 +123,6 @@ export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
     script.setAttribute("data-size", "large");
     script.setAttribute("data-lang", "ru");
     script.setAttribute("data-userpic", "false");
-    script.setAttribute("data-request-access", "write");
     script.setAttribute("data-onauth", "onTelegramAuth(user)");
     script.async = true;
 
@@ -143,7 +131,7 @@ export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
 
     return () => {
       if (target) {
-        target.innerHTML = "";
+        target.replaceChildren();
       }
       delete window.onTelegramAuth;
     };

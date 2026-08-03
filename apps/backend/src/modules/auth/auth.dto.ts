@@ -11,13 +11,14 @@ const passwordSchema = z
   .regex(/[0-9]/, "Password must contain a digit");
 
 export const telegramLoginSchema = z.object({
-  id: z.string().regex(/^\d+$/).min(1),
-  username: z.string().trim().min(1).max(32).optional(),
+  id: z.string().regex(/^\d+$/).min(1).max(20),
+  username: z.string().trim().min(1).max(32).regex(/^[a-zA-Z0-9_]+$/).optional(),
   first_name: z.string().trim().min(1).max(64).optional(),
-  photo_url: z.url().optional(),
-  auth_date: z.string().regex(/^\d+$/).min(1),
+  last_name: z.string().trim().min(1).max(64).optional(),
+  photo_url: z.url().max(2048).refine((url) => new URL(url).protocol === "https").optional(),
+  auth_date: z.string().regex(/^\d+$/).min(1).max(10),
   hash: z.string().regex(/^[a-f0-9]{64}$/i),
-});
+}).strict();
 
 export const registerSchema = z.object({
   identifier: identifierSchema,

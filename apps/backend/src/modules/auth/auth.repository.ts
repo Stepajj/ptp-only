@@ -31,13 +31,20 @@ export interface CreateLocalUserInput {
   identifierNormalized: string;
   passwordHash: string;
   language: string;
-  telegram?: {
-    id: string;
-    username: string | null;
-    firstName: string | null;
-    photoUrl: string | null;
-    linkedAt: Date;
-  };
+  telegram?: TelegramAccountData;
+}
+
+export interface TelegramAccountData {
+  id: string;
+  username: string | null;
+  firstName: string | null;
+  photoUrl: string | null;
+  linkedAt: Date;
+}
+
+export interface CreateTelegramUserInput {
+  language: string;
+  telegram: TelegramAccountData;
 }
 
 export interface CreateRefreshTokenInput {
@@ -112,6 +119,47 @@ export async function createLocalUser(input: CreateLocalUserInput): Promise<Auth
   });
 }
 
+export async function createTelegramUser(input: CreateTelegramUserInput): Promise<AuthUserRecord> {
+  return prisma.user.create({
+    data: {
+      telegramId: input.telegram.id,
+      telegramUsername: input.telegram.username,
+      telegramFirstName: input.telegram.firstName,
+      telegramPhotoUrl: input.telegram.photoUrl,
+      telegramLinkedAt: input.telegram.linkedAt,
+      settings: {
+        create: {
+          language: input.language,
+        },
+      },
+    },
+    include: userInclude,
+  });
+}
+
+const ONLY_P2P_PROVISIONING_LOCK_MAX_WAIT_MS = 30_000;
+const ONLY_P2P_PROVISIONING_LOCK_TIMEOUT_MS = 60_000;
+
+export async function withOnlyP2pProvisioningLock<T>(
+  userId: string,
+  work: () => Promise<T>,
+): Promise<T> {
+  return prisma.$transaction(
+    async (transaction) => {
+      // This transaction-scoped PostgreSQL lock serializes provisioning across app instances.
+      await transaction.$executeRaw`
+        SELECT pg_advisory_xact_lock(hashtext(${`only-p2p-provisioning:${userId}`}))
+      `;
+
+      return work();
+    },
+    {
+      maxWait: ONLY_P2P_PROVISIONING_LOCK_MAX_WAIT_MS,
+      timeout: ONLY_P2P_PROVISIONING_LOCK_TIMEOUT_MS,
+    },
+  );
+}
+
 export async function setPendingOnlyP2pExternalUserId(
   userId: string,
   externalUserId: string,
@@ -143,12 +191,6 @@ export async function linkOnlyP2pExternalClient(
         pendingOnlyP2pExternalUserId: null,
       },
     });
-  });
-}
-
-export async function deleteUserById(userId: string): Promise<void> {
-  await prisma.user.delete({
-    where: { id: userId },
   });
 }
 

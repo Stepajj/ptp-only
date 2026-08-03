@@ -7,6 +7,7 @@ export interface TelegramLoginPayload {
   id: string;
   username?: string | undefined;
   first_name?: string | undefined;
+  last_name?: string | undefined;
   photo_url?: string | undefined;
   auth_date: string;
   hash: string;
@@ -14,7 +15,7 @@ export interface TelegramLoginPayload {
 
 function buildDataCheckString(payload: TelegramLoginPayload): string {
   return Object.entries(payload)
-    .filter(([key]) => key !== "hash")
+    .filter(([key, value]) => key !== "hash" && value !== undefined)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([key, value]) => `${key}=${String(value)}`)
     .join("\n");
@@ -50,6 +51,7 @@ export function verifyTelegramLogin(payload: TelegramLoginPayload): void {
   }
 
   const authDateMillis = Number(auth_date) * 1000;
+  const now = Date.now();
 
   if (Number.isNaN(authDateMillis) || authDateMillis <= 0) {
     throw new AppError({
@@ -59,9 +61,17 @@ export function verifyTelegramLogin(payload: TelegramLoginPayload): void {
     });
   }
 
-  const ageSeconds = (Date.now() - authDateMillis) / 1000;
+  if (authDateMillis > now + 5 * 60 * 1000) {
+    throw new AppError({
+      statusCode: 401,
+      code: "INVALID_TELEGRAM_AUTH_DATE",
+      message: "Invalid Telegram auth_date",
+    });
+  }
 
-  if (ageSeconds > 86400) {
+  const ageSeconds = (now - authDateMillis) / 1000;
+
+  if (ageSeconds > 5 * 60) {
     throw new AppError({
       statusCode: 401,
       code: "TELEGRAM_AUTH_EXPIRED",

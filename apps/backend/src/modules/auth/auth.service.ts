@@ -3,19 +3,17 @@ import { UserStatus } from "@prisma/client";
 import { config } from "../../config";
 import { createOnlyP2PClient } from "../../integrations/only-p2p/only-p2p.client";
 import { AppError } from "../../shared/errors/app-error";
-import { logger } from "../../shared/logger/logger";
 import type { AuthResponseDto, CurrentUserResponseDto, LoginDto, RegisterDto, TelegramLoginDto } from "./auth.dto";
 import { toPublicUserDto } from "./auth.mapper";
-import { verifyTelegramLogin } from "./services/telegram.service";
+import { verifyTelegramLogin, type TelegramLoginPayload } from "./services/telegram.service";
 import {
   createLocalUser,
+  createTelegramUser,
   createRefreshToken as createRefreshTokenRecord,
-  deleteUserById,
   findCredentialByIdentifierNormalized,
   findExternalClientByUserId,
   findRefreshTokenByHash,
   findUserById,
-  isRecordNotFoundError,
   isUniqueConstraintError,
   linkOnlyP2pExternalClient,
   revokeAllUserRefreshTokens,
@@ -24,7 +22,9 @@ import {
   setPendingOnlyP2pExternalUserId,
   updateUserTelegramData,
   findUserByTelegramId,
+  withOnlyP2pProvisioningLock,
   type AuthUserRecord,
+  type TelegramAccountData,
 } from "./auth.repository";
 import type { IssuedSession, SessionMetadata } from "./auth.types";
 import { hashPassword, verifyPassword } from "./password.service";
@@ -52,6 +52,14 @@ function throwIdentifierAlreadyExists(): never {
   });
 }
 
+function throwTelegramAlreadyInUse(): never {
+  throw new AppError({
+    statusCode: 409,
+    code: "TELEGRAM_ID_ALREADY_IN_USE",
+    message: "Telegram account is already linked to another user",
+  });
+}
+
 function ensureActiveUser(status: UserStatus): void {
   if (status !== UserStatus.ACTIVE) {
     throw new AppError({
@@ -60,6 +68,28 @@ function ensureActiveUser(status: UserStatus): void {
       message: "User is not active",
     });
   }
+}
+
+function toTelegramVerificationPayload(input: TelegramLoginDto): TelegramLoginPayload {
+  return {
+    id: input.id,
+    auth_date: input.auth_date,
+    hash: input.hash,
+    ...(input.username ? { username: input.username } : {}),
+    ...(input.first_name ? { first_name: input.first_name } : {}),
+    ...(input.last_name ? { last_name: input.last_name } : {}),
+    ...(input.photo_url ? { photo_url: input.photo_url } : {}),
+  };
+}
+
+function toTelegramAccountData(input: TelegramLoginDto): TelegramAccountData {
+  return {
+    id: input.id,
+    username: input.username ?? null,
+    firstName: input.first_name ?? null,
+    photoUrl: input.photo_url ?? null,
+    linkedAt: new Date(),
+  };
 }
 
 async function issueSession(userId: string, metadata: SessionMetadata): Promise<IssuedSession> {
@@ -99,35 +129,6 @@ function createAuthResponse(user: Parameters<typeof toPublicUserDto>[0], session
   };
 }
 
-async function compensateFailedRegistration(userId: string, externalUserId?: string): Promise<void> {
-  try {
-    await deleteUserById(userId);
-  } catch (error) {
-    if (!isRecordNotFoundError(error)) {
-      logger.error(
-        {
-          err: error,
-          userId,
-          externalUserId,
-        },
-        "Failed to compensate incomplete registration",
-      );
-    }
-
-    throw error;
-  }
-
-  if (externalUserId) {
-    logger.warn(
-      {
-        userId,
-        externalUserId,
-      },
-      "OnlyP2P client created without local linkage after registration rollback",
-    );
-  }
-}
-
 async function resolveOnlyP2pExternalUserId(user: AuthUserRecord): Promise<string> {
   if (user.pendingOnlyP2pExternalUserId) {
     return user.pendingOnlyP2pExternalUserId;
@@ -143,33 +144,46 @@ async function finalizeExternalClientLink(
   user: AuthUserRecord,
   metadata: SessionMetadata,
 ): Promise<AuthResult> {
-  let externalUserId: string;
+  return withOnlyP2pProvisioningLock(user.id, async () => {
+    const currentUser = await findUserById(user.id);
 
-  try {
-    externalUserId = await resolveOnlyP2pExternalUserId(user);
-  } catch (error) {
-    await compensateFailedRegistration(user.id);
-    throw error;
-  }
-
-  try {
-    await linkOnlyP2pExternalClient(user.id, externalUserId);
-  } catch (error) {
-    if (isUniqueConstraintError(error)) {
-      const linkedClient = await findExternalClientByUserId(user.id);
-
-      if (linkedClient) {
-        const session = await issueSession(user.id, metadata);
-        return createAuthResponse(user, session);
-      }
+    if (!currentUser) {
+      throw new AppError({
+        statusCode: 401,
+        code: "UNAUTHORIZED",
+        message: "Authentication required",
+      });
     }
 
-    await compensateFailedRegistration(user.id, externalUserId);
-    throw error;
-  }
+    ensureActiveUser(currentUser.status);
 
-  const session = await issueSession(user.id, metadata);
-  return createAuthResponse(user, session);
+    const existingClient = await findExternalClientByUserId(currentUser.id);
+
+    if (existingClient) {
+      const session = await issueSession(currentUser.id, metadata);
+      return createAuthResponse(currentUser, session);
+    }
+
+    const externalUserId = await resolveOnlyP2pExternalUserId(currentUser);
+
+    try {
+      await linkOnlyP2pExternalClient(currentUser.id, externalUserId);
+    } catch (error) {
+      if (isUniqueConstraintError(error)) {
+        const linkedClient = await findExternalClientByUserId(currentUser.id);
+
+        if (linkedClient) {
+          const session = await issueSession(currentUser.id, metadata);
+          return createAuthResponse(currentUser, session);
+        }
+      }
+
+      throw error;
+    }
+
+    const session = await issueSession(currentUser.id, metadata);
+    return createAuthResponse(currentUser, session);
+  });
 }
 
 async function completePendingRegistration(
@@ -186,16 +200,12 @@ export async function register(input: RegisterDto, metadata: SessionMetadata): P
   const telegram = input.telegram;
 
   if (telegram) {
-    verifyTelegramLogin(telegram);
+    verifyTelegramLogin(toTelegramVerificationPayload(telegram));
 
     const existingTelegramOwner = await findUserByTelegramId(telegram.id);
 
     if (existingTelegramOwner) {
-      throw new AppError({
-        statusCode: 409,
-        code: "TELEGRAM_ID_ALREADY_IN_USE",
-        message: "Telegram account is already linked to another user",
-      });
+      throwTelegramAlreadyInUse();
     }
   }
 
@@ -245,6 +255,10 @@ export async function register(input: RegisterDto, metadata: SessionMetadata): P
     );
   } catch (error) {
     if (isUniqueConstraintError(error)) {
+      if (telegram && await findUserByTelegramId(telegram.id)) {
+        throwTelegramAlreadyInUse();
+      }
+
       throwIdentifierAlreadyExists();
     }
 
@@ -290,46 +304,34 @@ export async function login(input: LoginDto, metadata: SessionMetadata): Promise
 }
 
 export async function telegramLogin(input: TelegramLoginDto, metadata: SessionMetadata): Promise<AuthResult> {
-  verifyTelegramLogin({
-    ...input,
-    username: input.username ?? undefined,
-    first_name: input.first_name ?? undefined,
-    photo_url: input.photo_url ?? undefined,
-  });
+  verifyTelegramLogin(toTelegramVerificationPayload(input));
 
-  const user = await findUserByTelegramId(input.id);
+  let user = await findUserByTelegramId(input.id);
 
   if (!user) {
-    throw new AppError({
-      statusCode: 404,
-      code: "TELEGRAM_ACCOUNT_NOT_LINKED",
-      message: "Telegram account is not linked",
-    });
+    try {
+      user = await createTelegramUser({
+        language: "ru",
+        telegram: toTelegramAccountData(input),
+      });
+    } catch (error) {
+      if (!isUniqueConstraintError(error)) {
+        throw error;
+      }
+
+      user = await findUserByTelegramId(input.id);
+
+      if (!user) {
+        throw error;
+      }
+    }
   }
 
-  ensureActiveUser(user.status);
-
-  const session = await issueSession(user.id, metadata);
-  return createAuthResponse(user, session);
+  return finalizeExternalClientLink(user, metadata);
 }
 
 export async function linkTelegram(userId: string, input: TelegramLoginDto): Promise<CurrentUserResponseDto> {
-  verifyTelegramLogin({
-    ...input,
-    username: input.username ?? undefined,
-    first_name: input.first_name ?? undefined,
-    photo_url: input.photo_url ?? undefined,
-  });
-
-  const existingOwner = await findUserByTelegramId(input.id);
-
-  if (existingOwner && existingOwner.id !== userId) {
-    throw new AppError({
-      statusCode: 409,
-      code: "TELEGRAM_ID_ALREADY_IN_USE",
-      message: "Telegram account is already linked to another user",
-    });
-  }
+  verifyTelegramLogin(toTelegramVerificationPayload(input));
 
   const user = await findUserById(userId);
 
@@ -341,13 +343,31 @@ export async function linkTelegram(userId: string, input: TelegramLoginDto): Pro
     });
   }
 
-  await updateUserTelegramData(userId, {
-    telegramId: input.id,
-    telegramUsername: input.username ?? null,
-    telegramFirstName: input.first_name ?? null,
-    telegramPhotoUrl: input.photo_url ?? null,
-    telegramLinkedAt: new Date(),
-  });
+  ensureActiveUser(user.status);
+
+  const existingOwner = await findUserByTelegramId(input.id);
+
+  if (existingOwner && existingOwner.id !== userId) {
+    throwTelegramAlreadyInUse();
+  }
+
+  try {
+    const telegram = toTelegramAccountData(input);
+
+    await updateUserTelegramData(userId, {
+      telegramId: telegram.id,
+      telegramUsername: telegram.username,
+      telegramFirstName: telegram.firstName,
+      telegramPhotoUrl: telegram.photoUrl,
+      telegramLinkedAt: telegram.linkedAt,
+    });
+  } catch (error) {
+    if (isUniqueConstraintError(error)) {
+      throwTelegramAlreadyInUse();
+    }
+
+    throw error;
+  }
 
   const updatedUser = await findUserById(userId);
 
