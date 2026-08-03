@@ -1,0 +1,105 @@
+.header {
+    padding: 12px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid rgba(222,222,222,1);
+}
+
+.content{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+}
+
+.title{
+    font-size:18px;
+    font-weight:500;
+    line-height:100%;
+}
+
+.subtitle{
+    font-size:14px;
+    font-weight:400;
+    opacity:.6;
+}
+
+.actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.balanceButton{
+    height:41px;
+
+    padding:0 15px;
+
+    display:flex;
+    align-items:center;
+    gap:11px;
+
+    border-radius:10px;
+    border:1px solid rgba(222,222,222,1);
+
+    background:#fff;
+
+    cursor:pointer;
+
+    font-size:14px;
+    font-weight:500;
+
+    transition:.2s;
+}
+
+.balanceButton:hover{
+    border-color:#cfcfcf;
+}
+
+.depositButton{
+    height:41px;
+
+    padding:0 18px;
+
+    display:flex;
+    align-items:center;
+    gap:11px;
+
+    border-radius:10px;
+
+    background:linear-gradient(
+        90deg,
+        #18ADEE 0%,
+        #FA90D9 100%
+    );
+
+    border:1px solid rgba(0,0,0,.1);
+
+    color:#fff;
+
+    font-size:14px;
+    font-weight:500;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.depositButton:hover{
+    opacity:.95;
+}
+
+.walletIcon{
+    width:18px;
+    height:18px;
+
+    flex-shrink:0;
+}
+
+.plusIcon{
+    width:14px;
+    height:14px;
+
+    flex-shrink:0;
+}

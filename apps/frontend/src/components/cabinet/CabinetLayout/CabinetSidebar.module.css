@@ -1,0 +1,36 @@
+.sidebar {
+   width: 249px;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    background: rgba(20,20,23,1);
+
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.logo {
+    /* extra 15px margin so total offset from edge is 30px (parent padding 15px + this margin 15px) */
+    margin-top: 15px;
+    margin-left: 15px;
+}
+
+.menuHeader {
+    margin-top: 40px;
+    margin-bottom: 10px;
+    padding-left: 11px;
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.2px;
+}
+
+.menu {
+   display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    flex: 1;
+}

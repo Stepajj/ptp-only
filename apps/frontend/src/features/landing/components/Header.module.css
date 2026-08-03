@@ -69,3 +69,56 @@ color: rgba(3, 6, 29, 0.5);
   border: 1px solid rgba(0, 0, 0, 0.1);
   font-weight: 500;
 }
+
+.avatarButton {
+  position: relative;
+
+  width: 44px;
+  height: 44px;
+
+  flex-shrink: 0;
+
+  border: none;
+  outline: none;
+
+  cursor: pointer;
+
+  border-radius: 50%;
+
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(
+    90deg,
+    #18ADEE 0%,
+    #FA90D9 100%
+  );
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+.avatarButton:hover {
+  transform: translateY(-1px);
+
+  box-shadow: 0 8px 24px rgba(24, 173, 238, .25);
+}
+
+.avatarImage {
+  object-fit: cover;
+}
+
+.avatarInitials {
+  color: #fff;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  text-transform: uppercase;
+
+  user-select: none;
+}

@@ -1,12 +1,13 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { AnimatedSection } from "@/components/motion/AnimatedSection";
-import { MotionButton } from "@/components/motion/MotionButton";
 import { LAYOUT } from "@/constants/layout";
 import logo from "@/assets/images/logo.svg";
 
+import { HeaderActions } from "./HeaderActions";
+
 import styles from "./Header.module.css";
-import Link from "next/link";
 
 export function Header() {
   return (
@@ -18,43 +19,43 @@ export function Header() {
           maxWidth: LAYOUT.CONTAINER_MAX_WIDTH,
         }}
       >
-        <div className={styles.logo}>
-          <Image src={logo} alt="Логотип" width={109} height={29} />
-        </div>
+        <Link href="/" className={styles.logo}>
+          <Image
+            src={logo}
+            alt="Логотип"
+            width={109}
+            height={29}
+          />
+        </Link>
 
-        <nav className={styles.nav} aria-label="Основное меню">
+        <nav
+          className={styles.nav}
+          aria-label="Основное меню"
+        >
           <ul className={styles.menu}>
             <li>
               <a href="#">О сервисе</a>
             </li>
+
             <li>
               <a href="#">Как работает</a>
             </li>
+
             <li>
               <a href="#">Тарифы</a>
             </li>
+
             <li>
               <a href="#">Партнерам</a>
             </li>
+
             <li>
               <a href="#">FAQ</a>
             </li>
           </ul>
         </nav>
 
-       <div className={styles.actions}>
-  <Link href="/login" className={styles.actionLink}>
-    <MotionButton type="button" className={styles.loginButton}>
-      Войти
-    </MotionButton>
-  </Link>
-
-  <Link href="/register" className={styles.actionLink}>
-    <MotionButton type="button" className={styles.registerButton}>
-      Создать аккаунт
-    </MotionButton>
-  </Link>
-</div>
+        <HeaderActions />
       </AnimatedSection>
     </header>
   );
