@@ -185,7 +185,7 @@ export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
     const options: { client_id: number; request_access: string; scope: string[] } = {
       client_id: Number(TELEGRAM_CLIENT_ID),
       request_access: 'write',
-      scope: ['profile'],
+      scope: ['openid', 'profile'],
     };
 
     console.info('[Telegram Login] Calling Telegram.Login.auth()', { options });
