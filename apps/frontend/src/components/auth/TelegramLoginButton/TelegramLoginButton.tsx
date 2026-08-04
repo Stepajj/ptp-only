@@ -33,6 +33,7 @@ interface TelegramOidcResponse {
 }
 
 const TELEGRAM_CLIENT_ID = process.env.NEXT_PUBLIC_TELEGRAM_CLIENT_ID;
+console.log('[Telegram Login] TELEGRAM_CLIENT_ID', { TELEGRAM_CLIENT_ID });
 
 declare global {
   interface Window {
