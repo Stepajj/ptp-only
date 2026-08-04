@@ -41,7 +41,7 @@ export async function verifyTelegramOidcToken(idToken: string): Promise<Telegram
   }
 
   try {
-    const jwks = getJwks();
+    const jwks = getJwksCache();
     const { payload } = await jwtVerify(idToken, jwks, {
       issuer: TELEGRAM_ISSUER,
       audience: String(config.telegram.clientId),
