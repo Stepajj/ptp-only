@@ -103,7 +103,7 @@ export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
         if (mode === "login") {
           console.info('[Telegram Login] Sending id_token to backend...', { endpoint: 'telegramLogin' });
           const response = await telegramLogin(body);
-          console.info('[Telegram Login] Backend response', { status: response?.status, data: response?.data });
+          console.info('[Telegram Login] Backend response', { data: response?.data });
           useAuthStore.getState().setSession({
             user: response.data.user,
             accessToken: response.data.accessToken,
@@ -118,7 +118,7 @@ export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
 
         console.info('[Telegram Login] Sending id_token to backend...', { endpoint: 'linkTelegram' });
         const response = await linkTelegram(body, accessToken);
-        console.info('[Telegram Login] Backend response', { status: response?.status, data: response?.data });
+        console.info('[Telegram Login] Backend response', { data: response?.data });
         useAuthStore.getState().setUser(response.data.user);
       } catch (error) {
         if (error instanceof ApiError || error instanceof Error) {
@@ -163,7 +163,9 @@ export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
   const handleClick = useCallback(() => {
     console.info('[Telegram Login] handleClick start', { TELEGRAM_CLIENT_ID });
 
-    const scriptUrlLoaded = document.currentScript?.src || Array.from(document.getElementsByTagName('script')).slice(-1)[0]?.src;
+    const scripts = document.getElementsByTagName('script');
+    const lastScript = scripts.length ? (scripts[scripts.length - 1] as HTMLScriptElement) : undefined;
+    const scriptUrlLoaded = ((document.currentScript as HTMLScriptElement | null)?.src) || lastScript?.src;
     console.info('[Telegram Login] script URL loaded', { scriptUrlLoaded });
 
     console.info('[Telegram Login] window.Telegram', Boolean(window.Telegram));
@@ -179,11 +181,11 @@ export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
       return;
     }
 
-    const options = {
+    const options: { client_id: number; request_access: string; scope: string[] } = {
       client_id: Number(TELEGRAM_CLIENT_ID),
       request_access: 'write',
       scope: ['profile'],
-    } as const;
+    };
 
     console.info('[Telegram Login] Calling Telegram.Login.auth()', { options });
 
