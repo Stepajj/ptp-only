@@ -39,15 +39,21 @@ declare global {
     Telegram: {
       Login: {
         init: (options: {
-          bot_id: number;
-          request_access: boolean;
-          scope: string[];
+          client_id: number;
+          request_access?: string | string[];
+          scope?: string[];
+          nonce?: string;
+          lang?: string;
         }, callback: (data: TelegramOidcResponse | null) => void) => void;
         auth: (options: {
-          bot_id: number;
-          request_access: boolean;
-          scope: string[];
+          client_id: number;
+          request_access?: string | string[];
+          scope?: string[];
+          nonce?: string;
+          lang?: string;
         }, callback: (data: TelegramOidcResponse | null) => void) => void;
+        open?: (callback?: (data: TelegramOidcResponse | null) => void) => void;
+        close?: () => void;
       };
     };
   }
@@ -95,7 +101,9 @@ export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
         }
 
         if (mode === "login") {
+          console.info('[Telegram Login] Sending id_token to backend...', { endpoint: 'telegramLogin' });
           const response = await telegramLogin(body);
+          console.info('[Telegram Login] Backend response', { status: response?.status, data: response?.data });
           useAuthStore.getState().setSession({
             user: response.data.user,
             accessToken: response.data.accessToken,
@@ -108,7 +116,9 @@ export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
           throw new Error("Требуется авторизация для привязки Telegram");
         }
 
+        console.info('[Telegram Login] Sending id_token to backend...', { endpoint: 'linkTelegram' });
         const response = await linkTelegram(body, accessToken);
+        console.info('[Telegram Login] Backend response', { status: response?.status, data: response?.data });
         useAuthStore.getState().setUser(response.data.user);
       } catch (error) {
         if (error instanceof ApiError || error instanceof Error) {
@@ -130,10 +140,16 @@ export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
     }
 
     const script = document.createElement("script");
-    script.src = "https://telegram.org/js/telegram-widget.js?22";
+    const scriptUrl = "https://oauth.telegram.org/js/telegram-login.js?5";
+    console.info('[Telegram Login] Script loading...', { scriptUrl });
+    script.src = scriptUrl;
     script.async = true;
-    script.onload = () => setScriptLoaded(true);
+    script.onload = () => {
+      console.info('[Telegram Login] Script loaded', { scriptUrl });
+      setScriptLoaded(true);
+    };
     script.onerror = () => {
+      console.error('[Telegram Login] Library not loaded', { scriptUrl });
       setError("Не удалось загрузить Telegram Widget");
     };
 
@@ -145,18 +161,37 @@ export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
   }, [TELEGRAM_CLIENT_ID]);
 
   const handleClick = useCallback(() => {
-    if (!TELEGRAM_CLIENT_ID || !window.Telegram?.Login) {
+    console.info('[Telegram Login] handleClick start', { TELEGRAM_CLIENT_ID });
+
+    const scriptUrlLoaded = document.currentScript?.src || Array.from(document.getElementsByTagName('script')).slice(-1)[0]?.src;
+    console.info('[Telegram Login] script URL loaded', { scriptUrlLoaded });
+
+    console.info('[Telegram Login] window.Telegram', Boolean(window.Telegram));
+    console.info('[Telegram Login] window.Telegram.Login', Boolean(window.Telegram?.Login));
+    console.info('[Telegram Login] exists methods', {
+      auth: Boolean(window.Telegram?.Login?.auth),
+      init: Boolean(window.Telegram?.Login?.init),
+      open: Boolean(window.Telegram?.Login?.open),
+    });
+
+    if (!TELEGRAM_CLIENT_ID || !window.Telegram?.Login || !window.Telegram?.Login?.auth) {
+      console.error('[Telegram Login] Library not loaded or method missing');
       return;
     }
 
-    window.Telegram.Login.auth(
-      {
-        bot_id: Number(TELEGRAM_CLIENT_ID),
-        request_access: true,
-        scope: ["profile"],
-      },
-      handleTelegramAuth,
-    );
+    const options = {
+      client_id: Number(TELEGRAM_CLIENT_ID),
+      request_access: 'write',
+      scope: ['profile'],
+    } as const;
+
+    console.info('[Telegram Login] Calling Telegram.Login.auth()', { options });
+
+    try {
+      window.Telegram.Login.auth(options, handleTelegramAuth);
+    } catch (e) {
+      console.error('[Telegram Login] Error calling auth', e);
+    }
   }, [TELEGRAM_CLIENT_ID, handleTelegramAuth]);
 
   return (
