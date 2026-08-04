@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -20,44 +20,51 @@ interface Props {
   onAuth?: (payload: TelegramAuthPayload) => void;
 }
 
-interface TelegramWidgetPayload {
-  id: number | string;
-  username?: string;
-  first_name?: string;
-  last_name?: string;
-  photo_url?: string;
-  auth_date: number | string;
-  hash: string;
+interface TelegramOidcResponse {
+  id_token: string;
+  user?: {
+    id: number;
+    first_name?: string;
+    last_name?: string;
+    username?: string;
+    language_code?: string;
+    photo_url?: string;
+  };
 }
+
+const TELEGRAM_CLIENT_ID = process.env.NEXT_PUBLIC_TELEGRAM_CLIENT_ID;
 
 declare global {
   interface Window {
-    onTelegramAuth?: (payload: TelegramWidgetPayload) => void;
+    Telegram: {
+      Login: {
+        init: (options: {
+          bot_id: number;
+          request_access: boolean;
+          scope: string[];
+        }, callback: (data: TelegramOidcResponse | null) => void) => void;
+        auth: (options: {
+          bot_id: number;
+          request_access: boolean;
+          scope: string[];
+        }, callback: (data: TelegramOidcResponse | null) => void) => void;
+      };
+    };
   }
 }
-
-const TELEGRAM_BOT_USERNAME =
-  process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME?.replace(/^@/, "") ?? "";
 
 export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
   const router = useRouter();
   const accessToken = useAuthStore((state) => state.accessToken);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const widgetRef = useRef<HTMLDivElement | null>(null);
-
-console.log({
-  env: process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME,
-  TELEGRAM_BOT_USERNAME,
-  linked,
-  mode,
-  accessToken,
-});
+  const [scriptLoaded, setScriptLoaded] = useState(false);
 
   const disabled =
-    !TELEGRAM_BOT_USERNAME ||
+    !TELEGRAM_CLIENT_ID ||
     linked ||
-    (mode === "link" && !accessToken);
+    (mode === "link" && !accessToken) ||
+    !scriptLoaded;
 
   const buttonText = useMemo(() => {
     if (linked) {
@@ -68,15 +75,14 @@ console.log({
   }, [linked, mode]);
 
   const handleTelegramAuth = useCallback(
-    async (payload: TelegramWidgetPayload) => {
+    async (data: TelegramOidcResponse | null) => {
+      if (!data) {
+        setError("Авторизация через Telegram отменена");
+        return;
+      }
+
       const body: TelegramAuthPayload = {
-        id: String(payload.id),
-        username: payload.username,
-        first_name: payload.first_name,
-        last_name: payload.last_name,
-        photo_url: payload.photo_url,
-        auth_date: String(payload.auth_date),
-        hash: payload.hash,
+        id_token: data.id_token,
       };
 
       setError(null);
@@ -119,36 +125,51 @@ console.log({
   );
 
   useEffect(() => {
-    if (disabled) {
+    if (!TELEGRAM_CLIENT_ID) {
       return;
     }
 
-    window.onTelegramAuth = handleTelegramAuth;
-
     const script = document.createElement("script");
-    script.src = "https://telegram.org/js/telegram-widget.js?7";
-    script.setAttribute("data-telegram-login", TELEGRAM_BOT_USERNAME);
-    script.setAttribute("data-size", "large");
-    script.setAttribute("data-lang", "ru");
-    script.setAttribute("data-userpic", "false");
-    script.setAttribute("data-onauth", "onTelegramAuth(user)");
+    script.src = "https://telegram.org/js/telegram-widget.js?22";
     script.async = true;
+    script.onload = () => setScriptLoaded(true);
+    script.onerror = () => {
+      setError("Не удалось загрузить Telegram Widget");
+    };
 
-    const target = widgetRef.current;
-    target?.appendChild(script);
+    document.body.appendChild(script);
 
     return () => {
-      if (target) {
-        target.replaceChildren();
-      }
-      delete window.onTelegramAuth;
+      document.body.removeChild(script);
     };
-  }, [disabled, handleTelegramAuth]);
+  }, [TELEGRAM_CLIENT_ID]);
+
+  const handleClick = useCallback(() => {
+    if (!TELEGRAM_CLIENT_ID || !window.Telegram?.Login) {
+      return;
+    }
+
+    window.Telegram.Login.auth(
+      {
+        bot_id: Number(TELEGRAM_CLIENT_ID),
+        request_access: true,
+        scope: ["profile"],
+      },
+      handleTelegramAuth,
+    );
+  }, [TELEGRAM_CLIENT_ID, handleTelegramAuth]);
 
   return (
     <div className={styles.root}>
       {!disabled && !linked ? (
-        <div className={styles.widget} ref={widgetRef} />
+        <button
+          type="button"
+          className={styles.button}
+          onClick={handleClick}
+          disabled={isLoading}
+        >
+          {isLoading ? "Обработка..." : buttonText}
+        </button>
       ) : (
         <button type="button" className={styles.disabledButton} disabled>
           {buttonText}
@@ -158,7 +179,6 @@ console.log({
       {linked && (
         <p className={styles.status}>Telegram будет привязан после регистрации</p>
       )}
-      {isLoading && <p className={styles.status}>Обработка...</p>}
       {error && <p className={styles.error}>{error}</p>}
     </div>
   );

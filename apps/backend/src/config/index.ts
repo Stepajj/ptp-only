@@ -54,6 +54,8 @@ export const config = {
   telegram: {
     botToken: env.TELEGRAM_BOT_TOKEN,
     botUsername: env.TELEGRAM_BOT_USERNAME,
+    clientId: env.TELEGRAM_CLIENT_ID,
+    clientSecret: env.TELEGRAM_CLIENT_SECRET,
   },
 } as const;
 

@@ -36,6 +36,8 @@ const envSchema = z
     ONLY_P2P_TIMEOUT_MS: z.coerce.number().int().positive().default(10000),
     TELEGRAM_BOT_TOKEN: z.string().min(1),
     TELEGRAM_BOT_USERNAME: z.string().min(1),
+    TELEGRAM_CLIENT_ID: z.coerce.number().int().positive(),
+    TELEGRAM_CLIENT_SECRET: z.string().min(1),
   })
   .refine((env) => env.JWT_ACCESS_SECRET !== env.JWT_REFRESH_SECRET, {
     message: "JWT access and refresh secrets must be different",

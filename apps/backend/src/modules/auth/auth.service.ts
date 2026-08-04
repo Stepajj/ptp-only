@@ -5,7 +5,7 @@ import { createOnlyP2PClient } from "../../integrations/only-p2p/only-p2p.client
 import { AppError } from "../../shared/errors/app-error";
 import type { AuthResponseDto, CurrentUserResponseDto, LoginDto, RegisterDto, TelegramLoginDto } from "./auth.dto";
 import { toPublicUserDto } from "./auth.mapper";
-import { verifyTelegramLogin, type TelegramLoginPayload } from "./services/telegram.service";
+import { verifyTelegramOidcToken, type TelegramUserClaims } from "./services/telegram.service";
 import {
   createLocalUser,
   createTelegramUser,
@@ -70,24 +70,12 @@ function ensureActiveUser(status: UserStatus): void {
   }
 }
 
-function toTelegramVerificationPayload(input: TelegramLoginDto): TelegramLoginPayload {
+function toTelegramAccountData(claims: TelegramUserClaims): TelegramAccountData {
   return {
-    id: input.id,
-    auth_date: input.auth_date,
-    hash: input.hash,
-    ...(input.username ? { username: input.username } : {}),
-    ...(input.first_name ? { first_name: input.first_name } : {}),
-    ...(input.last_name ? { last_name: input.last_name } : {}),
-    ...(input.photo_url ? { photo_url: input.photo_url } : {}),
-  };
-}
-
-function toTelegramAccountData(input: TelegramLoginDto): TelegramAccountData {
-  return {
-    id: input.id,
-    username: input.username ?? null,
-    firstName: input.first_name ?? null,
-    photoUrl: input.photo_url ?? null,
+    id: claims.sub,
+    username: claims.username ?? null,
+    firstName: claims.given_name ?? null,
+    photoUrl: claims.picture ?? null,
     linkedAt: new Date(),
   };
 }
@@ -199,10 +187,12 @@ export async function register(input: RegisterDto, metadata: SessionMetadata): P
   const existingCredential = await findCredentialByIdentifierNormalized(identifierNormalized);
   const telegram = input.telegram;
 
-  if (telegram) {
-    verifyTelegramLogin(toTelegramVerificationPayload(telegram));
+  let telegramClaims: TelegramUserClaims | null = null;
 
-    const existingTelegramOwner = await findUserByTelegramId(telegram.id);
+  if (telegram) {
+    telegramClaims = await verifyTelegramOidcToken(telegram.id_token);
+
+    const existingTelegramOwner = await findUserByTelegramId(telegramClaims.sub);
 
     if (existingTelegramOwner) {
       throwTelegramAlreadyInUse();
@@ -240,22 +230,16 @@ export async function register(input: RegisterDto, metadata: SessionMetadata): P
 
   try {
     user = await createLocalUser(
-      telegram
+      telegramClaims
         ? {
             ...createLocalUserInput,
-            telegram: {
-              id: telegram.id,
-              username: telegram.username ?? null,
-              firstName: telegram.first_name ?? null,
-              photoUrl: telegram.photo_url ?? null,
-              linkedAt: new Date(),
-            },
+            telegram: toTelegramAccountData(telegramClaims),
           }
         : createLocalUserInput,
     );
   } catch (error) {
     if (isUniqueConstraintError(error)) {
-      if (telegram && await findUserByTelegramId(telegram.id)) {
+      if (telegramClaims && await findUserByTelegramId(telegramClaims.sub)) {
         throwTelegramAlreadyInUse();
       }
 
@@ -304,22 +288,22 @@ export async function login(input: LoginDto, metadata: SessionMetadata): Promise
 }
 
 export async function telegramLogin(input: TelegramLoginDto, metadata: SessionMetadata): Promise<AuthResult> {
-  verifyTelegramLogin(toTelegramVerificationPayload(input));
+  const claims = await verifyTelegramOidcToken(input.id_token);
 
-  let user = await findUserByTelegramId(input.id);
+  let user = await findUserByTelegramId(claims.sub);
 
   if (!user) {
     try {
       user = await createTelegramUser({
         language: "ru",
-        telegram: toTelegramAccountData(input),
+        telegram: toTelegramAccountData(claims),
       });
     } catch (error) {
       if (!isUniqueConstraintError(error)) {
         throw error;
       }
 
-      user = await findUserByTelegramId(input.id);
+      user = await findUserByTelegramId(claims.sub);
 
       if (!user) {
         throw error;
@@ -331,7 +315,7 @@ export async function telegramLogin(input: TelegramLoginDto, metadata: SessionMe
 }
 
 export async function linkTelegram(userId: string, input: TelegramLoginDto): Promise<CurrentUserResponseDto> {
-  verifyTelegramLogin(toTelegramVerificationPayload(input));
+  const claims = await verifyTelegramOidcToken(input.id_token);
 
   const user = await findUserById(userId);
 
@@ -345,14 +329,14 @@ export async function linkTelegram(userId: string, input: TelegramLoginDto): Pro
 
   ensureActiveUser(user.status);
 
-  const existingOwner = await findUserByTelegramId(input.id);
+  const existingOwner = await findUserByTelegramId(claims.sub);
 
   if (existingOwner && existingOwner.id !== userId) {
     throwTelegramAlreadyInUse();
   }
 
   try {
-    const telegram = toTelegramAccountData(input);
+    const telegram = toTelegramAccountData(claims);
 
     await updateUserTelegramData(userId, {
       telegramId: telegram.id,
