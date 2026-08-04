@@ -1,6 +1,7 @@
 import type { RequestHandler } from "express";
 
 import { AppError } from "../../shared/errors/app-error";
+import { logger } from "../../shared/logger/logger";
 import { parseBody } from "../../shared/validation/parse-body";
 import { getRequestMetadata } from "../../utils/request-metadata";
 import { loginSchema, registerSchema, telegramLoginSchema } from "./auth.dto";
@@ -78,12 +79,16 @@ export const logoutController: RequestHandler = async (request, response, next) 
 
 export const telegramLoginController: RequestHandler = async (request, response, next) => {
   try {
+    logger.info({ body: request.body }, "Telegram login request received");
     const body = parseBody(telegramLoginSchema, request.body as unknown);
+    logger.info({ body }, "Telegram login payload validated");
+
     const result = await telegramLogin(body, getRequestMetadata(request));
 
     setRefreshTokenCookie(response, result.refreshToken);
     response.status(200).json(result.response);
   } catch (error) {
+    logger.warn({ err: error }, "Telegram login request failed");
     next(error);
   }
 };

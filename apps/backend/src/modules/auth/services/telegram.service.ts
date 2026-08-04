@@ -2,6 +2,7 @@ import { jwtVerify, createRemoteJWKSet, type JWTVerifyResult, type KeyLike } fro
 
 import { config } from "../../../config";
 import { AppError } from "../../../shared/errors/app-error";
+import { logger } from "../../../shared/logger/logger";
 
 export interface TelegramOidcPayload {
   id_token: string;
@@ -19,8 +20,8 @@ export interface TelegramUserClaims {
   auth_date?: number;
 }
 
-const TELEGRAM_JWKS_URL = "https://core.telegram.org/.well-known/jwks.json";
-const TELEGRAM_ISSUER = "https://telegram.org";
+const TELEGRAM_JWKS_URL = "https://oauth.telegram.org/.well-known/jwks.json";
+const TELEGRAM_ISSUER = "https://oauth.telegram.org";
 
 let jwksCache: ReturnType<typeof createRemoteJWKSet> | null = null;
 
@@ -40,6 +41,8 @@ export async function verifyTelegramOidcToken(idToken: string): Promise<Telegram
     });
   }
 
+  logger.info({ hasIdToken: Boolean(idToken) }, "Verifying Telegram OIDC token");
+
   try {
     const jwks = getJwksCache();
     const { payload } = await jwtVerify(idToken, jwks, {
@@ -48,11 +51,14 @@ export async function verifyTelegramOidcToken(idToken: string): Promise<Telegram
       algorithms: ['RS256'],
     });
 
+    logger.info({ payload }, "Telegram OIDC token verified");
     return payload as TelegramUserClaims;
   } catch (error) {
     if (error instanceof AppError) {
       throw error;
     }
+
+    logger.warn({ err: error }, "Telegram ID token verification failed");
 
     throw new AppError({
       statusCode: 401,
