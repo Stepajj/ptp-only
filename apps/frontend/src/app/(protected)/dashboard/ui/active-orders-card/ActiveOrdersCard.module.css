@@ -1,0 +1,88 @@
+.card {
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
+
+  padding: 25px;
+
+  background: #ffffff;
+
+  border: 1px solid rgba(233, 233, 236, 1);
+  border-radius: 20px;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 45px;
+  height: 45px;
+
+  background: rgba(16, 174, 239, 0.1);
+
+  border-radius: 10px;
+
+  color: rgba(16, 174, 239, 1);
+
+  font-size: 20px;
+}
+
+.count {
+  margin: 10px 0 0;
+
+  color: rgba(20, 20, 23, 1);
+
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 100%;
+}
+
+.label {
+  margin: 10px 0 0;
+
+  color: rgba(20, 20, 23, 0.6);
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 100%;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 194px;
+  height: 45px;
+
+  margin-top: 22px;
+
+  padding: 13.5px 15px;
+
+  background: #ffffff;
+
+  border: 1px solid rgba(16, 174, 239, 0.2);
+  border-radius: 10px;
+
+  color: rgba(16, 174, 239, 1);
+
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 100%;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.button:hover {
+  background: rgba(16, 174, 239, 0.05);
+}
+
+.button:active {
+  background: rgba(16, 174, 239, 0.08);
+}
