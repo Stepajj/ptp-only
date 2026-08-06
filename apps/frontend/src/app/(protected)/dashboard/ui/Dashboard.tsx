@@ -2,6 +2,7 @@ import styles from './Dashboard.module.css';
 import ActiveOrdersCard from './active-orders-card/ActiveOrdersCard';
 import TodayIncomeCard from './TodayIncomeCard/TodayIncomeCard';
 import BalanceCard from './balance-card/BalanceCard';
+import QuickActions from './quick-actions/QuickActions';
 
 export default function Dashboard() {
   return (
@@ -14,7 +15,7 @@ export default function Dashboard() {
     <TodayIncomeCard />
 </div>
       <div className={styles.contentGrid}>
-        {/* QuickActions */}
+        <QuickActions /> 
 
         {/* RecentOrders */}
       </div>

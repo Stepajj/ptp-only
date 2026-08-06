@@ -1,0 +1,103 @@
+.container {
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
+
+  padding: 25px;
+
+  background: #ffffff;
+
+  border: 1px solid rgba(233, 233, 236, 1);
+  border-radius: 20px;
+}
+
+.title {
+  margin: 0;
+
+  color: rgba(0, 0, 0, 1);
+
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 100%;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+
+  margin-top: 20px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+
+  padding: 19px 15px;
+
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+
+  text-decoration: none;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 40px;
+  height: 40px;
+
+  border-radius: 10px;
+}
+
+.depositIcon {
+  background: rgba(16, 174, 239, 0.12);
+}
+
+.requisitesIcon {
+  background: rgba(16, 174, 239, 0.12);
+}
+
+.ordersIcon {
+  background: rgba(255, 109, 198, 0.12);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+
+  margin-left: 15px;
+}
+
+.itemTitle {
+  color: rgba(20, 20, 23, 1);
+
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 100%;
+}
+
+.itemDescription {
+  margin-top: 5px;
+
+  color: rgba(20, 20, 23, 0.6);
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 100%;
+}
+
+.arrow {
+  margin-left: auto;
+
+  color: rgba(20, 20, 23, 1);
+
+  font-size: 18px;
+  line-height: 1;
+}
