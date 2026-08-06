@@ -2,6 +2,8 @@ import Link from 'next/link';
 
 import styles from './QuickActions.module.css';
 
+import ArrowRightIcon from '../../assets/icons/rightArrow.svg';
+
 const actions = [
   {
     href: '#',
@@ -50,7 +52,7 @@ export default function QuickActions() {
               </span>
             </div>
 
-            <span className={styles.arrow}>→</span>
+            <ArrowRightIcon className={styles.arrow} />
           </Link>
         ))}
       </div>

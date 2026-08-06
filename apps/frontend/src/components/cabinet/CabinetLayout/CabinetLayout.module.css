@@ -1,7 +1,8 @@
 .layout {
     display: flex;
     height: 100vh;
-    background: #F6F7FB;
+   background: rgba(244, 245, 247, 1);
+
 }
 
 .content {
