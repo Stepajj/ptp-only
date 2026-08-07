@@ -1,0 +1,105 @@
+.item {
+  display: flex;
+  align-items: center;
+
+  min-width: 0;
+
+  padding-bottom: 15px;
+}
+
+.item:not(:last-child) {
+  margin-bottom: 15px;
+
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 40px;
+  height: 40px;
+
+  background: rgba(255, 255, 255, 1);
+
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.iconPlaceholder {
+  color: rgba(20, 20, 23, 1);
+
+  font-size: 14px;
+  line-height: 1;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+
+  margin-left: 10px;
+}
+
+.amount {
+  color: rgba(0, 0, 0, 1);
+
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 100%;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+
+  margin-top: 5px;
+
+  color: rgba(0, 0, 0, 0.6);
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 100%;
+  white-space: nowrap;
+}
+
+.separator {
+  margin-right: 8px;
+  margin-left: 8px;
+
+  font-size: 6px;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  margin-left: auto;
+
+  padding: 9px 15px;
+
+  border-radius: 10px;
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 100%;
+}
+
+.statusCompleted {
+  color: rgba(19, 179, 106, 1);
+
+  background: rgba(19, 179, 106, 0.1);
+}
+
+.statusPending {
+  color: rgba(186, 133, 20, 1);
+
+  background: rgba(186, 133, 20, 0.1);
+}

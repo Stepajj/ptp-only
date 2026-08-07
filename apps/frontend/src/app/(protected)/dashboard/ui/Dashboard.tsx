@@ -3,6 +3,7 @@ import ActiveOrdersCard from './active-orders-card/ActiveOrdersCard';
 import TodayIncomeCard from './TodayIncomeCard/TodayIncomeCard';
 import BalanceCard from './balance-card/BalanceCard';
 import QuickActions from './quick-actions/QuickActions';
+import RecentOrders from './recent-orders/RecentOrders';
 
 export default function Dashboard() {
   return (
@@ -17,7 +18,7 @@ export default function Dashboard() {
       <div className={styles.contentGrid}>
         <QuickActions /> 
 
-        {/* RecentOrders */}
+        <RecentOrders />
       </div>
     </section>
   );
