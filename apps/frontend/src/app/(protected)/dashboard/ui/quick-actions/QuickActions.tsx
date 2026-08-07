@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+import Image from 'next/image';
+
 import styles from './QuickActions.module.css';
 
 import ArrowRightIcon from '../../assets/icons/rightArrow.svg';
@@ -51,8 +53,8 @@ export default function QuickActions() {
                 {action.description}
               </span>
             </div>
-
-            <ArrowRightIcon className={styles.arrow} />
+            <Image src={ArrowRightIcon} alt="Arrow Right" className={styles.arrow} />
+            {/* <ArrowRightIcon className={styles.arrow} /> */}
           </Link>
         ))}
       </div>
