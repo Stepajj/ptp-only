@@ -1,6 +1,6 @@
 import styles from './ActiveOrdersCard.module.css';
 import Image from 'next/image';
-import ArrowsActive from '../../assets/icons/rightArrow.svg';
+import ArrowsActive from '../../assets/icons/active-arrows.svg';
 
 
 export default function ActiveOrdersCard() {

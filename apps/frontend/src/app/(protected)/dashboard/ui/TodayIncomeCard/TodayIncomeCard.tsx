@@ -1,6 +1,6 @@
 import styles from './TodayIncomeCard.module.css';
 import Image from 'next/image';
-import todayStats from '../../assets/icons/rightArrow.svg';
+import todayStats from '../../assets/icons/todayStats.svg';
 
 
 export default function TodayIncomeCard() {
