@@ -5,13 +5,14 @@ import Image from 'next/image';
 import styles from './QuickActions.module.css';
 
 import ArrowRightIcon from '../../assets/icons/rightArrow.svg';
+import PlusIcon from '../../assets/icons/ActionPlus.svg';
 
 const actions = [
   {
     href: '#',
     title: 'Пополнить баланс криптой',
     description: 'USDT, BTC, LTC, CryptoBot, xRocket',
-    icon: '+',
+    icon: <Image src={PlusIcon} alt="Plus" />,
     iconClassName: styles.depositIcon,
   },
   {
