@@ -57,7 +57,8 @@
 }
 
 .depositIcon {
-  background: rgba(16, 174, 239, 0.12);
+    background: linear-gradient(90deg, #18ADEE 0%, #FA90D9 100%);
+
 }
 
 .requisitesIcon {

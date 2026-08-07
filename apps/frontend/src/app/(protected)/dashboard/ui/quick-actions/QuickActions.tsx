@@ -6,6 +6,8 @@ import styles from './QuickActions.module.css';
 
 import ArrowRightIcon from '../../assets/icons/rightArrow.svg';
 import PlusIcon from '../../assets/icons/ActionPlus.svg';
+import CreditCard from '../../assets/icons/credit-card.svg';
+import PinkArrows from '../../assets/icons/priority-arrows.svg';
 
 const actions = [
   {
@@ -19,14 +21,14 @@ const actions = [
     href: '#',
     title: 'Добавить реквизит',
     description: 'Карта или СБП для приёма',
-    icon: '◻',
+    icon: <Image src={CreditCard} alt="Credit Card" />,
     iconClassName: styles.requisitesIcon,
   },
   {
     href: '#',
     title: 'Приём заявок',
     description: '2 заявки ожидают подтверждения',
-    icon: '✦',
+    icon: <Image src={PinkArrows} alt="Pink Arrows" />,
     iconClassName: styles.ordersIcon,
   },
 ];
