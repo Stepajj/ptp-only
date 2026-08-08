@@ -96,3 +96,18 @@ export async function me(accessToken: string) {
     accessToken,
   });
 }
+export type BalanceResponse = {
+  success: true;
+  data: {
+    balance: number;
+    frozen: number;
+    totalProfit: number;
+  };
+};
+
+export async function getBalance(accessToken: string) {
+  return requestJson<BalanceResponse>('/auth/balance', {
+    method: 'GET',
+    accessToken,
+  });
+}

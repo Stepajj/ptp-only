@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import {
+  balanceController,
   loginController,
   logoutController,
   refreshController,
@@ -19,3 +20,4 @@ authRouter.post("/logout", logoutController);
 authRouter.post("/refresh", authRateLimiter, refreshController);
 authRouter.post("/telegram", authRateLimiter, telegramLoginController);
 authRouter.post("/link-telegram", authenticate, authRateLimiter, linkTelegramController);
+authRouter.get("/balance", authenticate, balanceController);

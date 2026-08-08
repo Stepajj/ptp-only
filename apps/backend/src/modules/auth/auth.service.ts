@@ -1,7 +1,7 @@
 import { UserStatus } from "@prisma/client";
 
 import { config } from "../../config";
-import { createOnlyP2PClient } from "../../integrations/only-p2p/only-p2p.client";
+import { createOnlyP2PClient, getOnlyP2PBalance, } from "../../integrations/only-p2p/only-p2p.client";
 import { AppError } from "../../shared/errors/app-error";
 import type { AuthResponseDto, CurrentUserResponseDto, LoginDto, RegisterDto, TelegramLoginDto } from "./auth.dto";
 import { toPublicUserDto } from "./auth.mapper";
@@ -468,5 +468,25 @@ export async function getCurrentUser(userId: string): Promise<CurrentUserRespons
     data: {
       user: toPublicUserDto(user),
     },
+  };
+}
+
+
+export async function getBalance(userId: string) {
+  const externalClient = await findExternalClientByUserId(userId);
+
+  if (!externalClient) {
+    throw new AppError({
+      statusCode: 404,
+      code: "ONLY_P2P_CLIENT_NOT_FOUND",
+      message: "Only P2P client not found",
+    });
+  }
+
+  const balance = await getOnlyP2PBalance(externalClient.externalUserId);
+
+  return {
+    success: true,
+    data: balance,
   };
 }

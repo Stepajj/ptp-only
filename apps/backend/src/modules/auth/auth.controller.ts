@@ -11,6 +11,7 @@ import {
   setRefreshTokenCookie,
 } from "./auth.cookies";
 import {
+  getBalance,
   getCurrentUser,
   login,
   logout,
@@ -127,6 +128,25 @@ export const currentUserController: RequestHandler = async (request, response, n
     }
 
     response.status(200).json(await getCurrentUser(userId));
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const balanceController: RequestHandler = async (request, response, next) => {
+  try {
+    const userId = request.auth?.id;
+
+    if (!userId) {
+      throw new AppError({
+        statusCode: 401,
+        code: "UNAUTHORIZED",
+        message: "Authentication required",
+      });
+    }
+
+    response.status(200).json(await getBalance(userId));
   } catch (error) {
     next(error);
   }
