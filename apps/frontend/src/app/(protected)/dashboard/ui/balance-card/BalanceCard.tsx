@@ -49,8 +49,8 @@ export default function BalanceCard() {
       : `${new Intl.NumberFormat('ru-RU').format(balance)}₽`;
 
   return (
-    <article>
-      <h2>ДОСТУПНЫЙ БАЛАНС</h2>
+    <article className={styles.card}>
+      <h2 className={styles.title}>ДОСТУПНЫЙ БАЛАНС</h2>
 
       <p className={styles.balance}>
         {loading ? 'Загрузка...' : formattedBalance}
