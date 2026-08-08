@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useState } from 'react';
 
 import { getBalance } from '@/features/auth/api/auth.api';
