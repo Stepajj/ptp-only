@@ -21,20 +21,27 @@ export default function BalanceCard() {
 
     let cancelled = false;
 
-   const loadBalance = async () => {
-  if (!accessToken) {
-    console.error('[Balance] Access token отсутствует');
-    return;
-  }
+    const loadBalance = async () => {
+      if (!accessToken) {
+        console.error('[Balance] Access token отсутствует');
+        return;
+      }
 
-  try {
-    const result = await getBalance(accessToken);
+      try {
+        const result = await getBalance(accessToken);
 
-    console.log('[Balance] API response:', result);
-  } catch (error) {
-    console.error('[Balance] API error:', error);
-  }
-};
+        if (!cancelled) {
+          setBalance(result.data.balance);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('[Balance] API error:', error);
+
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
 
     void loadBalance();
 
