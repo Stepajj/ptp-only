@@ -4,12 +4,15 @@ import { authenticate } from "../middleware/authenticate";
 
 import { authRouter } from "../modules/auth/auth.routes";
 import { currentUserController } from "../modules/auth/auth.controller";
+import { banksRouter } from "../modules/banks/banks.routes";
 import { healthRouter } from "../modules/health/health.routes";
 import { topupRouter } from "../modules/topup/topup.routes";
 
 export const routes = Router();
 
 routes.use("/auth", authRouter);
+
+routes.use("/banks", banksRouter);
 
 routes.use("/topup", topupRouter);
 

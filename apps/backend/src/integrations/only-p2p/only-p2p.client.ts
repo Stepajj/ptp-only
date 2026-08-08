@@ -27,6 +27,12 @@ export interface OnlyP2PBalanceResult {
   totalProfit: number;
 }
 
+export interface OnlyP2PBank {
+  id: number;
+  name: string;
+  tier1: boolean;
+}
+
 function buildOnlyP2PUrl(path: string): string {
   return new URL(path, config.onlyP2P.baseUrl).toString();
 }
@@ -271,6 +277,131 @@ export async function getOnlyP2PBalance(
   }
 }
 
+export async function getOnlyP2PBanks(): Promise<OnlyP2PBank[]> {
+  const controller = new AbortController();
+  const timeout = setTimeout(
+    () => controller.abort(),
+    config.onlyP2P.timeoutMs,
+  );
+
+  try {
+    const response = await fetch(
+      buildOnlyP2PUrl("/op2p_api/banks"),
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          api_id: config.onlyP2P.apiId,
+          secret_key: config.onlyP2P.secretKey,
+        }),
+        signal: controller.signal,
+      },
+    );
+
+    const rawBody = await response.text();
+
+    if (!response.ok) {
+      throw new AppError({
+        statusCode: 502,
+        code: "ONLY_P2P_REQUEST_FAILED",
+        message: "External service request failed",
+      });
+    }
+
+    let parsed: unknown;
+
+    try {
+      parsed = JSON.parse(rawBody);
+    } catch {
+      throw new AppError({
+        statusCode: 502,
+        code: "ONLY_P2P_INVALID_RESPONSE",
+        message: "External service returned an invalid response",
+      });
+    }
+
+    if (!parsed || typeof parsed !== "object" || !("success" in parsed)) {
+      throw new AppError({
+        statusCode: 502,
+        code: "ONLY_P2P_INVALID_RESPONSE",
+        message: "External service returned an invalid response",
+      });
+    }
+
+    const responseData = parsed as {
+      success: unknown;
+      data?: unknown;
+    };
+
+    if (responseData.success !== true) {
+      throw new AppError({
+        statusCode: 502,
+        code: "ONLY_P2P_ERROR",
+        message: "External service rejected the request",
+      });
+    }
+
+    if (!Array.isArray(responseData.data)) {
+      throw new AppError({
+        statusCode: 502,
+        code: "ONLY_P2P_INVALID_RESPONSE",
+        message: "External service returned an invalid banks response",
+      });
+    }
+
+    return responseData.data.map((item) => {
+      if (!item || typeof item !== "object") {
+        throw new AppError({
+          statusCode: 502,
+          code: "ONLY_P2P_INVALID_RESPONSE",
+          message: "External service returned an invalid bank",
+        });
+      }
+
+      const bank = item as {
+        id?: unknown;
+        name?: unknown;
+        tier_1?: unknown;
+      };
+
+      if (
+        typeof bank.id !== "number" ||
+        !Number.isSafeInteger(bank.id) ||
+        typeof bank.name !== "string" ||
+        bank.name.length === 0 ||
+        typeof bank.tier_1 !== "boolean"
+      ) {
+        throw new AppError({
+          statusCode: 502,
+          code: "ONLY_P2P_INVALID_RESPONSE",
+          message: "External service returned an invalid bank",
+        });
+      }
+
+      return {
+        id: bank.id,
+        name: bank.name,
+        tier1: bank.tier_1,
+      };
+    });
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+
+    throw new AppError({
+      statusCode: 502,
+      code: "ONLY_P2P_UNAVAILABLE",
+      message: "External service is unavailable",
+      isOperational: true,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 export async function topupOnlyP2P(
   externalUserId: string,
   method: OnlyP2PTopupMethod,
@@ -405,26 +536,18 @@ export async function topupOnlyP2P(
       };
     }
 
-    if (method === "cb" || method === "xr") {
-      if (typeof data.pay_url !== "string" || data.pay_url.length === 0) {
-        throw new AppError({
-          statusCode: 502,
-          code: "ONLY_P2P_INVALID_RESPONSE",
-          message: "External service returned an invalid payment URL",
-        });
-      }
-
-      return {
-        method,
-        payUrl: data.pay_url,
-      };
+    if (typeof data.pay_url !== "string" || data.pay_url.length === 0) {
+      throw new AppError({
+        statusCode: 502,
+        code: "ONLY_P2P_INVALID_RESPONSE",
+        message: "External service returned an invalid payment URL",
+      });
     }
 
-    throw new AppError({
-      statusCode: 502,
-      code: "ONLY_P2P_INVALID_RESPONSE",
-      message: "External service returned an invalid topup response",
-    });
+    return {
+      method,
+      payUrl: data.pay_url,
+    };
   } catch (error) {
     if (error instanceof AppError) {
       throw error;
