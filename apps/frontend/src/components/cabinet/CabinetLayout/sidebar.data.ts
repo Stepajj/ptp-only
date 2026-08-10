@@ -14,7 +14,7 @@ export const sidebarItems: Array<{ href: string; title: string; icon: IconName }
   },
   {
     title: 'Реквизиты',
-    href: '/zxasdc',
+    href: '/requisites',
     icon: 'cards', // icon is a serializable key resolved by the client
   },
   {
