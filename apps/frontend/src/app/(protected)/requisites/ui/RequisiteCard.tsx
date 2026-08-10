@@ -1,6 +1,8 @@
+import RequisiteActions from './RequisiteActions';
+
 import styles from './RequisiteCard.module.css';
 
-type Requisite = {
+export type Requisite = {
   id: string;
   bankName: string;
   lastDigits: string;
@@ -16,9 +18,6 @@ type RequisiteCardProps = {
 export default function RequisiteCard({
   requisite,
 }: RequisiteCardProps) {
-  const progress =
-    (requisite.limitUsed / requisite.limitTotal) * 100;
-
   return (
     <article className={styles.card}>
       <div className={styles.main}>
@@ -37,23 +36,18 @@ export default function RequisiteCard({
           </p>
         </div>
 
-        <div className={styles.actionsPlaceholder} aria-hidden="true">
-          <span className={styles.statusPlaceholder}>
-            {requisite.isActive ? 'Активен' : 'Выключен'}
-          </span>
-
-          <span className={styles.controlPlaceholder} />
-          <span className={styles.controlPlaceholder} />
-          <span className={styles.controlPlaceholder} />
-        </div>
-      </div>
-
-      <div className={styles.progressTrack}>
-        <div
-          className={styles.progress}
-          style={{ width: `${progress}%` }}
+        <RequisiteActions
+          requisiteId={requisite.id}
+          isActive={requisite.isActive}
         />
       </div>
+
+      <progress
+        className={styles.progress}
+        value={requisite.limitUsed}
+        max={requisite.limitTotal}
+        aria-label={`Использовано ${requisite.limitUsed} из ${requisite.limitTotal}`}
+      />
     </article>
   );
 }
