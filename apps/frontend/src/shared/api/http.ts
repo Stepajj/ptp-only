@@ -12,7 +12,7 @@ export class ApiError extends Error {
   }
 }
 
-type JsonObject = Record<string, unknown>;
+type JsonObject = { [key: string]: unknown };
 
 type RequestOptions = Omit<RequestInit, 'body' | 'headers'> & {
   body?: BodyInit | JsonObject | null;
