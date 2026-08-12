@@ -1,21 +1,26 @@
-export type RequisiteStatus = 'active' | 'off';
+import type { Requisite as ApiRequisite } from '../api/requisites.api';
 
-export type RequisiteType = 'card' | 'sbp';
+export type RequisiteStatus = 'on' | 'off';
+
+export type RequisiteType = 'both' | 'card' | 'sbp' | null;
 
 export interface Requisite {
-  id: string;
-
-  type: RequisiteType;
-
-  bank: {
-    name: string;
-    maskedNumber: string;
-  };
-
-  limits: {
-    current: number;
-    daily: number;
-  };
-
+  requisiteId: number;
+  card: string;
+  phone: string;
+  fio: string;
+  bank: string;
+  bankId: number;
+  tier1: boolean;
   status: RequisiteStatus;
+  method: RequisiteType;
+  minAmount: number;
+  maxAmount: number;
+  limitAmount: number | null;
+  limitAmountMinutes: number | null;
+  exactAmountOnly: boolean;
+}
+
+export function fromApiRequisite(apiRequisite: ApiRequisite): Requisite {
+  return apiRequisite;
 }

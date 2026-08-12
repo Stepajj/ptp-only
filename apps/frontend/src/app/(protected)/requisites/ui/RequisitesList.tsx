@@ -1,56 +1,73 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import RequisiteCard from './RequisiteCard';
+import RequisiteCardSkeleton from './RequisiteCardSkeleton';
+import RequisitesEmpty from './RequisitesEmpty';
+import RequisitesError from './RequisitesError';
+import { getRequisites } from '@/features/requisites/api/requisites.api';
+import type { Requisite } from '@/features/requisites/api/requisites.api';
 
 import styles from './RequisitesList.module.css';
 
-type RequisiteMock = {
-  id: string;
-  bankName: string;
-  lastDigits: string;
-  limitUsed: number;
-  limitTotal: number;
-  isActive: boolean;
-};
-
-const requisites: RequisiteMock[] = [
-  {
-    id: '1',
-    bankName: 'Т-Банк',
-    lastDigits: '4821',
-    limitUsed: 34000,
-    limitTotal: 100000,
-    isActive: true,
-  },
-  {
-    id: '2',
-    bankName: 'Т-Банк',
-    lastDigits: '4821',
-    limitUsed: 34000,
-    limitTotal: 100000,
-    isActive: true,
-  },
-  {
-    id: '3',
-    bankName: 'Т-Банк',
-    lastDigits: '4821',
-    limitUsed: 34000,
-    limitTotal: 100000,
-    isActive: true,
-  },
-  {
-    id: '4',
-    bankName: 'Т-Банк',
-    lastDigits: '4821',
-    limitUsed: 34000,
-    limitTotal: 100000,
-    isActive: false,
-  },
-];
-
 export default function RequisitesList() {
+  const [requisites, setRequisites] = useState<Requisite[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadRequisites() {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getRequisites();
+        setRequisites(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load requisites');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadRequisites();
+  }, []);
+
+  const handleStatusChange = (requisiteId: number, newStatus: boolean) => {
+    setRequisites((prev) =>
+      prev.map((req) =>
+        req.requisiteId === requisiteId
+          ? { ...req, status: newStatus ? 'on' : 'off' }
+          : req
+      )
+    );
+  };
+
+  if (loading) {
+    return (
+      <section className={styles.list}>
+        <RequisiteCardSkeleton />
+        <RequisiteCardSkeleton />
+        <RequisiteCardSkeleton />
+      </section>
+    );
+  }
+
+  if (error) {
+    return <RequisitesError onRetry={() => window.location.reload()} />;
+  }
+
+  if (requisites.length === 0) {
+    return <RequisitesEmpty />;
+  }
+
   return (
     <section className={styles.list}>
       {requisites.map((requisite) => (
-        <RequisiteCard key={requisite.id} requisite={requisite} />
+        <RequisiteCard
+          key={requisite.requisiteId}
+          requisite={requisite}
+          onStatusChange={handleStatusChange}
+        />
       ))}
     </section>
   );
