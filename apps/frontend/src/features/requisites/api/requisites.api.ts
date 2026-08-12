@@ -47,7 +47,7 @@ export async function getRequisites(): Promise<Requisite[]> {
 export async function createRequisite(input: CreateRequisiteInput): Promise<{ requisiteId: number }> {
   const response = await requestJson<{ success: true; data: { requisiteId: number } }>('/requisites', {
     method: 'POST',
-    body: input,
+    body: { ...input } as Record<string, unknown>,
   });
   return response.data;
 }
@@ -55,7 +55,7 @@ export async function createRequisite(input: CreateRequisiteInput): Promise<{ re
 export async function editRequisite(requisiteId: number, input: EditRequisiteInput): Promise<void> {
   await requestJson<{ success: true }>(`/requisites/${requisiteId}`, {
     method: 'PATCH',
-    body: input,
+    body: { ...input } as Record<string, unknown>,
   });
 }
 
