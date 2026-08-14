@@ -1,4 +1,7 @@
-import type { DepositMethod } from "../model/deposit.types";
+import type {
+  DepositDetails,
+  DepositMethod,
+} from "../model/deposit.types";
 
 export const depositMethods: DepositMethod[] = [
   {
@@ -42,3 +45,50 @@ export const depositMethods: DepositMethod[] = [
     href: "/deposit/xrocket",
   },
 ];
+
+export const depositDetails: Record<string, DepositDetails> = {
+  "usdt-trc20": {
+    methodId: "usdt-trc20",
+    address: "TEaeekJj2c8gnVYIGUVTwX2rcve9abPTe",
+    minimum: "≈ 500 ₽ (эквивалент)",
+    crediting: "1-3 минуты • +7% к курсу",
+    networkLabel: "USDT • Сеть Tron",
+    badgeIcon: "₮",
+  },
+
+  bitcoin: {
+    methodId: "bitcoin",
+    address: "bc1qexamplemockdepositaddress",
+    minimum: "≈ 500 ₽ (эквивалент)",
+    crediting: "После 1 подтверждения • +7% к курсу",
+    networkLabel: "Bitcoin • Сеть BTC",
+    badgeIcon: "₿",
+  },
+
+  litecoin: {
+    methodId: "litecoin",
+    address: "ltc1examplemockdepositaddress",
+    minimum: "≈ 500 ₽ (эквивалент)",
+    crediting: "Быстрое зачисление • +7% к курсу",
+    networkLabel: "Litecoin • Сеть LTC",
+    badgeIcon: "Ł",
+  },
+
+  cryptobot: {
+    methodId: "cryptobot",
+    address: "https://t.me/CryptoBot?start=mock_invoice",
+    minimum: "≈ 500 ₽ (эквивалент)",
+    crediting: "После оплаты инвойса • +7% к курсу",
+    networkLabel: "CryptoBot • Telegram",
+    badgeIcon: "",
+  },
+
+  xrocket: {
+    methodId: "xrocket",
+    address: "https://t.me/xrocket?start=mock_invoice",
+    minimum: "≈ 500 ₽ (эквивалент)",
+    crediting: "После оплаты инвойса • +7% к курсу",
+    networkLabel: "xRocket • Telegram Tron",
+    badgeIcon: "",
+  },
+};

@@ -1,0 +1,334 @@
+.card {
+  width: 420px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  margin-top: 15px;
+  padding: 25px 20px;
+
+  border: 1px solid rgba(233, 233, 236, 1);
+  border-radius: 15px;
+
+  background: rgba(255, 255, 255, 1);
+}
+
+.qrWrapper {
+  width: 229px;
+  height: 229px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  background: #fff;
+}
+
+.qr {
+  width: 229px;
+  height: 229px;
+
+  display: grid;
+  grid-template-columns: repeat(29, 1fr);
+  grid-template-rows: repeat(29, 1fr);
+
+  background: #fff;
+
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.qrCell {
+  background: #fff;
+}
+
+.qrCellFilled {
+  background: #000;
+}
+
+.networkBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  margin-top: 10px;
+  padding: 8px 10px;
+
+  border-radius: 10px;
+
+  background: rgba(18, 179, 106, 0.1);
+
+  box-sizing: border-box;
+}
+
+.badgeIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 100%;
+}
+
+.usdt {
+  color: rgba(18, 179, 106, 1);
+}
+
+.bitcoin {
+  color: rgba(181, 122, 0, 1);
+}
+
+.litecoin {
+  color: rgba(16, 174, 239, 1);
+}
+
+.cryptobot {
+  color: rgba(20, 20, 23, 0.7);
+}
+
+.xrocket {
+  color: rgba(20, 20, 23, 0.7);
+}
+
+.networkText {
+  font-family: "Euclid Circular A", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 100%;
+  letter-spacing: 0;
+
+  color: rgba(18, 179, 106, 1);
+  opacity: 0.8;
+}
+
+.addressSection {
+  width: 100%;
+
+  margin-top: 15px;
+}
+
+.addressLabel {
+  font-family: "Euclid Circular A", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 100%;
+  letter-spacing: 0;
+
+  color: #000;
+  opacity: 0.5;
+}
+
+.addressField {
+  position: relative;
+
+  width: 100%;
+  min-height: 50px;
+
+  display: flex;
+  align-items: center;
+
+  margin-top: 10px;
+  padding: 7px 10px 8px 15px;
+
+  box-sizing: border-box;
+
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: 10px;
+
+  background: #fff;
+}
+
+.addressValue {
+  min-width: 0;
+  flex: 1;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 100%;
+  color: rgba(20, 20, 23, 0.9);
+}
+
+.urlValue {
+  font-size: 11px;
+}
+
+.copyButton {
+  position: relative;
+
+  flex: 0 0 35px;
+
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 8px;
+
+  background:
+    linear-gradient(0deg, #ffffff, #ffffff) padding-box,
+    linear-gradient(90deg, #18ADEE 0%, #FA90D9 100%) border-box;
+
+  cursor: pointer;
+
+  box-sizing: border-box;
+}
+
+.copyButton::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  border-radius: 8px;
+
+  background: linear-gradient(
+    90deg,
+    #18ADEE 0%,
+    #FA90D9 100%
+  );
+
+  opacity: 0.08;
+
+  pointer-events: none;
+}
+
+.copyIcon {
+  position: relative;
+  z-index: 1;
+
+  font-size: 18px;
+  line-height: 1;
+
+  background: linear-gradient(
+    90deg,
+    #18ADEE 0%,
+    #FA90D9 100%
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.copiedTooltip {
+  position: absolute;
+
+  right: 0;
+  bottom: calc(100% + 8px);
+
+  padding: 6px 8px;
+
+  border-radius: 6px;
+
+  background: rgba(20, 20, 23, 0.9);
+
+  color: #fff;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+
+  white-space: nowrap;
+
+  pointer-events: none;
+}
+
+.infoList {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  margin-top: 15px;
+}
+
+.infoItem {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding-top: 12px;
+
+  border-top: 1px solid rgba(233, 233, 236, 1);
+}
+
+.infoKey {
+  font-family: "Euclid Circular A", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 100%;
+  letter-spacing: 0;
+
+  color: #000;
+  opacity: 0.6;
+}
+
+.infoValue {
+  font-family: "Euclid Circular A", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 100%;
+  letter-spacing: 0;
+
+  color: #000;
+
+  text-align: right;
+}
+
+.waiting {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  margin-top: 15px;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 100%;
+  letter-spacing: 0;
+
+  color: rgba(16, 174, 239, 1);
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+
+  border: 1.5px solid rgba(16, 174, 239, 0.25);
+  border-top-color: rgba(16, 174, 239, 1);
+  border-radius: 50%;
+
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

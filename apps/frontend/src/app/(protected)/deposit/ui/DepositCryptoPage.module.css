@@ -1,0 +1,61 @@
+.page {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding-top: 25px;
+  margin-left: 30px;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 10px;
+
+  margin: 0;
+  padding: 0;
+
+  color: rgba(20, 20, 23, 0.6);
+  text-decoration: none;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 100%;
+  letter-spacing: 0;
+}
+
+.backArrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 8px;
+
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1;
+
+  transform: translateY(-1px);
+}
+
+.backText {
+  line-height: 100%;
+}
+
+.notFound {
+  width: 420px;
+
+  padding: 25px 20px;
+
+  box-sizing: border-box;
+
+  border: 1px solid rgba(233, 233, 236, 1);
+  border-radius: 15px;
+
+  background: #fff;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-size: 14px;
+  color: rgba(20, 20, 23, 0.7);
+}

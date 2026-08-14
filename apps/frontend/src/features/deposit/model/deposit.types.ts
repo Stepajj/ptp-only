@@ -13,3 +13,12 @@ export interface DepositMethod {
   variant: DepositMethodVariant;
   href: string;
 }
+
+export interface DepositDetails {
+  methodId: string;
+  address: string;
+  minimum: string;
+  crediting: string;
+  networkLabel: string;
+  badgeIcon: string;
+}
