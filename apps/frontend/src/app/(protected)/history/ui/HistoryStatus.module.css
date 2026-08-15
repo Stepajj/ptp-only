@@ -3,35 +3,38 @@
   align-items: center;
   justify-content: center;
 
-  min-height: 28px;
+  min-height: 27px;
+
   padding: 0 10px;
 
   border-radius: 999px;
 
   font-family: "Euclid Circular A", sans-serif;
-  font-size: 12px;
   font-weight: 500;
+  font-style: normal;
+  font-size: 12px;
   line-height: 100%;
+  letter-spacing: 0;
 
   white-space: nowrap;
 }
 
 .pending {
-  color: #d99600;
-  background: rgba(255, 176, 31, 0.12);
+  color: rgba(212, 146, 0, 1);
+  background: rgba(181, 122, 0, 0.1);
 }
 
 .completed {
-  color: #12b36a;
+  color: rgba(18, 179, 106, 1);
   background: rgba(18, 179, 106, 0.1);
 }
 
 .processing {
-  color: #10aeef;
+  color: rgba(16, 174, 239, 1);
   background: rgba(16, 174, 239, 0.1);
 }
 
 .cancelled {
-  color: #ef4f4f;
+  color: rgba(239, 79, 79, 1);
   background: rgba(239, 79, 79, 0.1);
 }

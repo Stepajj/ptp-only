@@ -1,44 +1,47 @@
 .card {
-  flex: 1;
-
   min-width: 0;
-
   box-sizing: border-box;
 
-  padding: 16px;
+  padding: 24px 20px 23px;
 
-  border: 1px solid #e9e9ec;
-  border-radius: 14px;
+  border-radius: 15px;
+  border: 1px solid rgba(222, 222, 222, 1);
 
-  background: #fff;
+  background: rgba(255, 255, 255, 1);
+  color: rgba(9, 9, 9, 1);
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .dark {
-  color: #fff;
-  background: #141417;
-  border-color: #141417;
+  border: none;
+
+  background: rgba(20, 20, 23, 1);
+  color: #ffffff;
 }
 
 .light {
-  color: #141417;
+  background: rgba(255, 255, 255, 1);
 }
 
 .title {
   font-family: "Euclid Circular A", sans-serif;
-  font-size: 12px;
   font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
   line-height: 100%;
-}
+  letter-spacing: 0;
 
-.title {
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 .value {
-  margin-top: 10px;
-
   font-family: "Euclid Circular A", sans-serif;
-  font-size: 18px;
   font-weight: 500;
+  font-style: normal;
+  font-size: 22px;
   line-height: 100%;
+  letter-spacing: 0;
 }

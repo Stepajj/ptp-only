@@ -1,12 +1,14 @@
 .item {
+  min-height: 45px;
+
   display: flex;
   align-items: center;
 
-  min-height: 64px;
+  box-sizing: border-box;
 
-  padding: 10px 14px;
+  padding: 15px 0;
 
-  border-bottom: 1px solid #eeeeef;
+  border-bottom: 1px solid rgba(233, 233, 236, 1);
 }
 
 .item:last-child {
@@ -14,22 +16,22 @@
 }
 
 .icon {
-  width: 34px;
-  height: 34px;
+  width: 45px;
+  height: 45px;
 
-  flex: 0 0 34px;
+  flex: 0 0 45px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 9px;
+  border-radius: 10px;
 
-  background: #f2f4f6;
+  background: rgba(244, 245, 247, 1);
 }
 
 .icon span {
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1;
 
   background: linear-gradient(
@@ -47,29 +49,36 @@
   min-width: 0;
   flex: 1;
 
-  margin-left: 10px;
+  margin-left: 15px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .amount {
   font-family: "Euclid Circular A", sans-serif;
+  font-weight: 400;
+  font-style: normal;
   font-size: 14px;
-  font-weight: 500;
   line-height: 100%;
+  letter-spacing: 0;
 
-  color: #141417;
+  color: rgba(9, 9, 9, 1);
 }
 
 .meta {
-  margin-top: 5px;
-
   font-family: "Euclid Circular A", sans-serif;
-  font-size: 12px;
   font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
   line-height: 100%;
+  letter-spacing: 0;
 
-  color: rgba(20, 20, 23, 0.6);
+  color: rgba(9, 9, 9, 1);
+  opacity: 0.8;
 }
 
 .item > span:last-child {
-  margin-left: 16px;
+  margin-left: 15px;
 }
