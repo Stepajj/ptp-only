@@ -1,5 +1,7 @@
 'use client';
 
+import { useAuthStore } from '@/features/auth/model/auth.store';
+
 import styles from './SidebarProfileCard.module.css';
 
 function getInitials(name?: string) {
@@ -15,34 +17,24 @@ function getInitials(name?: string) {
 }
 
 export function SidebarProfileCard() {
-  /**
-   * Позже заменишь на реальные данные из authStore.
-   */
-
-  const user = {
-    username: 'Артём К.',
-    id: 48213,
-    avatar: null,
-  };
+  const user = useAuthStore((state) => state.user);
+  const username = 'Пользователь';
+  const shortId = user?.id ? user.id.slice(0, 8) : '';
 
   return (
     <div className={styles.card}>
       <div className={styles.left}>
         <div className={styles.avatar}>
-          {user.avatar ? (
-            <img src={user.avatar} alt={user.username} />
-          ) : (
-            getInitials(user.username)
-          )}
+          {getInitials(username)}
         </div>
 
         <div className={styles.info}>
           <div className={styles.username}>
-            {user.username}
+            {username}
           </div>
 
           <div className={styles.id}>
-            ID {user.id}
+            ID {shortId}
           </div>
         </div>
       </div>

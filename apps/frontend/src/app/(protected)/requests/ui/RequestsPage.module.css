@@ -1,0 +1,187 @@
+.page {
+  box-sizing: border-box;
+  padding: 25px 36px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  padding: 3px;
+  border: 1px solid rgba(222, 222, 222, 1);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.tab,
+.historyButton,
+.confirmButton {
+  border: 0;
+  font-family: "Euclid Circular A", sans-serif;
+  cursor: pointer;
+}
+
+.tab {
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 9px;
+  background: transparent;
+  color: rgba(20, 20, 23, 0.55);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.activeTab {
+  background: rgba(20, 20, 23, 1);
+  color: #fff;
+}
+
+.historyButton {
+  height: 48px;
+  padding: 0 22px;
+  border: 1px solid rgba(222, 222, 222, 1);
+  border-radius: 12px;
+  background: #fff;
+  color: rgba(20, 20, 23, 0.9);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.error,
+.state {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 16px;
+  padding: 18px 20px;
+  border-radius: 12px;
+  background: #fff;
+  color: rgba(20, 20, 23, 0.7);
+  font-size: 14px;
+}
+
+.error {
+  color: #d92d20;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.item {
+  min-height: 72px;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 14px;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+  background: rgba(245, 246, 248, 1);
+  color: rgba(24, 173, 238, 1);
+  font-size: 14px;
+}
+
+.content {
+  min-width: 0;
+  flex: 1;
+}
+
+.amount {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 120%;
+  color: rgba(20, 20, 23, 1);
+}
+
+.meta,
+.requisite,
+.deadline {
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 120%;
+  color: rgba(20, 20, 23, 0.6);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.status {
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.waiting {
+  background: rgba(255, 178, 36, 0.12);
+  color: rgba(205, 126, 0, 1);
+}
+
+.cancelled {
+  background: rgba(217, 45, 32, 0.1);
+  color: rgba(217, 45, 32, 1);
+}
+
+.finished {
+  background: rgba(18, 179, 106, 0.12);
+  color: rgba(18, 129, 80, 1);
+}
+
+.amountInput {
+  width: 118px;
+  height: 34px;
+  box-sizing: border-box;
+  padding: 0 10px;
+  border: 1px solid rgba(222, 222, 222, 1);
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.confirmButton {
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: rgba(20, 20, 23, 1);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.confirmButton:disabled,
+.amountInput:disabled {
+  cursor: default;
+  opacity: 0.6;
+}

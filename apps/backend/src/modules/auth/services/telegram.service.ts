@@ -1,4 +1,4 @@
-import { jwtVerify, createRemoteJWKSet, type JWTVerifyResult, type KeyLike } from "jose";
+import { jwtVerify, createRemoteJWKSet } from "jose";
 
 import { config } from "../../../config";
 import { AppError } from "../../../shared/errors/app-error";
@@ -26,9 +26,8 @@ const TELEGRAM_ISSUER = "https://oauth.telegram.org";
 let jwksCache: ReturnType<typeof createRemoteJWKSet> | null = null;
 
 function getJwksCache() {
-  if (!jwksCache) {
-    jwksCache = createRemoteJWKSet(new URL(TELEGRAM_JWKS_URL));
-  }
+  jwksCache ??= createRemoteJWKSet(new URL(TELEGRAM_JWKS_URL));
+
   return jwksCache;
 }
 
@@ -51,7 +50,7 @@ export async function verifyTelegramOidcToken(idToken: string): Promise<Telegram
       algorithms: ['RS256'],
     });
 
-    logger.info({ payload }, "Telegram OIDC token verified");
+    logger.info("Telegram OIDC token verified");
     return payload as TelegramUserClaims;
   } catch (error) {
     if (error instanceof AppError) {

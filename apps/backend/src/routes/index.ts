@@ -7,6 +7,7 @@ import { currentUserController } from "../modules/auth/auth.controller";
 import { banksRouter } from "../modules/banks/banks.routes";
 import { healthRouter } from "../modules/health/health.routes";
 import { requisitesRouter } from "../modules/requisites/requisites.routes";
+import { requestsRouter } from "../modules/requests/requests.routes";
 import { topupRouter } from "../modules/topup/topup.routes";
 
 export const routes = Router();
@@ -16,6 +17,8 @@ routes.use("/auth", authRouter);
 routes.use("/banks", banksRouter);
 
 routes.use("/requisites", requisitesRouter);
+
+routes.use("/requests", requestsRouter);
 
 routes.use("/topup", topupRouter);
 

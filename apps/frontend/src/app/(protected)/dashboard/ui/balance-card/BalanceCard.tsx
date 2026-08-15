@@ -11,11 +11,10 @@ export default function BalanceCard() {
   const accessToken = useAuthStore((state) => state.accessToken);
 
   const [balance, setBalance] = useState<number | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!accessToken) {
-      setLoading(false);
       return;
     }
 
@@ -28,6 +27,7 @@ export default function BalanceCard() {
       }
 
       try {
+        setLoading(true);
         const result = await getBalance(accessToken);
 
         if (!cancelled) {

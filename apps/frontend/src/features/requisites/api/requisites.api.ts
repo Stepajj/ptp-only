@@ -1,4 +1,5 @@
 import { requestJson } from '@/shared/api/http';
+import { getAuthAccessToken } from '@/features/auth/lib/getAuthAccessToken';
 
 export interface Requisite {
   requisiteId: number;
@@ -40,7 +41,9 @@ export interface EditRequisiteInput {
 }
 
 export async function getRequisites(): Promise<Requisite[]> {
-  const response = await requestJson<{ success: true; data: Requisite[] }>('/requisites');
+  const response = await requestJson<{ success: true; data: Requisite[] }>('/requisites', {
+    accessToken: getAuthAccessToken(),
+  });
   return response.data;
 }
 
@@ -48,6 +51,7 @@ export async function createRequisite(input: CreateRequisiteInput): Promise<{ re
   const response = await requestJson<{ success: true; data: { requisiteId: number } }>('/requisites', {
     method: 'POST',
     body: { ...input } as Record<string, unknown>,
+    accessToken: getAuthAccessToken(),
   });
   return response.data;
 }
@@ -56,11 +60,13 @@ export async function editRequisite(requisiteId: number, input: EditRequisiteInp
   await requestJson<{ success: true }>(`/requisites/${requisiteId}`, {
     method: 'PATCH',
     body: { ...input } as Record<string, unknown>,
+    accessToken: getAuthAccessToken(),
   });
 }
 
 export async function deleteRequisite(requisiteId: number): Promise<void> {
   await requestJson<{ success: true }>(`/requisites/${requisiteId}`, {
     method: 'DELETE',
+    accessToken: getAuthAccessToken(),
   });
 }

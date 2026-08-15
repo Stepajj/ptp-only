@@ -43,7 +43,7 @@ export function DepositAddressCard({
   return (
     <section className={styles.card}>
       <div className={styles.qrWrapper}>
-        <MockQrCode value={details.address} />
+        <AddressQrPattern value={details.address} />
       </div>
 
       <div className={styles.networkBadge}>
@@ -60,7 +60,7 @@ export function DepositAddressCard({
 
       <div className={styles.addressSection}>
         <div className={styles.addressLabel}>
-          Адрес для пополнения
+          {details.addressLabel}
         </div>
 
         <div className={styles.addressField}>
@@ -119,18 +119,18 @@ export function DepositAddressCard({
         <span className={styles.spinner} />
 
         <span>
-          Ждём поступление средств...
+          {details.waitingText}
         </span>
       </div>
     </section>
   );
 }
 
-interface MockQrCodeProps {
+interface AddressQrPatternProps {
   value: string;
 }
 
-function MockQrCode({ value }: MockQrCodeProps) {
+function AddressQrPattern({ value }: AddressQrPatternProps) {
   const cells = Array.from({ length: 29 * 29 }, (_, index) => {
     const row = Math.floor(index / 29);
     const col = index % 29;

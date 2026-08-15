@@ -1,8 +1,5 @@
 import { AppError } from "../../shared/errors/app-error";
-import {
-  topupOnlyP2P,
-  type OnlyP2PTopupMethod,
-} from "../../integrations/only-p2p/only-p2p.client";
+import { topupOnlyP2P } from "../../integrations/only-p2p/only-p2p.client";
 import { findExternalClientByUserId } from "../auth/auth.repository";
 import type { TopupDto, TopupResponseDto } from "./topup.dto";
 
@@ -22,7 +19,7 @@ export async function topup(
 
   const result = await topupOnlyP2P(
     externalClient.externalUserId,
-    input.method as OnlyP2PTopupMethod,
+    input.method,
     input.amount,
   );
 

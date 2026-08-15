@@ -1,6 +1,5 @@
+import { redirect } from "next/navigation";
+
 export default function ZxcPage() {
-  return (
-    <main style={{ padding: 40 }}>
-    </main>
-  );
+  redirect("/requests");
 }

@@ -60,6 +60,24 @@ export interface EditOnlyP2PRequisiteInput {
   resetLimits?: boolean | undefined;
 }
 
+export type OnlyP2PRequestStatus = "waiting" | "cancelled" | "finished";
+
+export interface OnlyP2PRequest {
+  id: string;
+  amountRub: number;
+  receivedRubAmount: number | null;
+  requisiteId: number;
+  requisite: string;
+  fio: string;
+  bank: string;
+  method: "card" | "sbp";
+  status: OnlyP2PRequestStatus;
+  awaitingProof: boolean;
+  deadline: string | null;
+  created: string;
+  dateFinished: string | null;
+}
+
 function buildOnlyP2PUrl(path: string): string {
   return new URL(path, config.onlyP2P.baseUrl).toString();
 }
@@ -389,6 +407,61 @@ function parseOnlyP2PRequisitesResponse(raw: unknown): OnlyP2PRequisite[] {
   });
 }
 
+function parseOnlyP2PRequestsResponse(raw: unknown): OnlyP2PRequest[] {
+  if (!raw || typeof raw !== "object" || !Array.isArray((raw as { data?: unknown }).data)) {
+    throw new AppError({ statusCode: 502, code: "ONLY_P2P_INVALID_RESPONSE", message: "External service returned an invalid requests response" });
+  }
+
+  return (raw as { data: unknown[] }).data.map((item) => {
+    if (!item || typeof item !== "object") {
+      throw new AppError({ statusCode: 502, code: "ONLY_P2P_INVALID_RESPONSE", message: "External service returned an invalid request" });
+    }
+
+    const request = item as Record<string, unknown>;
+    const method = request.method;
+    const status = request.status;
+    const receivedRubAmount = request.received_rub_amount;
+    const deadline = request.deadline;
+    const dateFinished = request.date_finished;
+
+    if (
+      typeof request.id !== "string" ||
+      request.id.length === 0 ||
+      typeof request.amount_rub !== "number" ||
+      typeof receivedRubAmount !== "number" && receivedRubAmount !== null ||
+      typeof request.requisite_id !== "number" ||
+      !Number.isSafeInteger(request.requisite_id) ||
+      typeof request.requisite !== "string" ||
+      typeof request.fio !== "string" ||
+      typeof request.bank !== "string" ||
+      method !== "card" && method !== "sbp" ||
+      status !== "waiting" && status !== "cancelled" && status !== "finished" ||
+      typeof request.awaiting_proof !== "boolean" ||
+      typeof deadline !== "string" && deadline !== null ||
+      typeof request.created !== "string" ||
+      typeof dateFinished !== "string" && dateFinished !== null
+    ) {
+      throw new AppError({ statusCode: 502, code: "ONLY_P2P_INVALID_RESPONSE", message: "External service returned an invalid request" });
+    }
+
+    return {
+      id: request.id,
+      amountRub: request.amount_rub,
+      receivedRubAmount,
+      requisiteId: request.requisite_id,
+      requisite: request.requisite,
+      fio: request.fio,
+      bank: request.bank,
+      method,
+      status,
+      awaitingProof: request.awaiting_proof,
+      deadline,
+      created: request.created,
+      dateFinished,
+    };
+  });
+}
+
 export async function getOnlyP2PBanks(): Promise<OnlyP2PBank[]> {
   const controller = new AbortController();
   const timeout = setTimeout(
@@ -563,6 +636,28 @@ export async function deleteOnlyP2PRequisite(externalUserId: string, requisiteId
   await postOnlyP2P("/op2p_api/requisite_delete", {
     user_id: externalUserId,
     requisite_id: requisiteId,
+  });
+}
+
+export async function getOnlyP2PRequests(
+  externalUserId: string,
+  status?: OnlyP2PRequestStatus,
+): Promise<OnlyP2PRequest[]> {
+  return parseOnlyP2PRequestsResponse(await postOnlyP2P("/op2p_api/requests", {
+    user_id: externalUserId,
+    ...(status ? { status } : {}),
+  }));
+}
+
+export async function confirmOnlyP2PRequest(
+  externalUserId: string,
+  requestId: string,
+  amount?: number,
+): Promise<void> {
+  await postOnlyP2P("/op2p_api/request_confirm", {
+    user_id: externalUserId,
+    request_id: requestId,
+    ...(amount !== undefined ? { amount } : {}),
   });
 }
 

@@ -1,4 +1,4 @@
-import { depositMethods } from "@/features/deposit/mocks/deposit.mock";
+import { depositMethods } from "@/features/deposit/model/deposit.catalog";
 
 import { DepositMethods } from "./DepositMethods";
 import { DepositNotice } from "./DepositNotice";

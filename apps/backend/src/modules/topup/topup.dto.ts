@@ -13,7 +13,7 @@ export const topupSchema = z
 
     if (requiresAmount && value.amount === undefined) {
       context.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         path: ["amount"],
         message: "Amount is required for this topup method",
       });
@@ -26,7 +26,7 @@ export const topupSchema = z
 
     if (doesNotRequireAmount && value.amount !== undefined) {
       context.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         path: ["amount"],
         message: "Amount must not be provided for this topup method",
       });

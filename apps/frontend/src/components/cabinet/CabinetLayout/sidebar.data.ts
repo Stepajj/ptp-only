@@ -9,7 +9,7 @@ export const sidebarItems: Array<{ href: string; title: string; icon: IconName }
   },
   {
     title: 'Приём заявок',
-    href: '/zxc',
+    href: '/requests',
     icon: 'test', // icon is a serializable key resolved by the client
   },
   {
@@ -19,7 +19,7 @@ export const sidebarItems: Array<{ href: string; title: string; icon: IconName }
   },
   {
     title: 'Пополнение',
-    href: '/zxqwc',
+    href: '/deposit',
     icon: 'plus', // icon is a serializable key resolved by the client
   },
   {
