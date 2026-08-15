@@ -1,0 +1,27 @@
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin: 10px 0;
+}
+
+.select {
+  min-height: 34px;
+
+  padding: 0 28px 0 10px;
+
+  border: 1px solid #e9e9ec;
+  border-radius: 8px;
+
+  background: #fff;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+
+  color: #141417;
+
+  cursor: pointer;
+}
