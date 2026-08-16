@@ -1,0 +1,256 @@
+.page {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 25px 30px 30px;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 30px;
+
+  border-radius: 15px;
+
+  background: rgba(20, 20, 23, 1);
+
+  color: #fff;
+}
+
+.heroContent {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+.heroEyebrow {
+  font-family: "Euclid Circular A", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0;
+
+  color: rgba(247, 147, 26, 1);
+}
+
+.heroTitle {
+  margin: 0;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 28px;
+  line-height: 100%;
+  letter-spacing: 0;
+
+  color: #fff;
+}
+
+.heroDescription {
+  max-width: 595px;
+
+  margin: 0;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0;
+
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* =========================
+   INFO CARDS
+========================= */
+
+.infoGrid {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 15px;
+
+  margin-top: 15px;
+
+  align-items: stretch;
+}
+
+.infoCard {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  box-sizing: border-box;
+
+  padding: 25px 20px;
+
+  border: 1px solid rgba(222, 222, 222, 1);
+  border-radius: 15px;
+
+  background: #fff;
+
+  gap: 10px;
+}
+
+.infoTitle {
+  margin: 0;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 28px;
+  line-height: 100%;
+  letter-spacing: 0;
+}
+
+.restTitle {
+  color: rgba(16, 174, 239, 1);
+}
+
+.markupTitle {
+  color: rgba(255, 143, 216, 1);
+}
+
+.brandTitle {
+  color: rgba(255, 176, 31, 1);
+}
+
+.infoSubtitle {
+  margin: 0;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: 0;
+
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.infoDescription {
+  margin: 0;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0;
+
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* =========================
+   ACTIONS
+========================= */
+
+.actions {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: 2.35fr 1.88fr 1fr;
+
+  gap: 8px;
+
+  margin-top: 14px;
+
+  align-items: stretch;
+}
+
+.action {
+  min-width: 0;
+
+  min-height: 43px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  padding: 13px 16px;
+
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: 8px;
+
+  background: #fff;
+
+  color: rgba(9, 9, 9, 1);
+
+  text-decoration: none;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0;
+
+  text-align: center;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.action:hover {
+  box-shadow: 0 3px 10px rgba(20, 20, 23, 0.06);
+}
+
+.action:active {
+  transform: translateY(1px);
+}
+
+.actionPrimary {
+  border: 1px solid transparent;
+
+  background:
+    linear-gradient(
+      90deg,
+      #18ADEE 0%,
+      #FA90D9 100%
+    );
+
+  color: #fff;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 20px 16px 24px;
+  }
+
+  .hero {
+    padding: 24px;
+  }
+
+  .heroTitle {
+    font-size: 24px;
+  }
+}
