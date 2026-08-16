@@ -1,0 +1,40 @@
+.page {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 20px 30px 30px;
+}
+
+.columns {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 15px;
+
+  align-items: start;
+}
+
+.leftColumn {
+  min-width: 0;
+}
+
+.sectionTitle {
+  margin: 0;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: 0;
+
+  color: rgba(0, 0, 0, 1);
+}
+
+@media (max-width: 900px) {
+  .columns {
+    grid-template-columns: 1fr;
+  }
+}

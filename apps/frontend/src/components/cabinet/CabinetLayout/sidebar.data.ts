@@ -24,17 +24,17 @@ export const sidebarItems: Array<{ href: string; title: string; icon: IconName }
   },
   {
     title: 'История',
-    href: '/z22xc',
+    href: '/history',
     icon: 'history', // icon is a serializable key resolved by the client
   },
    {
     title: 'Партнёрство',
-    href: '/z222xc',
+    href: '/partnership',
     icon: 'deals', // icon is a serializable key resolved by the client
   },
    {
     title: 'Поддержка',
-    href: '/z44452xc',
+    href: '/support',
     icon: 'support', // icon is a serializable key resolved by the client
   },
    {

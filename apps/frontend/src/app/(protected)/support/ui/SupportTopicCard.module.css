@@ -1,0 +1,86 @@
+.card {
+  width: 100%;
+  min-width: 0;
+
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: flex-start;
+
+  padding: 15px;
+
+  border: 1px solid rgba(222, 222, 222, 1);
+  border-radius: 15px;
+
+  background: rgba(255, 255, 255, 1);
+
+  color: rgba(0, 0, 0, 1);
+  text-decoration: none;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.card:hover {
+  border-color: rgba(16, 174, 239, 0.6);
+}
+
+.icon {
+  width: 45px;
+  height: 45px;
+
+  flex: 0 0 45px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: rgba(244, 245, 247, 1);
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 100%;
+
+  color: rgba(9, 9, 9, 1);
+}
+
+.content {
+  min-width: 0;
+
+  margin-left: 15px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+.title {
+  margin: 0;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 0;
+
+  color: rgba(0, 0, 0, 1);
+}
+
+.description {
+  margin: 0;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0;
+
+  color: rgba(0, 0, 0, 0.8);
+}

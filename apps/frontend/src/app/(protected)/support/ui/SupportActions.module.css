@@ -1,0 +1,56 @@
+.actions {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: 1.85fr 1fr;
+
+  gap: 8px;
+
+  margin-top: 10px;
+}
+
+.button {
+  min-width: 0;
+  min-height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  padding: 8px 12px;
+
+  border-radius: 8px;
+
+  font-family: "Euclid Circular A", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0;
+
+  text-decoration: none;
+  text-align: center;
+
+  cursor: pointer;
+}
+
+.primary {
+  border: 1px solid transparent;
+
+  background: linear-gradient(
+    90deg,
+    #18ADEE 0%,
+    #FA90D9 100%
+  );
+
+  color: #fff;
+}
+
+.secondary {
+  border: 1px solid rgba(0, 0, 0, 0.07);
+
+  background: #fff;
+
+  color: rgba(9, 9, 9, 1);
+}
