@@ -1,3 +1,5 @@
+import SupportChatPage from './ui/SupportChatPage';
+
 export default function Page() {
-  return <div>Чат поддержки</div>;
+  return <SupportChatPage />;
 }

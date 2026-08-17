@@ -21,3 +21,20 @@ export interface SupportData {
   topics: SupportTopic[];
   faq: SupportFaqItem[];
 }
+
+export interface SupportMessage {
+  id: number;
+  user_id: number;
+  from_operator: boolean;
+  text: string;
+  created: string;
+}
+
+export interface SupportMessagesResponse {
+  success: boolean;
+  data: SupportMessage[];
+}
+
+export interface SupportSendResponse {
+  success: boolean;
+}

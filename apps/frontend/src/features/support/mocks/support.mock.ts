@@ -1,4 +1,7 @@
-import type { SupportData } from "../model/support.types";
+import type {
+  SupportData,
+  SupportMessage,
+} from "../model/support.types";
 
 export const supportMock: SupportData = {
   topics: [
@@ -55,3 +58,20 @@ export const supportMock: SupportData = {
     },
   ],
 };
+
+export const supportMessagesMock: SupportMessage[] = [
+  {
+    id: 1,
+    user_id: 48213,
+    from_operator: true,
+    text: "Здравствуйте! Опишите проблему — оператор ответит в течение нескольких минут.",
+    created: "2026-08-17T01:00:00+00:00",
+  },
+  {
+    id: 2,
+    user_id: 48213,
+    from_operator: false,
+    text: "Банк отклонил входящий перевод по заявке #10482, что делать?",
+    created: "2026-08-17T01:01:00+00:00",
+  },
+];
