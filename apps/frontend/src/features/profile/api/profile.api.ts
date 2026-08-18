@@ -19,6 +19,7 @@ export async function getProfile(): Promise<Profile> {
     name,
     email: user.identifier ?? '—',
     telegram: user.telegramUsername ? `@${user.telegramUsername.replace(/^@/, '')}` : null,
+    telegramLinked: user.telegramLinked ?? Boolean(user.telegramUsername),
     registeredAt: new Date(user.createdAt).getFullYear().toString(),
     avatar: user.avatarUrl ?? user.telegramPhotoUrl,
     stats: balanceResponse.data,

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { changePassword, getSessions, revokeSession, type AuthSession } from '@/features/auth/api/auth.api';
+import { changePassword, getSessions, revokeSession, setCredentials, type AuthSession } from '@/features/auth/api/auth.api';
 import { getAuthAccessToken } from '@/features/auth/lib/getAuthAccessToken';
 import { useAuthStore } from '@/features/auth/model/auth.store';
 
@@ -13,10 +13,12 @@ import styles from './SecurityPage.module.css';
 export default function SecurityPage() {
   const router = useRouter();
   const clearSession = useAuthStore((state) => state.clearSession);
+  const user = useAuthStore((state) => state.user);
   const [sessions, setSessions] = useState<AuthSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPassword, setCurrentPassword] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [changing, setChanging] = useState(false);
 
@@ -57,9 +59,20 @@ export default function SecurityPage() {
     try {
       setChanging(true);
       setError(null);
-      await changePassword({ currentPassword, newPassword }, accessToken);
-      clearSession();
-      router.replace('/login');
+      if (user?.identifier) {
+        await changePassword({ currentPassword, newPassword }, accessToken);
+        clearSession();
+        router.replace('/login');
+      } else {
+        if (!identifier.trim()) {
+          setError('Укажите email или логин');
+          return;
+        }
+        const response = await setCredentials({ identifier, password: newPassword }, accessToken);
+        useAuthStore.getState().setUser(response.data.user);
+        setIdentifier('');
+        setNewPassword('');
+      }
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : 'Не удалось изменить пароль');
     } finally {
@@ -74,11 +87,12 @@ export default function SecurityPage() {
         <div className={styles.row}><div><strong>Приём заявок</strong><span>Включается через настройки реквизита</span></div><span className={styles.external}>Реквизиты</span></div>
         <div className={styles.row}><div><strong>PIN для подтверждения заявок</strong><span>В текущем backend-контракте PIN не реализован</span></div><span className={styles.unavailable}>Недоступно</span></div>
         <form className={styles.password} onSubmit={(event) => void handlePasswordChange(event)}>
-          <strong>Пароль</strong>
-          <span>Изменение пароля завершает все активные сессии</span>
-          <input type="password" autoComplete="current-password" placeholder="Текущий пароль" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} disabled={changing} required />
+          <strong>{user?.identifier ? 'Пароль' : 'Добавить вход по email и паролю'}</strong>
+          <span>{user?.identifier ? 'Изменение пароля завершает все активные сессии' : 'После сохранения можно будет входить через email и пароль'}</span>
+          {!user?.identifier && <input type="email" autoComplete="username" placeholder="Email" value={identifier} onChange={(event) => setIdentifier(event.target.value)} disabled={changing} required />}
+          {user?.identifier && <input type="password" autoComplete="current-password" placeholder="Текущий пароль" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} disabled={changing} required />}
           <input type="password" autoComplete="new-password" placeholder="Новый пароль" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} disabled={changing} required />
-          <button type="submit" disabled={changing}>{changing ? 'Сохранение...' : 'Сменить пароль'}</button>
+          <button type="submit" disabled={changing}>{changing ? 'Сохранение...' : user?.identifier ? 'Сменить пароль' : 'Добавить пароль'}</button>
         </form>
         <div className={styles.sessions}>
           <strong>Активные сессии</strong>

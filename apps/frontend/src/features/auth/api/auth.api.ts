@@ -8,6 +8,7 @@ export type AuthUser = {
   displayName: string;
   identifier: string | null;
   telegramUsername: string | null;
+  telegramLinked: boolean;
   telegramPhotoUrl: string | null;
   avatarUrl: string | null;
 };
@@ -142,6 +143,14 @@ export async function revokeSession(sessionId: string, accessToken: string) {
 
 export async function changePassword(input: { currentPassword: string; newPassword: string }, accessToken: string) {
   return requestJson<null>('/auth/password', {
+    method: 'POST',
+    body: input,
+    accessToken,
+  });
+}
+
+export async function setCredentials(input: { identifier: string; password: string }, accessToken: string) {
+  return requestJson<MeResponse>('/auth/credentials', {
     method: 'POST',
     body: input,
     accessToken,

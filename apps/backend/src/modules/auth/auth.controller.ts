@@ -3,7 +3,7 @@ import type { RequestHandler } from "express";
 import { AppError } from "../../shared/errors/app-error";
 import { parseBody } from "../../shared/validation/parse-body";
 import { getRequestMetadata } from "../../utils/request-metadata";
-import { changePasswordSchema, loginSchema, profileUpdateSchema, registerSchema, sessionIdSchema, telegramLoginSchema } from "./auth.dto";
+import { changePasswordSchema, loginSchema, profileUpdateSchema, registerSchema, sessionIdSchema, setCredentialsSchema, telegramLoginSchema } from "./auth.dto";
 import {
   clearRefreshTokenCookie,
   getRefreshTokenFromRequest,
@@ -22,6 +22,7 @@ import {
   getSessions,
   revokeSession,
   updateCurrentUserProfile,
+  setCredentials,
 } from "./auth.service";
 
 export const registerController: RequestHandler = async (request, response, next) => {
@@ -115,6 +116,13 @@ export const changePasswordController: RequestHandler = async (request, response
     await changePassword(request.auth.id, parseBody(changePasswordSchema, request.body as unknown));
     clearRefreshTokenCookie(response);
     response.status(204).send();
+  } catch (error) { next(error); }
+};
+
+export const setCredentialsController: RequestHandler = async (request, response, next) => {
+  try {
+    if (!request.auth?.id) throw new AppError({ statusCode: 401, code: "UNAUTHORIZED", message: "Authentication required" });
+    response.status(200).json(await setCredentials(request.auth.id, parseBody(setCredentialsSchema, request.body as unknown)));
   } catch (error) { next(error); }
 };
 

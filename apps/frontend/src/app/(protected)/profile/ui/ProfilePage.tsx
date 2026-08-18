@@ -20,9 +20,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [isEditingPhoto, setIsEditingPhoto] = useState(false);
   const [displayName, setDisplayName] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,7 +31,6 @@ export default function ProfilePage() {
 
         setProfile(data);
         setDisplayName(data.name);
-        setAvatarUrl(data.avatar ?? '');
       } finally {
         setIsLoading(false);
       }
@@ -52,12 +49,8 @@ export default function ProfilePage() {
     setIsSaving(true);
     setError(null);
     try {
-      await updateProfile({
-        displayName: displayName.trim(),
-        avatarUrl: avatarUrl.trim() || null,
-      });
+      await updateProfile({ displayName: displayName.trim() });
       setProfile(await getProfile());
-      setIsEditingPhoto(false);
     } catch (saveError) {
       setError(saveError instanceof Error ? saveError.message : 'Не удалось сохранить профиль');
     } finally {
@@ -90,14 +83,6 @@ export default function ProfilePage() {
               </p>
             </div>
           </div>
-
-          <button
-            className={styles.changePhotoButton}
-            type="button"
-            onClick={() => setIsEditingPhoto((value) => !value)}
-          >
-            {isEditingPhoto ? 'Отмена' : 'Сменить фото'}
-          </button>
 
         </div>
 
@@ -158,32 +143,19 @@ export default function ProfilePage() {
               <input
                 className={styles.input}
                 type="text"
-              value={profile.telegram ?? 'Не привязан'}
+              value={profile.telegram ?? (profile.telegramLinked ? 'Привязан' : 'Не привязан')}
               readOnly
               />
             </label>
 
-            {!profile.telegram && (
-              <TelegramLoginButton mode="link" />
+            {!profile.telegramLinked && (
+              <TelegramLoginButton mode="link" onLinked={() => void getProfile().then(setProfile)} />
             )}
           </div>
 
-          {isEditingPhoto && (
-            <label className={styles.field}>
-              <span className={styles.label}>Ссылка на фото (HTTPS)</span>
-              <input
-                className={styles.input}
-                type="url"
-                value={avatarUrl}
-                onChange={(event) => setAvatarUrl(event.target.value)}
-                placeholder="https://..."
-              />
-            </label>
-          )}
-
           {error && <p className={styles.error}>{error}</p>}
 
-          <button className={styles.saveButton} type="button" onClick={saveProfile} disabled={isSaving}>
+          <button className={styles.saveButton} type="button" onClick={() => void saveProfile()} disabled={isSaving}>
             {isSaving ? 'Сохранение...' : 'Сохранить изменения'}
           </button>
 

@@ -31,6 +31,11 @@ export const changePasswordSchema = z.object({
   newPassword: passwordSchema,
 }).strict();
 
+export const setCredentialsSchema = z.object({
+  identifier: identifierSchema,
+  password: passwordSchema,
+}).strict();
+
 export const sessionIdSchema = z.uuid();
 
 export const profileUpdateSchema = z.object({
@@ -44,6 +49,7 @@ export type RegisterDto = z.infer<typeof registerSchema>;
 export type LoginDto = z.infer<typeof loginSchema>;
 export type TelegramLoginDto = z.infer<typeof telegramLoginSchema>;
 export type ChangePasswordDto = z.infer<typeof changePasswordSchema>;
+export type SetCredentialsDto = z.infer<typeof setCredentialsSchema>;
 export type ProfileUpdateDto = z.infer<typeof profileUpdateSchema>;
 
 export interface PublicUserDto {
@@ -54,6 +60,7 @@ export interface PublicUserDto {
   displayName: string;
   identifier: string | null;
   telegramUsername: string | null;
+  telegramLinked: boolean;
   telegramPhotoUrl: string | null;
   avatarUrl: string | null;
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
 import {
@@ -114,13 +115,13 @@ export default function SupportChatPage() {
 
   return (
     <main className={styles.page}>
-      <a className={styles.backLink} href="/support">
+      <Link className={styles.backLink} href="/support">
         <span className={styles.backIcon} aria-hidden="true">
           ‹
         </span>
 
         <span>К темам поддержки</span>
-      </a>
+      </Link>
 
       <section className={styles.chat}>
         <SupportChatHeader topic={topic} />

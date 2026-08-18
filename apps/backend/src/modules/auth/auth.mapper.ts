@@ -16,6 +16,7 @@ export function toPublicUserDto(user: UserWithSettings): PublicUserDto {
     displayName: user.displayName ?? user.telegramFirstName ?? user.credential?.identifier ?? user.id,
     identifier: user.credential?.identifier ?? null,
     telegramUsername: user.telegramUsername,
+    telegramLinked: user.telegramId !== null,
     telegramPhotoUrl: user.telegramPhotoUrl,
     avatarUrl: user.avatarUrl,
   };

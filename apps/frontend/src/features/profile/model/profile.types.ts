@@ -9,6 +9,7 @@ export interface Profile {
   name: string;
   email: string;
   telegram: string | null;
+  telegramLinked: boolean;
   registeredAt: string;
   avatar: string | null;
   stats: ProfileStats;

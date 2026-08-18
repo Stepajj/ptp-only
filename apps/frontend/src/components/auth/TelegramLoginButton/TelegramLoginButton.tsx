@@ -18,6 +18,7 @@ interface Props {
   mode: TelegramLoginMode;
   linked?: boolean;
   onAuth?: (payload: TelegramAuthPayload) => void;
+  onLinked?: () => void;
 }
 
 interface TelegramOidcResponse {
@@ -60,7 +61,7 @@ declare global {
   }
 }
 
-export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
+export function TelegramLoginButton({ mode, linked = false, onAuth, onLinked }: Props) {
   const router = useRouter();
   const accessToken = useAuthStore((state) => state.accessToken);
   const [error, setError] = useState<string | null>(null);
@@ -121,6 +122,7 @@ export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
         const response = await linkTelegram(body, accessToken);
         console.info('[Telegram Login] Backend response', { data: response?.data });
         useAuthStore.getState().setUser(response.data.user);
+        onLinked?.();
       } catch (error) {
         if (error instanceof ApiError || error instanceof Error) {
           setError(error.message);
@@ -132,7 +134,7 @@ export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
         setIsLoading(false);
       }
     },
-    [accessToken, mode, onAuth, router],
+    [accessToken, mode, onAuth, onLinked, router],
   );
 
   useEffect(() => {

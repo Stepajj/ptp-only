@@ -3,7 +3,7 @@ import { UserStatus } from "@prisma/client";
 import { config } from "../../config";
 import { createOnlyP2PClient, getOnlyP2PBalance, } from "../../integrations/only-p2p/only-p2p.client";
 import { AppError } from "../../shared/errors/app-error";
-import type { AuthResponseDto, ChangePasswordDto, CurrentUserResponseDto, LoginDto, ProfileUpdateDto, RegisterDto, TelegramLoginDto } from "./auth.dto";
+import type { AuthResponseDto, ChangePasswordDto, CurrentUserResponseDto, LoginDto, ProfileUpdateDto, RegisterDto, SetCredentialsDto, TelegramLoginDto } from "./auth.dto";
 import { toPublicUserDto } from "./auth.mapper";
 import { verifyTelegramOidcToken, type TelegramUserClaims } from "./services/telegram.service";
 import {
@@ -26,6 +26,7 @@ import {
   listActiveRefreshTokens,
   revokeRefreshTokenById,
   updateUserPassword,
+  createUserCredential,
   updateProfile,
   withOnlyP2pProvisioningLock,
   type AuthUserRecord,
@@ -532,6 +533,47 @@ export async function changePassword(userId: string, input: ChangePasswordDto): 
     throw new AppError({ statusCode: 500, code: "PASSWORD_UPDATE_FAILED", message: "Password update failed" });
   }
   await revokeAllUserRefreshTokens(userId, "password_changed");
+}
+
+export async function setCredentials(userId: string, input: SetCredentialsDto): Promise<CurrentUserResponseDto> {
+  const user = await findUserById(userId);
+  if (!user) {
+    throw new AppError({ statusCode: 401, code: "UNAUTHORIZED", message: "Authentication required" });
+  }
+
+  ensureActiveUser(user.status);
+
+  if (!user.telegramId) {
+    throw new AppError({ statusCode: 403, code: "TELEGRAM_AUTH_REQUIRED", message: "Telegram authentication is required to set initial credentials" });
+  }
+
+  if (user.credential) {
+    throw new AppError({ statusCode: 409, code: "PASSWORD_AUTH_ALREADY_CONFIGURED", message: "Password authentication is already configured" });
+  }
+
+  const identifierNormalized = normalizeIdentifier(input.identifier);
+  if (await findCredentialByIdentifierNormalized(identifierNormalized)) {
+    throwIdentifierAlreadyExists();
+  }
+
+  try {
+    await createUserCredential(
+      userId,
+      input.identifier.trim(),
+      identifierNormalized,
+      await hashPassword(input.password),
+    );
+  } catch (error) {
+    if (isUniqueConstraintError(error)) throwIdentifierAlreadyExists();
+    throw error;
+  }
+
+  const updatedUser = await findUserById(userId);
+  if (!updatedUser) {
+    throw new AppError({ statusCode: 500, code: "USER_UPDATE_FAILED", message: "Failed to configure password authentication" });
+  }
+
+  return { success: true, data: { user: toPublicUserDto(updatedUser) } };
 }
 
 export async function updateCurrentUserProfile(userId: string, input: ProfileUpdateDto): Promise<CurrentUserResponseDto> {

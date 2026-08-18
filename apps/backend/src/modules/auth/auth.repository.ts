@@ -367,6 +367,17 @@ export async function updateUserPassword(userId: string, passwordHash: string): 
   return result.count === 1;
 }
 
+export async function createUserCredential(
+  userId: string,
+  identifier: string,
+  identifierNormalized: string,
+  passwordHash: string,
+): Promise<void> {
+  await prisma.userCredential.create({
+    data: { userId, identifier, identifierNormalized, passwordHash },
+  });
+}
+
 export function isUniqueConstraintError(error: unknown): boolean {
   return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002";
 }
