@@ -135,7 +135,7 @@ export default function ProfilePage() {
             <input
               className={styles.input}
               type="text"
-              value={profile.name}
+              value={displayName}
               onChange={(event) => setDisplayName(event.target.value)}
             />
           </label>

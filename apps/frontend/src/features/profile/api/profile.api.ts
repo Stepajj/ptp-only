@@ -13,9 +13,10 @@ export async function getProfile(): Promise<Profile> {
     getBalance(accessToken),
   ]);
   const user = userResponse.data.user;
+  const name = user.displayName?.trim() || user.telegramUsername?.trim() || user.identifier?.trim() || user.id;
   return {
     id: user.id,
-    name: user.displayName,
+    name,
     email: user.identifier ?? '—',
     telegram: user.telegramUsername ? `@${user.telegramUsername.replace(/^@/, '')}` : null,
     registeredAt: new Date(user.createdAt).getFullYear().toString(),
