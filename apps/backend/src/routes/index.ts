@@ -9,6 +9,7 @@ import { healthRouter } from "../modules/health/health.routes";
 import { requisitesRouter } from "../modules/requisites/requisites.routes";
 import { requestsRouter } from "../modules/requests/requests.routes";
 import { topupRouter } from "../modules/topup/topup.routes";
+import { supportRouter } from "../modules/support/support.routes";
 
 export const routes = Router();
 
@@ -21,6 +22,7 @@ routes.use("/requisites", requisitesRouter);
 routes.use("/requests", requestsRouter);
 
 routes.use("/topup", topupRouter);
+routes.use("/support", supportRouter);
 
 routes.get("/me", authenticate, currentUserController);
 

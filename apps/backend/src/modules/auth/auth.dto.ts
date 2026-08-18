@@ -24,17 +24,38 @@ export const registerSchema = z.object({
 export const loginSchema = z.object({
   identifier: identifierSchema,
   password: z.string().min(1).max(128),
+}).strict();
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1).max(128),
+  newPassword: passwordSchema,
+}).strict();
+
+export const sessionIdSchema = z.uuid();
+
+export const profileUpdateSchema = z.object({
+  displayName: z.string().trim().min(1).max(120).optional(),
+  avatarUrl: z.url().max(2048).refine((value) => new URL(value).protocol === "https:", "Avatar URL must use HTTPS").nullable().optional(),
+}).strict().refine((value) => value.displayName !== undefined || value.avatarUrl !== undefined, {
+  message: "At least one profile field is required",
 });
 
 export type RegisterDto = z.infer<typeof registerSchema>;
 export type LoginDto = z.infer<typeof loginSchema>;
 export type TelegramLoginDto = z.infer<typeof telegramLoginSchema>;
+export type ChangePasswordDto = z.infer<typeof changePasswordSchema>;
+export type ProfileUpdateDto = z.infer<typeof profileUpdateSchema>;
 
 export interface PublicUserDto {
   id: string;
   status: string;
   language: string;
   createdAt: string;
+  displayName: string;
+  identifier: string | null;
+  telegramUsername: string | null;
+  telegramPhotoUrl: string | null;
+  avatarUrl: string | null;
 }
 
 export interface AuthResponseDto {

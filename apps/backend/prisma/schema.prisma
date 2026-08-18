@@ -27,6 +27,8 @@ model User {
   telegramFirstName          String?           @map("telegram_first_name")
   telegramPhotoUrl           String?           @map("telegram_photo_url")
   telegramLinkedAt           DateTime?         @map("telegram_linked_at")
+  displayName                String?           @map("display_name")
+  avatarUrl                  String?           @map("avatar_url")
   createdAt                  DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt                  DateTime          @updatedAt @map("updated_at") @db.Timestamptz(3)
   deletedAt                  DateTime?         @map("deleted_at") @db.Timestamptz(3)

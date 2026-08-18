@@ -8,7 +8,7 @@ import {
   listRequestsQuerySchema,
   requestIdSchema,
 } from "./requests.dto";
-import { confirmRequest, listRequests } from "./requests.service";
+import { confirmRequest, listRequests, submitRequestProof } from "./requests.service";
 
 function getUserId(request: Parameters<RequestHandler>[0]): string {
   if (!request.auth?.id) {
@@ -40,4 +40,18 @@ export const confirmRequestController: RequestHandler = async (request, response
   } catch (error) {
     next(error);
   }
+};
+
+export const requestProofController: RequestHandler = async (request, response, next) => {
+  try {
+    const file = request.file;
+    if (!file) throw new AppError({ statusCode: 400, code: "FILE_REQUIRED", message: "Proof file is required" });
+    const requestId = requestIdSchema.parse(request.params.requestId);
+    const validExtension = /\.(mp4|mov|avi|mkv|webm|m4v|gif|pdf)$/i.test(file.originalname);
+    const validMime = file.mimetype === "application/pdf" || file.mimetype === "image/gif" || file.mimetype.startsWith("video/");
+    if (!validExtension || !validMime) {
+      throw new AppError({ statusCode: 400, code: "FILE_TYPE_INVALID", message: "File must be a video or a PDF" });
+    }
+    response.status(200).json(await submitRequestProof(getUserId(request), requestId, file));
+  } catch (error) { next(error); }
 };

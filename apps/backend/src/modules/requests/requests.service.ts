@@ -1,6 +1,7 @@
 import {
   confirmOnlyP2PRequest,
   getOnlyP2PRequests,
+  sendOnlyP2PRequestProof,
 } from "../../integrations/only-p2p/only-p2p.client";
 import { AppError } from "../../shared/errors/app-error";
 import { findExternalClientByUserId } from "../auth/auth.repository";
@@ -39,5 +40,10 @@ export async function confirmRequest(
     input.amount,
   );
 
+  return { success: true as const };
+}
+
+export async function submitRequestProof(userId: string, requestId: string, file: { buffer: Buffer; mimetype: string; originalname: string }) {
+  await sendOnlyP2PRequestProof(await getExternalUserId(userId), requestId, file);
   return { success: true as const };
 }

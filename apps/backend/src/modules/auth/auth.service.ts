@@ -3,7 +3,7 @@ import { UserStatus } from "@prisma/client";
 import { config } from "../../config";
 import { createOnlyP2PClient, getOnlyP2PBalance, } from "../../integrations/only-p2p/only-p2p.client";
 import { AppError } from "../../shared/errors/app-error";
-import type { AuthResponseDto, CurrentUserResponseDto, LoginDto, RegisterDto, TelegramLoginDto } from "./auth.dto";
+import type { AuthResponseDto, ChangePasswordDto, CurrentUserResponseDto, LoginDto, ProfileUpdateDto, RegisterDto, TelegramLoginDto } from "./auth.dto";
 import { toPublicUserDto } from "./auth.mapper";
 import { verifyTelegramOidcToken, type TelegramUserClaims } from "./services/telegram.service";
 import {
@@ -11,6 +11,7 @@ import {
   createTelegramUser,
   createRefreshToken as createRefreshTokenRecord,
   findCredentialByIdentifierNormalized,
+  findCredentialByUserId,
   findExternalClientByUserId,
   findRefreshTokenByHash,
   findUserById,
@@ -22,6 +23,10 @@ import {
   setPendingOnlyP2pExternalUserId,
   updateUserTelegramData,
   findUserByTelegramId,
+  listActiveRefreshTokens,
+  revokeRefreshTokenById,
+  updateUserPassword,
+  updateProfile,
   withOnlyP2pProvisioningLock,
   type AuthUserRecord,
   type TelegramAccountData,
@@ -489,4 +494,47 @@ export async function getBalance(userId: string) {
     success: true,
     data: balance,
   };
+}
+
+export async function getSessions(userId: string, currentRefreshToken?: string) {
+  const currentTokenHash = currentRefreshToken ? hashToken(currentRefreshToken) : null;
+  const sessions = await listActiveRefreshTokens(userId);
+  return {
+    success: true as const,
+    data: sessions.map((session) => ({
+      id: session.id,
+      device: session.userAgent ?? "Неизвестное устройство",
+      ipAddress: session.ipAddress,
+      createdAt: session.createdAt.toISOString(),
+      lastUsedAt: (session.lastUsedAt ?? session.createdAt).toISOString(),
+      expiresAt: session.expiresAt.toISOString(),
+      current: session.tokenHash === currentTokenHash,
+    })),
+  };
+}
+
+export async function revokeSession(userId: string, sessionId: string): Promise<void> {
+  const revoked = await revokeRefreshTokenById(userId, sessionId, "user_requested");
+  if (!revoked) {
+    throw new AppError({ statusCode: 404, code: "SESSION_NOT_FOUND", message: "Session not found" });
+  }
+}
+
+export async function changePassword(userId: string, input: ChangePasswordDto): Promise<void> {
+  const credential = await findCredentialByUserId(userId);
+  if (!credential) {
+    throw new AppError({ statusCode: 400, code: "PASSWORD_AUTH_NOT_CONFIGURED", message: "Password authentication is not configured" });
+  }
+  if (!(await verifyPassword(input.currentPassword, credential.passwordHash))) {
+    throw new AppError({ statusCode: 401, code: "INVALID_PASSWORD", message: "Current password is invalid" });
+  }
+  if (!(await updateUserPassword(userId, await hashPassword(input.newPassword)))) {
+    throw new AppError({ statusCode: 500, code: "PASSWORD_UPDATE_FAILED", message: "Password update failed" });
+  }
+  await revokeAllUserRefreshTokens(userId, "password_changed");
+}
+
+export async function updateCurrentUserProfile(userId: string, input: ProfileUpdateDto): Promise<CurrentUserResponseDto> {
+  const user = await updateProfile(userId, input);
+  return { success: true, data: { user: toPublicUserDto(user) } };
 }

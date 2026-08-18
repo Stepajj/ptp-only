@@ -8,6 +8,10 @@ import {
   registerController,
   telegramLoginController,
   linkTelegramController,
+  sessionsController,
+  revokeSessionController,
+  changePasswordController,
+  updateProfileController,
 } from "./auth.controller";
 import { authRateLimiter } from "./auth.rate-limit";
 import { authenticate } from "../../middleware/authenticate";
@@ -20,4 +24,8 @@ authRouter.post("/logout", logoutController);
 authRouter.post("/refresh", authRateLimiter, refreshController);
 authRouter.post("/telegram", authRateLimiter, telegramLoginController);
 authRouter.post("/link-telegram", authenticate, authRateLimiter, linkTelegramController);
+authRouter.get("/sessions", authenticate, sessionsController);
+authRouter.delete("/sessions/:sessionId", authenticate, revokeSessionController);
+authRouter.post("/password", authenticate, authRateLimiter, changePasswordController);
+authRouter.patch("/profile", authenticate, updateProfileController);
 authRouter.get("/balance", authenticate, balanceController);

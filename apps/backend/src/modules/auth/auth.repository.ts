@@ -4,6 +4,11 @@ import { prisma } from "../../db/prisma";
 
 const userInclude = {
   settings: true,
+  credential: {
+    select: {
+      identifier: true,
+    },
+  },
 } satisfies Prisma.UserInclude;
 
 const credentialWithUserInclude = {
@@ -73,6 +78,20 @@ export async function findCredentialByIdentifierNormalized(
     where: { identifierNormalized },
     include: credentialWithUserInclude,
   });
+}
+
+export async function findCredentialByUserId(userId: string) {
+  return prisma.userCredential.findUnique({
+    where: { userId },
+    select: { passwordHash: true },
+  });
+}
+
+export async function updateProfile(userId: string, data: { displayName?: string | undefined; avatarUrl?: string | null | undefined }): Promise<AuthUserRecord> {
+  const updateData: Prisma.UserUpdateInput = {};
+  if (data.displayName !== undefined) updateData.displayName = data.displayName;
+  if (data.avatarUrl !== undefined) updateData.avatarUrl = data.avatarUrl;
+  return prisma.user.update({ where: { id: userId }, data: updateData, include: userInclude });
 }
 
 export async function findExternalClientByUserId(userId: string) {
@@ -330,6 +349,24 @@ export async function revokeAllUserRefreshTokens(userId: string, reason: string)
   });
 }
 
+export async function listActiveRefreshTokens(userId: string, now = new Date()) {
+  return prisma.refreshToken.findMany({
+    where: { userId, revokedAt: null, expiresAt: { gt: now } },
+    orderBy: { createdAt: "desc" },
+    select: { id: true, userAgent: true, ipAddress: true, expiresAt: true, lastUsedAt: true, createdAt: true, tokenHash: true },
+  });
+}
+
+export async function revokeRefreshTokenById(userId: string, id: string, reason: string): Promise<boolean> {
+  const result = await prisma.refreshToken.updateMany({ where: { id, userId, revokedAt: null }, data: { revokedAt: new Date(), revokedReason: reason } });
+  return result.count === 1;
+}
+
+export async function updateUserPassword(userId: string, passwordHash: string): Promise<boolean> {
+  const result = await prisma.userCredential.updateMany({ where: { userId }, data: { passwordHash } });
+  return result.count === 1;
+}
+
 export function isUniqueConstraintError(error: unknown): boolean {
   return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002";
 }
@@ -337,7 +374,3 @@ export function isUniqueConstraintError(error: unknown): boolean {
 export function isRecordNotFoundError(error: unknown): boolean {
   return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025";
 }
-
-
-
-

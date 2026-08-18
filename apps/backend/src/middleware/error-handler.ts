@@ -16,6 +16,10 @@ interface ErrorResponse {
 }
 
 function normalizeError(error: unknown): AppError {
+  if (error && typeof error === "object" && "code" in error && error.code === "LIMIT_FILE_SIZE") {
+    return new AppError({ statusCode: 413, code: "FILE_TOO_LARGE", message: "Uploaded file is too large" });
+  }
+
   if (error instanceof AppError) {
     return error;
   }

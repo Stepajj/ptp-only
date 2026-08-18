@@ -17,6 +17,18 @@ interface OnlyP2PBaseResponse {
   error?: string;
 }
 
+function onlyP2PError(message?: string): AppError {
+  const normalizedMessage = message?.trim();
+
+  return new AppError({
+    statusCode: 400,
+    code: "ONLY_P2P_ERROR",
+    message: normalizedMessage && normalizedMessage.length > 0
+      ? normalizedMessage
+      : "External service rejected the request",
+  });
+}
+
 export interface CreateOnlyP2PClientResult {
   externalUserId: string;
 }
@@ -76,6 +88,14 @@ export interface OnlyP2PRequest {
   deadline: string | null;
   created: string;
   dateFinished: string | null;
+}
+
+export interface OnlyP2PSupportMessage {
+  id: number;
+  externalUserId: string;
+  fromOperator: boolean;
+  text: string;
+  created: string;
 }
 
 function buildOnlyP2PUrl(path: string): string {
@@ -164,11 +184,7 @@ function parseOnlyP2PBalanceResponse(
   };
 
   if (response.success !== true) {
-    throw new AppError({
-      statusCode: 502,
-      code: "ONLY_P2P_ERROR",
-      message: "External service rejected the request",
-    });
+    throw onlyP2PError(typeof response.error === "string" ? response.error : undefined);
   }
 
   if (
@@ -243,11 +259,7 @@ export async function createOnlyP2PClient(): Promise<CreateOnlyP2PClientResult> 
     const baseResponse = parseOnlyP2PBaseResponse(rawBody);
 
     if (!baseResponse.success) {
-      throw new AppError({
-        statusCode: 502,
-        code: "ONLY_P2P_ERROR",
-        message: "External service rejected the request",
-      });
+      throw onlyP2PError(baseResponse.error);
     }
 
     return {
@@ -345,7 +357,7 @@ async function postOnlyP2P(path: string, body: Record<string, unknown>): Promise
 
     const baseResponse = parseOnlyP2PBaseResponse(rawBody);
     if (!baseResponse.success) {
-      throw new AppError({ statusCode: 502, code: "ONLY_P2P_ERROR", message: "External service rejected the request" });
+      throw onlyP2PError(baseResponse.error);
     }
 
     return JSON.parse(rawBody) as unknown;
@@ -462,6 +474,37 @@ function parseOnlyP2PRequestsResponse(raw: unknown): OnlyP2PRequest[] {
   });
 }
 
+function parseOnlyP2PSupportMessagesResponse(raw: unknown): OnlyP2PSupportMessage[] {
+  if (!raw || typeof raw !== "object" || !Array.isArray((raw as { data?: unknown }).data)) {
+    throw new AppError({ statusCode: 502, code: "ONLY_P2P_INVALID_RESPONSE", message: "External service returned an invalid support response" });
+  }
+
+  return (raw as { data: unknown[] }).data.map((item) => {
+    if (!item || typeof item !== "object") {
+      throw new AppError({ statusCode: 502, code: "ONLY_P2P_INVALID_RESPONSE", message: "External service returned an invalid support message" });
+    }
+
+    const message = item as Record<string, unknown>;
+    if (
+      typeof message.id !== "number" || !Number.isSafeInteger(message.id) ||
+      typeof message.user_id !== "number" && typeof message.user_id !== "string" ||
+      typeof message.from_operator !== "boolean" ||
+      typeof message.text !== "string" ||
+      typeof message.created !== "string"
+    ) {
+      throw new AppError({ statusCode: 502, code: "ONLY_P2P_INVALID_RESPONSE", message: "External service returned an invalid support message" });
+    }
+
+    return {
+      id: message.id,
+      externalUserId: String(message.user_id),
+      fromOperator: message.from_operator,
+      text: message.text,
+      created: message.created,
+    };
+  });
+}
+
 export async function getOnlyP2PBanks(): Promise<OnlyP2PBank[]> {
   const controller = new AbortController();
   const timeout = setTimeout(
@@ -517,15 +560,13 @@ export async function getOnlyP2PBanks(): Promise<OnlyP2PBank[]> {
 
     const responseData = parsed as {
       success: unknown;
+      error?: unknown;
       data?: unknown;
     };
 
     if (responseData.success !== true) {
-      throw new AppError({
-        statusCode: 502,
-        code: "ONLY_P2P_ERROR",
-        message: "External service rejected the request",
-      });
+      const externalError = responseData.error;
+      throw onlyP2PError(typeof externalError === "string" ? externalError : undefined);
     }
 
     if (!Array.isArray(responseData.data)) {
@@ -661,6 +702,50 @@ export async function confirmOnlyP2PRequest(
   });
 }
 
+export async function sendOnlyP2PRequestProof(
+  externalUserId: string,
+  requestId: string,
+  file: { buffer: Buffer; mimetype: string; originalname: string },
+): Promise<void> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), config.onlyP2P.timeoutMs);
+  try {
+    const form = new FormData();
+    form.append("api_id", config.onlyP2P.apiId);
+    form.append("secret_key", config.onlyP2P.secretKey);
+    form.append("user_id", externalUserId);
+    form.append("request_id", requestId);
+    form.append("file", new Blob([new Uint8Array(file.buffer)], { type: file.mimetype }), file.originalname);
+    const response = await fetch(buildOnlyP2PUrl("/op2p_api/request_proof"), { method: "POST", body: form, signal: controller.signal });
+    const rawBody = await response.text();
+    if (!response.ok) throw new AppError({ statusCode: 502, code: "ONLY_P2P_REQUEST_FAILED", message: "External service request failed" });
+    const baseResponse = parseOnlyP2PBaseResponse(rawBody);
+    if (!baseResponse.success) throw onlyP2PError(baseResponse.error);
+  } catch (error) {
+    if (error instanceof AppError) throw error;
+    throw new AppError({ statusCode: 502, code: "ONLY_P2P_UNAVAILABLE", message: "External service is unavailable", isOperational: true });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+export async function sendOnlyP2PSupportMessage(externalUserId: string, text: string): Promise<void> {
+  await postOnlyP2P("/op2p_api/support_send", {
+    user_id: externalUserId,
+    text,
+  });
+}
+
+export async function getOnlyP2PSupportMessages(
+  externalUserId: string,
+  afterId?: number,
+): Promise<OnlyP2PSupportMessage[]> {
+  return parseOnlyP2PSupportMessagesResponse(await postOnlyP2P("/op2p_api/support_messages", {
+    user_id: externalUserId,
+    ...(afterId !== undefined ? { after_id: afterId } : {}),
+  }));
+}
+
 export async function topupOnlyP2P(
   externalUserId: string,
   method: OnlyP2PTopupMethod,
@@ -744,11 +829,7 @@ export async function topupOnlyP2P(
     };
 
     if (responseData.success !== true) {
-      throw new AppError({
-        statusCode: 502,
-        code: "ONLY_P2P_ERROR",
-        message: "External service rejected the topup request",
-      });
+      throw onlyP2PError(typeof responseData.error === "string" ? responseData.error : undefined);
     }
 
     if (

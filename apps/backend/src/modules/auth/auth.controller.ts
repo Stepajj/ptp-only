@@ -1,10 +1,9 @@
 import type { RequestHandler } from "express";
 
 import { AppError } from "../../shared/errors/app-error";
-import { logger } from "../../shared/logger/logger";
 import { parseBody } from "../../shared/validation/parse-body";
 import { getRequestMetadata } from "../../utils/request-metadata";
-import { loginSchema, registerSchema, telegramLoginSchema } from "./auth.dto";
+import { changePasswordSchema, loginSchema, profileUpdateSchema, registerSchema, sessionIdSchema, telegramLoginSchema } from "./auth.dto";
 import {
   clearRefreshTokenCookie,
   getRefreshTokenFromRequest,
@@ -19,6 +18,10 @@ import {
   register,
   telegramLogin,
   linkTelegram,
+  changePassword,
+  getSessions,
+  revokeSession,
+  updateCurrentUserProfile,
 } from "./auth.service";
 
 export const registerController: RequestHandler = async (request, response, next) => {
@@ -80,18 +83,46 @@ export const logoutController: RequestHandler = async (request, response, next) 
 
 export const telegramLoginController: RequestHandler = async (request, response, next) => {
   try {
-    logger.info({ body: request.body }, "Telegram login request received");
     const body = parseBody(telegramLoginSchema, request.body as unknown);
-    logger.info({ body }, "Telegram login payload validated");
 
     const result = await telegramLogin(body, getRequestMetadata(request));
 
     setRefreshTokenCookie(response, result.refreshToken);
     response.status(200).json(result.response);
   } catch (error) {
-    logger.warn({ err: error }, "Telegram login request failed");
     next(error);
   }
+};
+
+export const sessionsController: RequestHandler = async (request, response, next) => {
+  try {
+    if (!request.auth?.id) throw new AppError({ statusCode: 401, code: "UNAUTHORIZED", message: "Authentication required" });
+    response.status(200).json(await getSessions(request.auth.id, getRefreshTokenFromRequest(request)));
+  } catch (error) { next(error); }
+};
+
+export const revokeSessionController: RequestHandler = async (request, response, next) => {
+  try {
+    if (!request.auth?.id) throw new AppError({ statusCode: 401, code: "UNAUTHORIZED", message: "Authentication required" });
+    await revokeSession(request.auth.id, sessionIdSchema.parse(request.params.sessionId));
+    response.status(204).send();
+  } catch (error) { next(error); }
+};
+
+export const changePasswordController: RequestHandler = async (request, response, next) => {
+  try {
+    if (!request.auth?.id) throw new AppError({ statusCode: 401, code: "UNAUTHORIZED", message: "Authentication required" });
+    await changePassword(request.auth.id, parseBody(changePasswordSchema, request.body as unknown));
+    clearRefreshTokenCookie(response);
+    response.status(204).send();
+  } catch (error) { next(error); }
+};
+
+export const updateProfileController: RequestHandler = async (request, response, next) => {
+  try {
+    if (!request.auth?.id) throw new AppError({ statusCode: 401, code: "UNAUTHORIZED", message: "Authentication required" });
+    response.status(200).json(await updateCurrentUserProfile(request.auth.id, parseBody(profileUpdateSchema, request.body as unknown)));
+  } catch (error) { next(error); }
 };
 
 export const linkTelegramController: RequestHandler = async (request, response, next) => {
