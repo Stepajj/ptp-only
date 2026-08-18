@@ -52,6 +52,12 @@
   background: #000;
 }
 
+.qrLoading {
+  color: rgba(20, 20, 23, 0.55);
+  font-size: 12px;
+  text-align: center;
+}
+
 .networkBadge {
   display: inline-flex;
   align-items: center;

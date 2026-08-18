@@ -18,8 +18,8 @@ function getInitials(name?: string) {
 
 export function SidebarProfileCard() {
   const user = useAuthStore((state) => state.user);
-  const username = 'Пользователь';
-  const shortId = user?.id ? user.id.slice(0, 8) : '';
+  const username = user?.displayName ?? user?.identifier ?? 'Пользователь';
+  const shortId = user?.id ? user.id.slice(0, 8) : '—';
 
   return (
     <div className={styles.card}>

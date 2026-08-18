@@ -1,24 +1,25 @@
-import { profileMock } from '../mocks/profile.mock';
+import { getAuthAccessToken } from '@/features/auth/lib/getAuthAccessToken';
+import { getBalance, me } from '@/features/auth/api/auth.api';
 
 import type {
   Profile,
-  UpdateProfileInput,
-  UpdateProfileResponse,
 } from '../model/profile.types';
 
 export async function getProfile(): Promise<Profile> {
-  return profileMock;
-}
-
-export async function updateProfile(
-  input: UpdateProfileInput,
-): Promise<UpdateProfileResponse> {
-  profileMock.name = input.name;
-  profileMock.email = input.email;
-  profileMock.telegram = input.telegram;
-
+  const accessToken = getAuthAccessToken();
+  if (!accessToken) throw new Error('Authentication required');
+  const [userResponse, balanceResponse] = await Promise.all([
+    me(accessToken),
+    getBalance(accessToken),
+  ]);
+  const user = userResponse.data.user;
   return {
-    success: true,
-    data: profileMock,
+    id: user.id,
+    name: user.displayName,
+    email: user.identifier ?? '—',
+    telegram: user.telegramUsername ? `@${user.telegramUsername.replace(/^@/, '')}` : null,
+    registeredAt: new Date(user.createdAt).getFullYear().toString(),
+    avatar: user.telegramPhotoUrl,
+    stats: balanceResponse.data,
   };
 }

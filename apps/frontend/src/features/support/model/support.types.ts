@@ -24,7 +24,7 @@ export interface SupportData {
 
 export interface SupportMessage {
   id: number;
-  user_id: number;
+  user_id?: number | string;
   from_operator: boolean;
   text: string;
   created: string;

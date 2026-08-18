@@ -5,6 +5,10 @@ export type AuthUser = {
   status: string;
   language: string;
   createdAt: string;
+  displayName: string;
+  identifier: string | null;
+  telegramUsername: string | null;
+  telegramPhotoUrl: string | null;
 };
 
 export type AuthSessionResponse = {

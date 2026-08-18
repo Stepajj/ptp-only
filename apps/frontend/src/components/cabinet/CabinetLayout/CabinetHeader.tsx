@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import { getAuthAccessToken } from '@/features/auth/lib/getAuthAccessToken';
 import { getBalance } from '@/features/auth/api/auth.api';
@@ -13,6 +14,7 @@ import  PlusIcon from './icons/headerPlus.svg';
 import Image from 'next/image';
 
 export function CabinetHeader() {
+  const pathname = usePathname();
   const [balance, setBalance] = useState<number | null>(null);
 
   useEffect(() => {
@@ -37,9 +39,9 @@ export function CabinetHeader() {
   return (
     <header className={styles.header}>
       <div className={styles.content}>
-        <h1 className={styles.title}>Личный кабинет</h1>
+        <h1 className={styles.title}>{getPageHeader(pathname).title}</h1>
         <span className={styles.subtitle}>
-          Обзор баланса активности
+          {getPageHeader(pathname).subtitle}
         </span>
       </div>
 
@@ -57,6 +59,16 @@ export function CabinetHeader() {
       </div>
     </header>
   );
+}
+
+function getPageHeader(pathname: string): { title: string; subtitle: string } {
+  if (pathname.startsWith('/requests')) return { title: 'Приём заявок', subtitle: 'Входящие переводы от покупателей' };
+  if (pathname.startsWith('/requisites')) return { title: 'Реквизиты', subtitle: 'Управление реквизитами для приёма платежей' };
+  if (pathname.startsWith('/deposit')) return { title: 'Пополнение', subtitle: 'Пополните баланс через доступный способ' };
+  if (pathname.startsWith('/history')) return { title: 'История', subtitle: 'Завершённые входящие заявки' };
+  if (pathname.startsWith('/support')) return { title: 'Поддержка', subtitle: 'Свяжитесь с оператором' };
+  if (pathname.startsWith('/profile')) return { title: 'Профиль', subtitle: 'Данные аккаунта и настройки' };
+  return { title: 'Личный кабинет', subtitle: 'Обзор баланса активности' };
 }
 
 function formatRub(value: number): string {

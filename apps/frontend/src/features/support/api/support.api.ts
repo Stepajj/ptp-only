@@ -1,7 +1,7 @@
-import { supportMessagesMock } from '../mocks/support.mock';
+import { getAuthAccessToken } from '@/features/auth/lib/getAuthAccessToken';
+import { requestJson } from '@/shared/api/http';
 
 import type {
-  SupportMessage,
   SupportMessagesResponse,
   SupportSendResponse,
 } from '../model/support.types';
@@ -9,27 +9,18 @@ import type {
 export async function getSupportMessages(
   afterId?: number,
 ): Promise<SupportMessagesResponse> {
-  const data =
-    afterId === undefined
-      ? supportMessagesMock
-      : supportMessagesMock.filter((message) => message.id > afterId);
-
-  return {
-    success: true,
-    data,
-  };
+  const query = afterId === undefined ? '' : `?after_id=${afterId}`;
+  return requestJson<SupportMessagesResponse>(`/support/messages${query}`, {
+    accessToken: getAuthAccessToken(),
+  });
 }
 
 export async function sendSupportMessage(
   text: string,
 ): Promise<SupportSendResponse> {
-  if (!text.trim()) {
-    return {
-      success: false,
-    };
-  }
-
-  return {
-    success: true,
-  };
+  return requestJson<SupportSendResponse>('/support/messages', {
+    method: 'POST',
+    body: { text },
+    accessToken: getAuthAccessToken(),
+  });
 }

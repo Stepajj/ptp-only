@@ -1,27 +1,15 @@
 export interface ProfileStats {
-  balance: number;
-  frozen: number;
-  totalProfit: number;
+  balance: number | null;
+  frozen: number | null;
+  totalProfit: number | null;
 }
 
 export interface Profile {
-  id: number;
+  id: string;
   name: string;
   email: string;
-  telegram: string;
+  telegram: string | null;
   registeredAt: string;
   avatar: string | null;
   stats: ProfileStats;
-}
-
-export interface UpdateProfileInput {
-  name: string;
-  email: string;
-  telegram: string;
-}
-
-export interface UpdateProfileResponse {
-  success: boolean;
-  data?: Profile;
-  error?: string;
 }

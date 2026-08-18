@@ -1,29 +1,24 @@
 'use client';
 
 import Link from 'next/link';
-import { FormEvent, useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 import {
   getProfile,
-  updateProfile,
 } from '@/features/profile/api/profile.api';
 import type { Profile } from '@/features/profile/model/profile.types';
 
 import styles from './ProfilePage.module.css';
 
-function formatRubles(value: number): string {
-  return `${new Intl.NumberFormat('ru-RU').format(value)} ₽`;
+function formatRubles(value: number | null): string {
+  return value === null ? '—' : `${new Intl.NumberFormat('ru-RU').format(value)} ₽`;
 }
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [telegram, setTelegram] = useState('');
-
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -31,9 +26,6 @@ export default function ProfilePage() {
         const data = await getProfile();
 
         setProfile(data);
-        setName(data.name);
-        setEmail(data.email);
-        setTelegram(data.telegram);
       } finally {
         setIsLoading(false);
       }
@@ -41,35 +33,6 @@ export default function ProfilePage() {
 
     loadProfile();
   }, []);
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (isSaving) {
-      return;
-    }
-
-    setIsSaving(true);
-
-    try {
-      const response = await updateProfile({
-        name,
-        email,
-        telegram,
-      });
-
-      if (!response.success || !response.data) {
-        return;
-      }
-
-      setProfile(response.data);
-      setName(response.data.name);
-      setEmail(response.data.email);
-      setTelegram(response.data.telegram);
-    } finally {
-      setIsSaving(false);
-    }
-  };
 
   if (isLoading || !profile) {
     return <div className={styles.loading}>Загрузка...</div>;
@@ -82,9 +45,11 @@ export default function ProfilePage() {
           <div className={styles.identity}>
             <div className={styles.avatar}>
               {profile.avatar ? (
-                <img
+                <Image
                   src={profile.avatar}
                   alt=""
+                  width={56}
+                  height={56}
                 />
               ) : (
                 'AK'
@@ -128,14 +93,13 @@ export default function ProfilePage() {
           <div className={styles.statCard}>
             <span className={styles.statLabel}>Профит с пополнений</span>
             <strong className={`${styles.statValue} ${styles.statValueSuccess}`}>
-              +{formatRubles(profile.stats.totalProfit)}
+              {profile.stats.totalProfit === null ? '—' : `+${formatRubles(profile.stats.totalProfit)}`}
             </strong>
           </div>
         </div>
 
-        <form
+        <div
           className={styles.form}
-          onSubmit={handleSubmit}
         >
           <label className={styles.field}>
             <span className={styles.label}>Отображаемое имя</span>
@@ -143,8 +107,8 @@ export default function ProfilePage() {
             <input
               className={styles.input}
               type="text"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
+              value={profile.name}
+              readOnly
             />
           </label>
 
@@ -155,8 +119,8 @@ export default function ProfilePage() {
               <input
                 className={styles.input}
                 type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
+              value={profile.email}
+              readOnly
               />
             </label>
 
@@ -166,20 +130,13 @@ export default function ProfilePage() {
               <input
                 className={styles.input}
                 type="text"
-                value={telegram}
-                onChange={(event) => setTelegram(event.target.value)}
+              value={profile.telegram ?? 'Не привязан'}
+              readOnly
               />
             </label>
           </div>
 
-          <button
-            className={styles.saveButton}
-            type="submit"
-            disabled={isSaving}
-          >
-            {isSaving ? 'Сохранение...' : 'Сохранить изменения'}
-          </button>
-        </form>
+        </div>
       </section>
 
       <Link

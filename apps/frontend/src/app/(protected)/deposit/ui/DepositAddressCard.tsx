@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import QRCode from "qrcode";
 
 import type {
   DepositDetails,
@@ -13,7 +15,6 @@ interface DepositAddressCardProps {
   method: DepositMethod;
   details: DepositDetails;
 }
-
 function isUrl(value: string) {
   return value.startsWith("http://") || value.startsWith("https://");
 }
@@ -23,6 +24,19 @@ export function DepositAddressCard({
   details,
 }: DepositAddressCardProps) {
   const [copied, setCopied] = useState(false);
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void QRCode.toDataURL(details.address, { margin: 1, errorCorrectionLevel: "M", width: 220 })
+      .then((dataUrl) => {
+        if (!cancelled) setQrDataUrl(dataUrl);
+      })
+      .catch(() => {
+        if (!cancelled) setQrDataUrl(null);
+      });
+    return () => { cancelled = true; };
+  }, [details.address]);
 
   const handleCopy = async () => {
     try {
@@ -43,7 +57,7 @@ export function DepositAddressCard({
   return (
     <section className={styles.card}>
       <div className={styles.qrWrapper}>
-        <AddressQrPattern value={details.address} />
+        {qrDataUrl ? <Image src={qrDataUrl} alt="QR-код для пополнения" width={220} height={220} unoptimized /> : <div className={styles.qrLoading}>Генерация QR-кода...</div>}
       </div>
 
       <div className={styles.networkBadge}>
@@ -124,76 +138,4 @@ export function DepositAddressCard({
       </div>
     </section>
   );
-}
-
-interface AddressQrPatternProps {
-  value: string;
-}
-
-function AddressQrPattern({ value }: AddressQrPatternProps) {
-  const cells = Array.from({ length: 29 * 29 }, (_, index) => {
-    const row = Math.floor(index / 29);
-    const col = index % 29;
-
-    if (isFinderCell(row, col, 0, 0)) return true;
-    if (isFinderCell(row, col, 0, 22)) return true;
-    if (isFinderCell(row, col, 22, 0)) return true;
-
-    const seed =
-      value.charCodeAt((row * 29 + col) % value.length) +
-      row * 13 +
-      col * 7;
-
-    return seed % 5 < 2;
-  });
-
-  return (
-    <div
-      className={styles.qr}
-      role="img"
-      aria-label="QR-код для пополнения"
-    >
-      {cells.map((filled, index) => (
-        <span
-          key={index}
-          className={
-            filled ? styles.qrCellFilled : styles.qrCell
-          }
-        />
-      ))}
-    </div>
-  );
-}
-
-function isFinderCell(
-  row: number,
-  col: number,
-  startRow: number,
-  startCol: number,
-) {
-  if (
-    row < startRow ||
-    row >= startRow + 7 ||
-    col < startCol ||
-    col >= startCol + 7
-  ) {
-    return false;
-  }
-
-  const localRow = row - startRow;
-  const localCol = col - startCol;
-
-  const outer =
-    localRow === 0 ||
-    localRow === 6 ||
-    localCol === 0 ||
-    localCol === 6;
-
-  const inner =
-    localRow >= 2 &&
-    localRow <= 4 &&
-    localCol >= 2 &&
-    localCol <= 4;
-
-  return outer || inner;
 }

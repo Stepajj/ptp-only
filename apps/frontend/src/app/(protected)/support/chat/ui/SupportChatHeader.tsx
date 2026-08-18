@@ -7,6 +7,7 @@ interface SupportChatHeaderProps {
 export default function SupportChatHeader({
   topic,
 }: SupportChatHeaderProps) {
+  const topicLabel = topic ? topic.replace(/[-_]/g, ' ') : 'Общий вопрос';
   return (
     <header className={styles.header}>
       <div className={styles.supportInfo}>
@@ -25,7 +26,7 @@ export default function SupportChatHeader({
       </div>
 
       <div className={styles.ticket}>
-        Обращение #10482
+        Тема: {topicLabel}
       </div>
     </header>
   );
