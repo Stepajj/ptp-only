@@ -14,7 +14,10 @@ export function CabinetLayout({ children }: Props) {
 
       <div className={styles.content}>
         <CabinetHeader />
-        {children}
+        <div className={styles.contentWrapper}>
+            {children}
+        </div>
+        
       </div>
     </div>
   );
