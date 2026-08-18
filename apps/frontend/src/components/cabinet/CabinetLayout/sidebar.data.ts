@@ -39,7 +39,7 @@ export const sidebarItems: Array<{ href: string; title: string; icon: IconName }
   },
    {
     title: 'Профиль',
-    href: '/z226565xc',
+    href: '/profile',
     icon: 'profile', // icon is a serializable key resolved by the client
   },
   
