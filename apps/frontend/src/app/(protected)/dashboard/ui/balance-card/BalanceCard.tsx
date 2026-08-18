@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-
+import Image from 'next/image';
+import BonusArrow from '../../assets/icons/bonusArrow.svg';
 import { getBalance } from '@/features/auth/api/auth.api';
 import { useAuthStore } from '@/features/auth/model/auth.store';
 
@@ -64,7 +65,7 @@ export default function BalanceCard() {
       </p>
 
       <div className={styles.bonus}>
-        <span className={styles.bonusIcon}>▲</span>
+        <Image src={BonusArrow} alt="Bonus arrow"  />
 
         <span className={styles.bonusText}>
           7% к курсу при пополнении
