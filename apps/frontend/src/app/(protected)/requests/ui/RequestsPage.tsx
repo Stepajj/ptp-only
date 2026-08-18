@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 
 import {
   confirmIncomingRequest,
@@ -122,23 +123,16 @@ export function RequestsPage() {
         <div className={styles.list}>
           {visibleRequests.map((request) => (
             <article key={request.id} className={styles.item}>
-              <div className={styles.icon}>
-                ▶
-              </div>
-
-              <div className={styles.content}>
-                <div className={styles.amount}>
-                  {formatRub(request.amountRub)}
+              <Link href={`/requests/${encodeURIComponent(request.id)}`} className={styles.itemLink}>
+                <div className={styles.icon}>▶</div>
+                <div className={styles.content}>
+                  <div className={styles.amount}>{formatRub(request.amountRub)}</div>
+                  <div className={styles.meta}>
+                    Покупатель · {request.bank} → ваш {request.method === "sbp" ? "СБП" : "реквизит"}
+                  </div>
+                  <div className={styles.requisite}>{request.requisite}</div>
                 </div>
-
-                <div className={styles.meta}>
-                  Покупатель · {request.bank} → ваш {request.method === "sbp" ? "СБП" : "реквизит"}
-                </div>
-
-                <div className={styles.requisite}>
-                  {request.requisite}
-                </div>
-              </div>
+              </Link>
 
               <div className={styles.actions}>
                 <span className={`${styles.status} ${styles[request.status]}`}>

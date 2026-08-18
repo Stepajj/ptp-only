@@ -55,15 +55,11 @@ function extractErrorMessage(payload: unknown): string {
 
   if (error && typeof error === 'object') {
     const message = (error as { message?: unknown }).message;
-    const code = (error as { code?: unknown }).code;
-
-    if (typeof message === 'string' && typeof code === 'string') {
-      return `${code}: ${message}`;
-    }
-
     if (typeof message === 'string') {
       return message;
     }
+
+    const code = (error as { code?: unknown }).code;
 
     if (typeof code === 'string') {
       return code;

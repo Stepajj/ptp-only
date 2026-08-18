@@ -31,9 +31,7 @@ export function HistorySummary({
 
       <HistorySummaryCard
         title="Выдано от +7%"
-        value={`+${formatRubles(
-          summary.bonusAmount,
-        )}`}
+        value={summary.bonusAmount === null ? "—" : `+${formatRubles(summary.bonusAmount)}`}
       />
     </section>
   );

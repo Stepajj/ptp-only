@@ -31,7 +31,7 @@ export default function AddRequisiteForm() {
         const data = await getBanks();
         setBanks(data);
       } catch (err) {
-        setError('Не удалось загрузить список банков');
+        setError(err instanceof Error ? err.message : 'Не удалось загрузить список банков');
       }
     }
     loadBanks();

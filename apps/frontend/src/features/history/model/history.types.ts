@@ -16,7 +16,7 @@ export interface HistoryItem {
   id: string;
   amount: number;
   currency: string;
-  orderNumber: number;
+  orderNumber: string;
   paymentMethod: string;
   bankName: string;
   createdAt: string;
@@ -26,7 +26,7 @@ export interface HistoryItem {
 export interface HistorySummary {
   receivedAmount: number;
   completedOrders: number;
-  bonusAmount: number;
+  bonusAmount: number | null;
 }
 
 export interface HistoryFilters {
