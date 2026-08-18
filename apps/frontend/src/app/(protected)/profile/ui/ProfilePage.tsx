@@ -1,12 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 import {
   getProfile,
+  updateProfile,
 } from '@/features/profile/api/profile.api';
+import { TelegramLoginButton } from '@/components/auth/TelegramLoginButton/TelegramLoginButton';
 import type { Profile } from '@/features/profile/model/profile.types';
 
 import styles from './ProfilePage.module.css';
@@ -19,6 +20,11 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isEditingPhoto, setIsEditingPhoto] = useState(false);
+  const [displayName, setDisplayName] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -26,6 +32,8 @@ export default function ProfilePage() {
         const data = await getProfile();
 
         setProfile(data);
+        setDisplayName(data.name);
+        setAvatarUrl(data.avatar ?? '');
       } finally {
         setIsLoading(false);
       }
@@ -38,6 +46,25 @@ export default function ProfilePage() {
     return <div className={styles.loading}>Загрузка...</div>;
   }
 
+  const initials = profile.name.trim().slice(0, 2).toUpperCase() || 'П';
+
+  const saveProfile = async () => {
+    setIsSaving(true);
+    setError(null);
+    try {
+      await updateProfile({
+        displayName: displayName.trim(),
+        avatarUrl: avatarUrl.trim() || null,
+      });
+      setProfile(await getProfile());
+      setIsEditingPhoto(false);
+    } catch (saveError) {
+      setError(saveError instanceof Error ? saveError.message : 'Не удалось сохранить профиль');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <main className={styles.page}>
       <section className={styles.profileCard}>
@@ -45,14 +72,13 @@ export default function ProfilePage() {
           <div className={styles.identity}>
             <div className={styles.avatar}>
               {profile.avatar ? (
-                <Image
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
                   src={profile.avatar}
                   alt=""
-                  width={56}
-                  height={56}
                 />
               ) : (
-                'AK'
+                initials
               )}
             </div>
 
@@ -68,9 +94,11 @@ export default function ProfilePage() {
           <button
             className={styles.changePhotoButton}
             type="button"
+            onClick={() => setIsEditingPhoto((value) => !value)}
           >
-            Сменить фото
+            {isEditingPhoto ? 'Отмена' : 'Сменить фото'}
           </button>
+
         </div>
 
         <div className={styles.divider} />
@@ -108,7 +136,7 @@ export default function ProfilePage() {
               className={styles.input}
               type="text"
               value={profile.name}
-              readOnly
+              onChange={(event) => setDisplayName(event.target.value)}
             />
           </label>
 
@@ -134,7 +162,30 @@ export default function ProfilePage() {
               readOnly
               />
             </label>
+
+            {!profile.telegram && (
+              <TelegramLoginButton mode="link" />
+            )}
           </div>
+
+          {isEditingPhoto && (
+            <label className={styles.field}>
+              <span className={styles.label}>Ссылка на фото (HTTPS)</span>
+              <input
+                className={styles.input}
+                type="url"
+                value={avatarUrl}
+                onChange={(event) => setAvatarUrl(event.target.value)}
+                placeholder="https://..."
+              />
+            </label>
+          )}
+
+          {error && <p className={styles.error}>{error}</p>}
+
+          <button className={styles.saveButton} type="button" onClick={saveProfile} disabled={isSaving}>
+            {isSaving ? 'Сохранение...' : 'Сохранить изменения'}
+          </button>
 
         </div>
       </section>
@@ -153,7 +204,7 @@ export default function ProfilePage() {
           </span>
 
           <span className={styles.securityDescription}>
-            2FA, пароль, PIN для подтверждения, сессии
+            Пароль и активные сессии
           </span>
         </div>
 

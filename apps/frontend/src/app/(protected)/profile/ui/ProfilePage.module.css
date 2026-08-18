@@ -318,3 +318,9 @@
   font-family: 'Euclid Circular A', sans-serif;
   font-size: 14px;
 }
+
+.error {
+  margin: 12px 0 0;
+  color: #c63b3b;
+  font-size: 13px;
+}

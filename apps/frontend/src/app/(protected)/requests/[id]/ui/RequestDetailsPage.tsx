@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import {
   confirmIncomingRequest,
   getIncomingRequests,
+  uploadRequestProof,
   type IncomingRequest,
 } from "@/features/requests/api/requests.api";
 
@@ -15,6 +16,7 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
   const [request, setRequest] = useState<IncomingRequest | null>(null);
   const [loading, setLoading] = useState(true);
   const [confirming, setConfirming] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
 
@@ -54,6 +56,22 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
     }
   };
 
+  const uploadProof = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !request) return;
+    try {
+      setUploading(true);
+      setError(null);
+      await uploadRequestProof(request.id, file);
+      await loadRequest();
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Не удалось отправить пруф");
+    } finally {
+      setUploading(false);
+      event.target.value = "";
+    }
+  };
+
   if (loading) return <main className={styles.page}>Загрузка заявки...</main>;
   if (error) return <main className={styles.page}><div className={styles.error}>{error}</div></main>;
   if (!request) return <main className={styles.page}><div className={styles.error}>Заявка не найдена</div></main>;
@@ -81,6 +99,7 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
         </div>
         {request.status === "finished" ? <p className={styles.success}>Получение денег подтверждено {request.dateFinished ? formatDate(request.dateFinished) : ""}</p> : <p className={styles.notice}>Подтверждайте получение только после фактического поступления денег на счёт.</p>}
         {canConfirm && <button type="button" className={styles.confirm} onClick={() => void confirm()} disabled={confirming}>{confirming ? "Подтверждение..." : "Подтвердить получение"}</button>}
+        {request.status === "cancelled" && request.awaitingProof && <label className={styles.proof}>Загрузить пруф (видео или PDF)<input type="file" accept=".mp4,.mov,.avi,.mkv,.webm,.m4v,.gif,.pdf" onChange={(event) => void uploadProof(event)} disabled={uploading} />{uploading && <span>Отправка...</span>}</label>}
       </section>
     </main>
   );

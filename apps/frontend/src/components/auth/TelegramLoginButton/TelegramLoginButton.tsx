@@ -159,7 +159,7 @@ export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
     return () => {
       document.body.removeChild(script);
     };
-  }, [TELEGRAM_CLIENT_ID]);
+  }, []);
 
   const handleClick = useCallback(() => {
     console.info('[Telegram Login] handleClick start', { TELEGRAM_CLIENT_ID });
@@ -195,7 +195,7 @@ export function TelegramLoginButton({ mode, linked = false, onAuth }: Props) {
     } catch (e) {
       console.error('[Telegram Login] Error calling auth', e);
     }
-  }, [TELEGRAM_CLIENT_ID, handleTelegramAuth]);
+  }, [handleTelegramAuth]);
 
   return (
     <div className={styles.root}>

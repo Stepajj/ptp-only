@@ -43,3 +43,13 @@ export async function confirmIncomingRequest(
     accessToken: getAuthAccessToken(),
   });
 }
+
+export async function uploadRequestProof(requestId: string, file: File): Promise<void> {
+  const body = new FormData();
+  body.append("file", file);
+  await requestJson<{ success: true }>(`/requests/${encodeURIComponent(requestId)}/proof`, {
+    method: "POST",
+    body,
+    accessToken: getAuthAccessToken(),
+  });
+}

@@ -9,6 +9,7 @@ export type AuthUser = {
   identifier: string | null;
   telegramUsername: string | null;
   telegramPhotoUrl: string | null;
+  avatarUrl: string | null;
 };
 
 export type AuthSessionResponse = {
@@ -112,6 +113,48 @@ export type BalanceResponse = {
 export async function getBalance(accessToken: string) {
   return requestJson<BalanceResponse>('/auth/balance', {
     method: 'GET',
+    accessToken,
+  });
+}
+
+export type AuthSession = {
+  id: string;
+  device: string;
+  ipAddress: string | null;
+  createdAt: string;
+  lastUsedAt: string;
+  expiresAt: string;
+  current: boolean;
+};
+
+export async function getSessions(accessToken: string) {
+  return requestJson<{ success: true; data: AuthSession[] }>('/auth/sessions', {
+    accessToken,
+  });
+}
+
+export async function revokeSession(sessionId: string, accessToken: string) {
+  return requestJson<null>(`/auth/sessions/${encodeURIComponent(sessionId)}`, {
+    method: 'DELETE',
+    accessToken,
+  });
+}
+
+export async function changePassword(input: { currentPassword: string; newPassword: string }, accessToken: string) {
+  return requestJson<null>('/auth/password', {
+    method: 'POST',
+    body: input,
+    accessToken,
+  });
+}
+
+export async function updateProfile(
+  input: { displayName?: string; avatarUrl?: string | null },
+  accessToken: string,
+) {
+  return requestJson<MeResponse>('/auth/profile', {
+    method: 'PATCH',
+    body: input,
     accessToken,
   });
 }

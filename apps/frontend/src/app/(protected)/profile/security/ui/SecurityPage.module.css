@@ -1,0 +1,14 @@
+.page { padding: 20px; }
+.back { color: #707070; text-decoration: none; font-size: 14px; }
+.card { width: min(100%, 655px); margin-top: 16px; border: 1px solid #e9e9ec; border-radius: 15px; background: #fff; overflow: hidden; }
+.row, .password, .sessions { padding: 16px 20px; border-bottom: 1px solid #e9e9ec; }
+.row { display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+.row div, .password, .sessions, .session div { display: flex; flex-direction: column; gap: 6px; }
+.row span, .password > span, .sessions > span, .session span { color: #707070; font-size: 12px; }
+.external { color: #12b36a !important; }
+.unavailable { color: #9b6b00 !important; }
+.password input { box-sizing: border-box; width: 100%; height: 42px; margin-top: 4px; padding: 0 12px; border: 1px solid #e9e9ec; border-radius: 8px; }
+.password button, .session button { align-self: flex-start; border: 1px solid #e9e9ec; border-radius: 8px; background: #fff; padding: 9px 14px; cursor: pointer; }
+.sessions { border-bottom: 0; }
+.session { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 14px; }
+.error { margin: 14px 20px 20px; padding: 12px; border-radius: 8px; color: #b42318; background: #fff0ef; }
