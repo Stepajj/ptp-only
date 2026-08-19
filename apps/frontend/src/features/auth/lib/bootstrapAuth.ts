@@ -1,7 +1,9 @@
 import { refresh, me } from '../api/auth.api';
 import { useAuthStore } from '../model/auth.store';
 
-export async function bootstrapAuth() {
+let bootstrapPromise: Promise<void> | null = null;
+
+async function performBootstrapAuth(): Promise<void> {
   const authStore = useAuthStore.getState();
 
   authStore.setLoading();
@@ -20,4 +22,16 @@ export async function bootstrapAuth() {
   } catch {
     authStore.clearSession();
   }
+}
+
+export function bootstrapAuth(): Promise<void> {
+  if (bootstrapPromise) {
+    return bootstrapPromise;
+  }
+
+  bootstrapPromise = performBootstrapAuth().finally(() => {
+    bootstrapPromise = null;
+  });
+
+  return bootstrapPromise;
 }

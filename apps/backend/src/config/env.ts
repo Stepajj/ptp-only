@@ -26,7 +26,7 @@ const envSchema = z
     REFRESH_COOKIE_NAME: z.string().min(1).default("op2p_refresh_token"),
     REFRESH_COOKIE_DOMAIN: z.string().optional(),
     REFRESH_COOKIE_SECURE: booleanStringSchema.optional(),
-    REFRESH_COOKIE_SAME_SITE: z.enum(["strict", "lax", "none"]).default("lax"),
+    REFRESH_COOKIE_SAME_SITE: z.enum(["strict", "lax", "none"]).optional(),
     BCRYPT_SALT_ROUNDS: z.coerce.number().int().min(10).max(14).default(12),
     AUTH_RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(900000),
     AUTH_RATE_LIMIT_MAX_REQUESTS: z.coerce.number().int().positive().default(20),

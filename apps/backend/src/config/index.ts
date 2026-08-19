@@ -42,7 +42,8 @@ export const config = {
       name: env.REFRESH_COOKIE_NAME,
       domain: env.REFRESH_COOKIE_DOMAIN?.trim() === "" ? undefined : env.REFRESH_COOKIE_DOMAIN,
       secure: env.REFRESH_COOKIE_SECURE ?? env.NODE_ENV === "production",
-      sameSite: env.REFRESH_COOKIE_SAME_SITE,
+      // Separate production frontend/backend origins require SameSite=None.
+      sameSite: env.REFRESH_COOKIE_SAME_SITE ?? (env.NODE_ENV === "production" ? "none" : "lax"),
     },
   },
   onlyP2P: {
