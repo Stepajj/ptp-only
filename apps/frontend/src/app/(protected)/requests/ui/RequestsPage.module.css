@@ -87,8 +87,8 @@
 }
 
 .emptyIcon {
-  width: 72px;
-  height: 72px;
+  width: 55px;
+  height: 55px;
   border-radius: 20px;
   background: rgba(245, 246, 248, 1);
   display: flex;
@@ -249,3 +249,38 @@
   cursor: default;
   opacity: 0.6;
 }
+
+.reqSteps{
+  display: flex;
+  gap: 10px;
+  margin-top: 25px;
+
+}
+
+.reqStep{
+ padding: 10px 15px;
+  border-radius: 40px;
+  background: rgba(244, 245, 247, 1);
+  border: 1px solid rgba(233, 233, 236, 1);
+  
+  display: flex;
+  gap:6px;
+ 
+}
+
+
+.reqStepContent{
+font-size: 14px;
+  font-weight: 500;
+ color: rgba(0, 0, 0, 0.6);
+
+}
+
+.reqStepCircle{
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+
+background: rgba(10, 193, 142, 1);
+}
+

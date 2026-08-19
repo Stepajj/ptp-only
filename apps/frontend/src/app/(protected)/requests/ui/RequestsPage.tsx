@@ -120,10 +120,30 @@ export function RequestsPage() {
               <path d="M19 11H5M19 11C20.1046 11 21 11.8954 21 13V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V13C3 11.8954 3.89543 11 5 11M19 11V7C19 5.89543 18.1046 5 17 5M5 11V7C5 5.89543 5.89543 5 7 5M7 5C7 3.89543 7.89543 3 9 3H15C16.1046 3 17 3.89543 17 5M7 5H17" stroke="#A0A0AB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <h3 className={styles.emptyTitle}>Нет активных заявок</h3>
+          <h3 className={styles.emptyTitle}>Пока нет заявок на приём</h3>
           <p className={styles.emptyDescription}>
-            В данный момент нет доступных заявок для обработки. Вы можете обновить список или вернуться позже.
+           Чтобы система начала подбирать вам входящие переводы, подключите реквизит — карту или СБП. Это один шаг до первой продажи.
           </p>
+          <div className={styles.reqSteps}>
+            <div className={styles.reqStep}>
+
+              <div className={styles.reqStepCircle}>1</div>
+              <div className={styles.reqStepContent}>Крипта залита</div>
+            </div>
+            <div className={styles.reqStepArrow}>- </div>
+            <div className={styles.reqStep}>
+
+              <div className={styles.reqStepCircle}>1</div>
+              <div className={styles.reqStepContent}>Крипта залита</div>
+            </div>
+            <div className={styles.reqStepArrow}>-</div>
+            <div className={styles.reqStep}>
+
+              <div className={styles.reqStepCircle}>1</div>
+              <div className={styles.reqStepContent}>Крипта залита</div>
+            </div>
+            <div className={styles.reqStepArrow}>-</div>
+          </div>
           <button type="button" className={styles.reloadButton} onClick={() => void loadRequests()}>
             Обновить список
           </button>
