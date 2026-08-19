@@ -1,6 +1,5 @@
 .page {
   box-sizing: border-box;
-
 }
 
 .toolbar {
@@ -14,7 +13,6 @@
   display: flex;
   align-items: center;
   gap: 4px;
-
   padding: 5px;
   border: 1px solid rgba(222, 222, 222, 1);
   border-radius: 12px;
@@ -23,7 +21,8 @@
 
 .tab,
 .historyButton,
-.confirmButton {
+.confirmButton,
+.reloadButton {
   border: 0;
   font-family: "Euclid Circular A", sans-serif;
   cursor: pointer;
@@ -37,6 +36,7 @@
   color: rgba(20, 20, 23, 0.55);
   font-size: 13px;
   font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .activeTab {
@@ -71,6 +71,64 @@
   color: #d92d20;
 }
 
+.emptyState {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 16px;
+  padding: 60px 20px;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid rgba(230, 230, 235, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.emptyIcon {
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  background: rgba(245, 246, 248, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.emptyTitle {
+  margin: 0 0 8px 0;
+  font-family: "Euclid Circular A", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(20, 20, 23, 1);
+}
+
+.emptyDescription {
+  margin: 0 0 24px 0;
+  max-width: 380px;
+  font-family: "Euclid Circular A", sans-serif;
+  font-size: 14px;
+  line-height: 140%;
+  color: rgba(20, 20, 23, 0.5);
+}
+
+.reloadButton {
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 10px;
+  background: rgba(20, 20, 23, 1);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  transition: opacity 0.2s ease;
+}
+
+.reloadButton:hover {
+  opacity: 0.9;
+}
+
 .list {
   display: flex;
   flex-direction: column;
@@ -81,11 +139,9 @@
 .item {
   min-height: 72px;
   box-sizing: border-box;
-
   display: flex;
   align-items: center;
   gap: 12px;
-
   padding: 14px;
   border-radius: 12px;
   background: #fff;
@@ -105,11 +161,9 @@
   width: 40px;
   height: 40px;
   flex: 0 0 auto;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 10px;
   background: rgba(245, 246, 248, 1);
   color: rgba(24, 173, 238, 1);
