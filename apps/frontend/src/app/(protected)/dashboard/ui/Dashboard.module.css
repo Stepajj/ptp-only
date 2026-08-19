@@ -18,3 +18,48 @@
   grid-template-rows: 350px;
   gap: 20px;
 }
+
+.title {
+  margin: 0;
+  padding: 0;
+
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 28px;
+  letter-spacing: 0;
+
+  color: rgba(0, 0, 0, 1);
+}
+
+.subtitle {
+  display: flex;
+  align-items: center;
+
+  margin: 10px 0 0;
+  padding: 0;
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: 0;
+
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.bold {
+  margin-left: 4px;
+
+  font-weight: 500;
+  color: rgba(0, 0, 0, 1);
+}
+
+.dot {
+  width: 4px;
+  height: 4px;
+  flex: 0 0 4px;
+
+  margin: 0 8px;
+
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+}

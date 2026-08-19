@@ -9,12 +9,13 @@ import RecentOrders from './recent-orders/RecentOrders';
 export default function Dashboard() {
   return (
     <section className={styles.dashboard}>
-      <h1 className={styles.title}>
-  Здравствуйте, пользователь 👋
-</h1>
+   <h1 className={styles.title}>
+      Здравствуйте, Артём 👋
+   </h1>
 
 <p className={styles.subtitle}>
-  <span className={styles.subtitleBold}>2 реквизита</span>
+  <span>Сегодня активны</span>
+  <span className={styles.bold}>2 реквизита</span>
   <span className={styles.dot} />
   <span>система подбирает переводы</span>
 </p>
