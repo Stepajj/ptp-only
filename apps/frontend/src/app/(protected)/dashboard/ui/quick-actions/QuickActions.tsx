@@ -1,13 +1,23 @@
+'use client'
+
 import Link from 'next/link';
 
 import Image from 'next/image';
-
+import { useEffect, useState } from 'react';
 import styles from './QuickActions.module.css';
-
+import { getIncomingRequests } from '@/features/requests/api/requests.api';
 import ArrowRightIcon from '../../assets/icons/rightArrow.svg';
 import PlusIcon from '../../assets/icons/ActionPlus.svg';
 import CreditCard from '../../assets/icons/credit-card.svg';
 import PinkArrows from '../../assets/icons/priority-arrows.svg';
+
+const [count, setCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    queueMicrotask(() => void getIncomingRequests().then((requests) => {
+      setCount(requests.filter((request) => request.status === 'waiting' || (request.status === 'cancelled' && request.awaitingProof)).length);
+    }).catch(() => setCount(null)));
+  }, []);
 
 const actions = [
   {
@@ -27,7 +37,7 @@ const actions = [
   {
     href: '#',
     title: 'Приём заявок',
-    description: '2 заявки ожидают подтверждения',
+    description: `${count} заявки ожидают подтверждения`,
     icon: <Image src={PinkArrows} alt="Pink Arrows" />,
     iconClassName: styles.ordersIcon,
   },
