@@ -42,8 +42,11 @@ export const config = {
       name: env.REFRESH_COOKIE_NAME,
       domain: env.REFRESH_COOKIE_DOMAIN?.trim() === "" ? undefined : env.REFRESH_COOKIE_DOMAIN,
       secure: env.REFRESH_COOKIE_SECURE ?? env.NODE_ENV === "production",
-      // Separate production frontend/backend origins require SameSite=None.
-      sameSite: env.REFRESH_COOKIE_SAME_SITE ?? (env.NODE_ENV === "production" ? "none" : "lax"),
+      // The deployed frontend is on Vercel and the API is on Railway. A lax
+      // cookie is not sent by cross-site fetch, so production must be None.
+      sameSite: env.NODE_ENV === "production"
+        ? "none"
+        : (env.REFRESH_COOKIE_SAME_SITE ?? "lax"),
     },
   },
   onlyP2P: {
