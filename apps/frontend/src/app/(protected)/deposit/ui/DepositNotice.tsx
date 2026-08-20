@@ -1,10 +1,13 @@
 import styles from "./DepositNotice.module.css";
+import Image from 'next/image';
+
+import Procent from '../../assets/icons/Procent.svg';
 
 export function DepositNotice() {
   return (
     <div className={styles.notice}>
       <div className={styles.icon} aria-hidden="true">
-        %
+        <Image src={Procent} alt=""/>
       </div>
 
       <div className={styles.content}>

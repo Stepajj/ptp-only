@@ -91,10 +91,11 @@
 }
 
 .emptyIcon {
-  width: 55px;
-  height: 55px;
-  border-radius: 20px;
-  background: rgba(245, 246, 248, 1);
+  width: 65px;
+  height: 65px;
+  border-radius: 10px;
+  background: rgba(244, 245, 247, 1);
+border: 1px solid rgba(233, 233, 236, 1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -265,7 +266,7 @@ color: #fff;
   display: flex;
   gap: 10px;
   margin-bottom: 15px;
-
+  align-items: center;
 }
 
 .reqStep{
