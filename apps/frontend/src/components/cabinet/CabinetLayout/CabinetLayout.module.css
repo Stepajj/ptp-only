@@ -19,5 +19,5 @@
 .contentWrapper{
     padding: 25px 30px;
     overflow: auto;
-    
+    height: 100%;
 }
