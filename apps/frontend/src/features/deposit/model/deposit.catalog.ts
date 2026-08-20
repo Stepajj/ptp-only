@@ -1,6 +1,8 @@
 import type { DepositMethod } from "./deposit.types";
 
 import Tether from '../../../app/(protected)/deposit/assets/icons/Tether.svg';
+import Bitcoin from '../../../app/(protected)/deposit/assets/icons/Bitcoin.svg';
+import Litecoin from '../../../app/(protected)/deposit/assets/icons/Litecoin.svg';
 
 export const depositMethods: DepositMethod[] = [
   {
