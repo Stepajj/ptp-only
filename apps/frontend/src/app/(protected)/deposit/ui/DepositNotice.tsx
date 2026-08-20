@@ -1,7 +1,7 @@
 import styles from "./DepositNotice.module.css";
 import Image from 'next/image';
 
-import Procent from '../../assets/icons/Procent.svg';
+import Procent from '../assets/icons/Procent.svg';
 
 export function DepositNotice() {
   return (
