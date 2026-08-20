@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 import type { DepositMethod } from "@/features/deposit/model/deposit.types";
 
@@ -18,7 +19,8 @@ export function DepositMethodCard({
       aria-label={`Пополнить через ${method.title}`}
     >
       <div className={`${styles.icon} ${styles[method.variant]}`}>
-        {method.icon}
+        <Image src={method.icon} alt=""  />
+        
       </div>
 
       <div className={styles.content}>

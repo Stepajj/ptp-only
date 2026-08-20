@@ -1,12 +1,14 @@
 import type { DepositMethod } from "./deposit.types";
 
+import Tether from '../../../app/(protected)/deposit/assets/icons/Tether.svg';
+
 export const depositMethods: DepositMethod[] = [
   {
     id: "usdt-trc20",
     apiMethod: "usdt",
     title: "USDT • TRC-20",
     details: ["Сеть Tron", "зачисление 1-3 мин"],
-    icon: "₮",
+    icon: Tether,
     variant: "usdt",
     href: "/deposit/usdt-trc20",
   },
