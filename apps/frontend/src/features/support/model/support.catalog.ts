@@ -1,11 +1,14 @@
 import type { SupportData } from './support.types';
 
+
+import Handshake from '../../../app/(protected)/support/assets/icons/handshake.svg';
+
 export const supportCatalog: SupportData = {
   topics: [
     { id: 'order', title: 'Проблема с заявкой', description: 'Перевод не пришёл, спор по сумме', icon: '⇄' },
     { id: 'requisites', title: 'Реквизиты и лимиты', description: 'Блокировки, привязка карты', icon: '▤' },
     { id: 'deposit', title: 'Пополнение', description: 'Не зачислилась крипта', icon: '+' },
-    { id: 'partnership', title: 'Партнёрство', description: 'White Label, API', icon: '⚒' },
+    { id: 'partnership', title: 'Партнёрство', description: 'White Label, API', icon: Handshake },
   ],
   faq: [
     { id: 'faq-1', question: 'Почему подтверждения даю я, а не плательщик?', answer: 'Деньги приходят на вашу карту — вы первым видите перевод. Это защищает от ложных заявок.' },
