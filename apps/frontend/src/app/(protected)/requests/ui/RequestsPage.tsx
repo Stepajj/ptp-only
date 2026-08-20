@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from 'next/image';
 import ArrowsIcon from "../assets/icons/EmptyArrows.svg";
-
+import GreenCirle from "../assets/icons/GreenCirle.svg";
+import StepsArrow from "../assets/icons/StepsArrow.svg";
 import Link from "next/link";
 
 import {
@@ -129,22 +130,22 @@ export function RequestsPage() {
           <div className={styles.reqSteps}>
             <div className={styles.reqStep}>
 
-              <div className={styles.reqStepCircle}>1</div>
+              <div className={styles.reqStepCircle}><Image alt="" src={GreenCirle} /></div>
               <div className={styles.reqStepContent}>Крипта залита</div>
             </div>
-            <div className={styles.reqStepArrow}>- </div>
+            <div className={styles.reqStepArrow}><Image alt="" src={StepsArrow} /> </div>
             <div className={`${styles.reqStep} ${styles.blueStep}`}>
 
-              <div className={styles.reqStepCircle}>2</div>
-              <div className={styles.reqStepContent}>Крипта залита</div>
+              <div className={`${styles.reqStepCircle} ${styles.blueCircle}`}>2</div>
+              <div className={styles.reqStepContent}>Подключить реквизиты</div>
             </div>
-            <div className={styles.reqStepArrow}>-</div>
+            <div className={styles.reqStepArrow}><Image alt="" src={StepsArrow} /></div>
             <div className={styles.reqStep}>
 
-              <div className={styles.reqStepCircle}>3</div>
-              <div className={styles.reqStepContent}>Крипта залита</div>
+              <div className={`${styles.reqStepCircle} ${styles.grayCircle}`}>3</div>
+              <div className={styles.reqStepContent}>Приём заявок</div>
             </div>
-            <div className={styles.reqStepArrow}>-</div>
+            
           </div>
           <button type="button" className={styles.reloadButton} onClick={() => void loadRequests()}>
             Обновить список
