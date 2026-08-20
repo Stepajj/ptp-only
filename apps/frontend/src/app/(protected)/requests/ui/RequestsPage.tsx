@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from 'next/image';
 import ArrowsIcon from "../assets/icons/EmptyArrows.svg";
-import GreenCirle from "../assets/icons/GreenCirle.svg";
+import GreenCircle from "../assets/icons/GreenCircle.svg";
 import StepsArrow from "../assets/icons/StepsArrow.svg";
 import Link from "next/link";
 
@@ -130,7 +130,7 @@ export function RequestsPage() {
           <div className={styles.reqSteps}>
             <div className={styles.reqStep}>
 
-              <div className={styles.reqStepCircle}><Image alt="" src={GreenCirle} /></div>
+              <div className={styles.reqStepCircle}><Image alt="" src={GreenCircle} /></div>
               <div className={styles.reqStepContent}>Крипта залита</div>
             </div>
             <div className={styles.reqStepArrow}><Image alt="" src={StepsArrow} /> </div>
