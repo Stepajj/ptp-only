@@ -8,7 +8,7 @@ export interface SupportTopic {
   id: SupportTopicId;
   title: string;
   description: string;
-  icon: string;
+  icon: string ;
 }
 
 export interface SupportFaqItem {

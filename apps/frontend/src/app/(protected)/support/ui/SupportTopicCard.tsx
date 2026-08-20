@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from 'next/image';
 
 import type { SupportTopic } from "@/features/support/model/support.types";
 
@@ -17,7 +18,8 @@ export function SupportTopicCard({
       className={styles.card}
     >
       <div className={styles.icon}>
-        {topic.icon}
+      <Image src={topic.icon} alt=""  />
+       
       </div>
 
       <div className={styles.content}>
