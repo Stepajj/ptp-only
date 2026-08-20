@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import ArrowsIcon from "@/assets/icons/EmptyArrows.svg";
 import Image from 'next/image';
+import ArrowsIcon from "../assets/icons/EmptyArrows.svg";
+
 import Link from "next/link";
 
 import {
@@ -140,7 +141,7 @@ export function RequestsPage() {
             <div className={styles.reqStepArrow}>-</div>
             <div className={styles.reqStep}>
 
-              <div className={styles.reqStepCircle}>1</div>
+              <div className={styles.reqStepCircle}>3</div>
               <div className={styles.reqStepContent}>Крипта залита</div>
             </div>
             <div className={styles.reqStepArrow}>-</div>
