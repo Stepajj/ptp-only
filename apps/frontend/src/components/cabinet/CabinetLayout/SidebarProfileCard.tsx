@@ -49,7 +49,7 @@ export function SidebarProfileCard() {
         type="button"
         aria-label="Настройки"
       >
-        ⚙️
+        <Image src={SettingsIcon} alt="" />
       </button>
     </div>
   );
