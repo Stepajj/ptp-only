@@ -2,8 +2,8 @@
 
 import { useAuthStore } from '@/features/auth/model/auth.store';
 import Image from 'next/image';
-import SettingsIcon from "./icons/settings.svg"
-
+import { useRouter } from 'next/navigation';
+import SettingsIcon from './icons/settings.svg';
 import styles from './SidebarProfileCard.module.css';
 
 function getInitials(name?: string) {
@@ -20,8 +20,16 @@ function getInitials(name?: string) {
 
 export function SidebarProfileCard() {
   const user = useAuthStore((state) => state.user);
-  const username = user?.displayName ?? user?.identifier ?? 'Пользователь';
+  const router = useRouter();
+
+  const username =
+    user?.displayName ?? user?.identifier ?? 'Пользователь';
+
   const shortId = user?.id ? user.id.slice(0, 8) : '—';
+
+  const handleSettingsClick = () => {
+    router.push('/profile');
+  };
 
   return (
     <div className={styles.card}>
@@ -29,8 +37,13 @@ export function SidebarProfileCard() {
         <div className={styles.avatar}>
           {user?.avatarUrl || user?.telegramPhotoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={user.avatarUrl ?? user.telegramPhotoUrl ?? ''} alt="Аватар пользователя" />
-          ) : getInitials(username)}
+            <img
+              src={user.avatarUrl ?? user.telegramPhotoUrl ?? ''}
+              alt="Аватар пользователя"
+            />
+          ) : (
+            getInitials(username)
+          )}
         </div>
 
         <div className={styles.info}>
@@ -48,8 +61,12 @@ export function SidebarProfileCard() {
         className={styles.settings}
         type="button"
         aria-label="Настройки"
+        onClick={handleSettingsClick}
       >
-        <Image src={SettingsIcon} alt="" />
+        <Image
+          src={SettingsIcon}
+          alt=""
+        />
       </button>
     </div>
   );
