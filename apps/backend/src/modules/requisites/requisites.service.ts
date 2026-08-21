@@ -32,7 +32,19 @@ export async function createRequisite(userId: string, input: CreateRequisiteDto)
     ...(input.exactAmountOnly !== undefined ? { exactAmountOnly: input.exactAmountOnly } : {}),
   };
   if (Object.keys(settings).length > 0) {
-    await editOnlyP2PRequisite(externalUserId, requisiteId, settings);
+    try {
+      await editOnlyP2PRequisite(externalUserId, requisiteId, settings);
+    } catch (error) {
+      // The partner creates the requisite before applying optional settings.
+      // Remove it on failure so the frontend cannot report a failed create while
+      // leaving an unconfigured external requisite behind.
+      try {
+        await deleteOnlyP2PRequisite(externalUserId, requisiteId);
+      } catch {
+        // Preserve the original, actionable partner validation error.
+      }
+      throw error;
+    }
   }
   return { success: true as const, data: { requisiteId } };
 }

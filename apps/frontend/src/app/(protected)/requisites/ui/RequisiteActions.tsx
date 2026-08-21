@@ -6,6 +6,10 @@ import { editRequisite, deleteRequisite } from '@/features/requisites/api/requis
 
 import styles from './RequisiteActions.module.css';
 
+function getErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error && error.message.trim() ? error.message : fallback;
+}
+
 type RequisiteActionsProps = {
   requisiteId: string;
   isActive: boolean;
@@ -29,7 +33,7 @@ export default function RequisiteActions({
       onStatusChange?.(newStatus === 'on');
     } catch (error) {
       console.error('Failed to toggle requisite:', error);
-      alert('Не удалось изменить статус реквизита');
+      alert(getErrorMessage(error, 'Не удалось изменить статус реквизита'));
     } finally {
       setLoading(false);
     }
@@ -46,7 +50,7 @@ export default function RequisiteActions({
       window.location.reload();
     } catch (error) {
       console.error('Failed to delete requisite:', error);
-      alert('Не удалось удалить реквизит');
+      alert(getErrorMessage(error, 'Не удалось удалить реквизит'));
     } finally {
       setLoading(false);
     }

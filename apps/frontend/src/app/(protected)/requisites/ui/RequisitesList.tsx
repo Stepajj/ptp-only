@@ -53,7 +53,7 @@ export default function RequisitesList() {
   }
 
   if (error) {
-    return <RequisitesError onRetry={() => window.location.reload()} />;
+    return <RequisitesError onRetry={() => window.location.reload()} message={error} />;
   }
 
   if (requisites.length === 0) {

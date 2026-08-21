@@ -129,7 +129,11 @@ export default function AddRequisiteForm() {
   };
 
   const formatPhoneNumber = (value: string) => {
-    const cleaned = value.replace(/\D/g, '');
+    let cleaned = value.replace(/\D/g, '');
+    if (cleaned.startsWith('7') || cleaned.startsWith('8')) {
+      cleaned = cleaned.slice(1);
+    }
+    cleaned = cleaned.slice(0, 10);
     if (cleaned.length === 0) return '';
     if (cleaned.length <= 3) return `+7 ${cleaned}`;
     if (cleaned.length <= 6) return `+7 ${cleaned.slice(0, 3)} ${cleaned.slice(3)}`;
