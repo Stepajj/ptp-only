@@ -25,7 +25,10 @@ export function SidebarProfileCard() {
     <div className={styles.card}>
       <div className={styles.left}>
         <div className={styles.avatar}>
-          {getInitials(username)}
+          {user?.avatarUrl || user?.telegramPhotoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={user.avatarUrl ?? user.telegramPhotoUrl ?? ''} alt="Аватар пользователя" />
+          ) : getInitials(username)}
         </div>
 
         <div className={styles.info}>

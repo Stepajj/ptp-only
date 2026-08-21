@@ -1,0 +1,39 @@
+@keyframes cabinet-page-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 700px) {
+  [class*="_page_"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    box-sizing: border-box;
+    animation: cabinet-page-enter 280ms ease-out both;
+  }
+
+  [class*="_toolbar_"], [class*="_header_"], [class*="_actions_"] {
+    max-width: 100%;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  [class*="_tabs_"] { width: 100%; overflow-x: auto; white-space: nowrap; }
+  [class*="_grid_"] { grid-template-columns: 1fr !important; }
+  [class*="_card_"], [class*="_container_"], [class*="_notice_"], [class*="_invoiceForm_"], [class*="_summary_"], [class*="_emptyState_"] { width: 100% !important; max-width: 100% !important; min-width: 0; box-sizing: border-box; }
+  [class*="_list_"] { width: 100%; min-width: 0; }
+  [class*="_item_"] { min-width: 0; max-width: 100%; }
+  [class*="_amountInput_"], [class*="_input_"], [class*="_select_"] { max-width: 100%; }
+  [class*="_qrWrapper_"], [class*="_qr_"], [class*="_addressField_"] { max-width: 100%; }
+  [class*="_backLink_"] { margin-bottom: 12px; }
+  [class*="_emptyTitle_"] { font-size: 20px; line-height: 1.25; }
+  [class*="_heroTitle_"] { font-size: 22px; line-height: 1.2; }
+  [class*="_heroDescription_"], [class*="_description_"] { line-height: 1.35; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [class*="_page_"] { animation: none; }
+}
