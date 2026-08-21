@@ -4,7 +4,7 @@
 }
 
 @media (max-width: 700px) {
-  [class*="_page_"] {
+  [class*="__page"] {
     width: 100% !important;
     max-width: 100% !important;
     min-width: 0 !important;
@@ -15,25 +15,94 @@
     animation: cabinet-page-enter 280ms ease-out both;
   }
 
-  [class*="_toolbar_"], [class*="_header_"], [class*="_actions_"] {
+  [class*="__toolbar"], [class*="__header"], [class*="__actions"] {
     max-width: 100%;
     flex-wrap: wrap;
     gap: 10px;
   }
 
-  [class*="_tabs_"] { width: 100%; overflow-x: auto; white-space: nowrap; }
-  [class*="_grid_"] { grid-template-columns: 1fr !important; }
-  [class*="_card_"], [class*="_container_"], [class*="_notice_"], [class*="_invoiceForm_"], [class*="_summary_"], [class*="_emptyState_"] { width: 100% !important; max-width: 100% !important; min-width: 0; box-sizing: border-box; }
-  [class*="_list_"] { width: 100%; min-width: 0; }
-  [class*="_item_"] { min-width: 0; max-width: 100%; }
-  [class*="_amountInput_"], [class*="_input_"], [class*="_select_"] { max-width: 100%; }
-  [class*="_qrWrapper_"], [class*="_qr_"], [class*="_addressField_"] { max-width: 100%; }
-  [class*="_backLink_"] { margin-bottom: 12px; }
-  [class*="_emptyTitle_"] { font-size: 20px; line-height: 1.25; }
-  [class*="_heroTitle_"] { font-size: 22px; line-height: 1.2; }
-  [class*="_heroDescription_"], [class*="_description_"] { line-height: 1.35; }
+  [class*="__tabs"] { width: 100%; overflow-x: auto; white-space: nowrap; }
+  [class*="__grid"] { grid-template-columns: 1fr !important; }
+  [class*="__card"], [class*="__container"], [class*="__notice"], [class*="__invoiceForm"], [class*="__summary"], [class*="__emptyState"] { width: 100% !important; max-width: 100% !important; min-width: 0; box-sizing: border-box; }
+  [class*="__list"] { width: 100%; min-width: 0; }
+  [class*="__item"] { min-width: 0; max-width: 100%; }
+  [class*="__amountInput"], [class*="__input"], [class*="__select"] { max-width: 100%; }
+  [class*="__qrWrapper"], [class*="__qr"], [class*="__addressField"] { max-width: 100%; }
+  [class*="__backLink"] { margin-bottom: 12px; }
+  [class*="__emptyTitle"] { font-size: 20px; line-height: 1.25; }
+  [class*="__heroTitle"] { font-size: 22px; line-height: 1.2; }
+  [class*="__heroDescription"], [class*="__description"] { line-height: 1.35; }
+
+  /* Deposit */
+  [class*="DepositMethods-module"][class*="__grid"], [class*="DepositPage-module"][class*="__page"] { display: block !important; }
+  [class*="DepositMethodCard-module"][class*="__card"] { display: flex !important; min-height: 70px; margin-bottom: 10px; padding: 14px !important; border-radius: 12px !important; }
+  [class*="DepositMethodCard-module"][class*="__title"] { font-size: 15px !important; }
+  [class*="DepositMethodCard-module"][class*="__details"] { font-size: 12px !important; white-space: normal !important; }
+  [class*="DepositNotice-module"][class*="__notice"] { display: flex !important; padding: 12px !important; margin-bottom: 12px; }
+  [class*="DepositAddressCard-module"][class*="__card"] { padding: 14px !important; border-radius: 14px !important; }
+  [class*="DepositAddressCard-module"][class*="__qrWrapper"] { width: min(220px, 70vw) !important; height: auto !important; aspect-ratio: 1; margin: 0 auto 12px !important; }
+  [class*="DepositAddressCard-module"][class*="__qr"] { width: 100% !important; height: 100% !important; }
+  [class*="DepositAddressCard-module"][class*="__addressField"] { display: grid !important; grid-template-columns: 1fr auto; gap: 8px; padding: 10px !important; }
+  [class*="DepositAddressCard-module"][class*="__addressValue"] { overflow-wrap: anywhere; font-size: 12px !important; }
+  [class*="DepositCryptoPage-module"][class*="__invoiceForm"] { width: 100% !important; padding: 16px !important; }
+
+  /* Requests and request details */
+  [class*="RequestsPage-module"][class*="__toolbar"] { display: block !important; }
+  [class*="RequestsPage-module"][class*="__tabs"] { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px !important; }
+  [class*="RequestsPage-module"][class*="__tab"] { min-width: 0; height: 42px !important; padding: 0 4px !important; font-size: 11px !important; }
+  [class*="RequestsPage-module"][class*="__historyButton"] { width: auto; height: 42px !important; margin-top: 10px; padding: 0 16px !important; }
+  [class*="RequestsPage-module"][class*="__emptyState"] { min-height: 470px; margin-top: 12px; padding: 28px 16px !important; }
+  [class*="RequestsPage-module"][class*="__emptyDescription"] { max-width: 300px !important; font-size: 14px !important; }
+  [class*="RequestsPage-module"][class*="__item"] { display: grid !important; grid-template-columns: 40px 1fr auto; align-items: start !important; gap: 8px !important; padding: 12px !important; }
+  [class*="RequestsPage-module"][class*="__itemLink"] { display: contents !important; }
+  [class*="RequestsPage-module"][class*="__content"] { grid-column: 2; margin: 0 !important; }
+  [class*="RequestsPage-module"][class*="__actions"] { grid-column: 2 / -1; justify-content: flex-start !important; }
+  [class*="RequestsPage-module"][class*="__status"] { margin: 0 !important; }
+  [class*="RequestDetailsPage-module"][class*="__card"], [class*="RequestDetailsPage-module"][class*="__container"] { padding: 14px !important; }
+
+  /* Requisites */
+  [class*="RequisitesHeader-module"][class*="__container"] { display: flex !important; align-items: flex-start; flex-direction: column; gap: 10px; }
+  [class*="RequisitesHeader-module"][class*="__addButton"] { width: 100%; height: 42px !important; }
+  [class*="RequisitesNotice-module"][class*="__container"] { display: flex !important; padding: 12px !important; }
+  [class*="RequisiteCard-module"][class*="__card"] { padding: 12px !important; border-radius: 13px !important; }
+  [class*="RequisiteCard-module"][class*="__main"] { gap: 10px !important; }
+  [class*="RequisiteCard-module"][class*="__title"] { font-size: 14px !important; }
+  [class*="RequisiteCard-module"][class*="__description"] { font-size: 12px !important; }
+  [class*="RequisiteActions-module"][class*="__container"] { flex-wrap: wrap; }
+  [class*="RequisiteSettings-module"][class*="__card"], [class*="AddRequisiteForm-module"][class*="__card"] { width: 100% !important; padding: 14px !important; }
+  [class*="AddRequisiteForm-module"][class*="__typeButtons"] { grid-template-columns: 1fr 1fr !important; }
+  [class*="AddRequisiteForm-module"][class*="__limits"] { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+  [class*="AddRequisiteForm-module"][class*="__actions"] { display: grid !important; grid-template-columns: 1fr 1fr; }
+  [class*="RequisiteSettings-module"][class*="__actions"] { display: grid !important; grid-template-columns: 1fr 1fr; }
+
+  /* History */
+  [class*="HistorySummary-module"][class*="__summary"] { display: grid !important; grid-template-columns: 1fr !important; gap: 10px !important; }
+  [class*="HistoryFilters-module"][class*="__filters"] { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px !important; }
+  [class*="HistoryFilters-module"][class*="__select"] { width: 100% !important; min-width: 0 !important; }
+  [class*="HistoryItem-module"][class*="__item"] { display: grid !important; grid-template-columns: 40px 1fr; gap: 10px !important; padding: 12px !important; }
+  [class*="HistoryItem-module"][class*="__item"] > span:last-child { grid-column: 2; justify-self: start; }
+
+  /* Partnership, support, profile and security */
+  [class*="PartnershipPage-module"][class*="__infoGrid"], [class*="SupportTopics-module"][class*="__grid"] { grid-template-columns: 1fr !important; }
+  [class*="PartnershipPage-module"][class*="__hero"] { padding: 18px !important; }
+  [class*="PartnershipPage-module"][class*="__actions"] { display: grid !important; grid-template-columns: 1fr; }
+  [class*="SupportPage-module"][class*="__columns"] { display: block !important; }
+  [class*="SupportPage-module"][class*="__leftColumn"] { width: 100% !important; }
+  [class*="SupportActions-module"][class*="__actions"] { display: grid !important; grid-template-columns: 1fr; }
+  [class*="SupportActions-module"][class*="__button"] { width: 100% !important; }
+  [class*="SupportFaq-module"][class*="__card"], [class*="SupportNotice-module"][class*="__notice"] { margin-top: 12px; }
+  [class*="SupportChatPage-module"][class*="__chat"] { min-height: calc(100vh - 180px) !important; }
+  [class*="SupportChatMessages-module"][class*="__messages"] { min-height: 260px !important; max-height: calc(100vh - 360px); }
+  [class*="SupportChatInput-module"][class*="__footer"] { padding: 10px !important; }
+  [class*="ProfilePage-module"][class*="__profileCard"], [class*="ProfilePage-module"][class*="__securityCard"] { padding: 14px !important; }
+  [class*="ProfilePage-module"][class*="__profileTop"] { align-items: flex-start !important; }
+  [class*="ProfilePage-module"][class*="__fieldsRow"] { display: block !important; }
+  [class*="ProfilePage-module"][class*="__field"] { width: 100% !important; margin-bottom: 12px; }
+  [class*="ProfilePage-module"][class*="__saveButton"] { width: 100% !important; }
+  [class*="SecurityPage-module"][class*="__card"] { width: 100% !important; margin-top: 12px; }
+  [class*="SecurityPage-module"][class*="__row"], [class*="SecurityPage-module"][class*="__session"] { align-items: flex-start !important; padding: 14px !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [class*="_page_"] { animation: none; }
+  [class*="__page"] { animation: none; }
 }

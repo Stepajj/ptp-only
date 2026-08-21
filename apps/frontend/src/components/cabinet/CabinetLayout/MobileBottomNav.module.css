@@ -1,9 +1,16 @@
 .nav { display: none; }
 @media (max-width: 700px) {
-    .nav { position: fixed; right: 0; bottom: 0; left: 0; z-index: 20; display: block; overflow-x: auto; background: rgba(20, 20, 23, 1); padding: 5px; }
-    .items { display: flex; min-width: max-content; gap: 5px; }
-    .item { display: flex; flex: 0 0 96px; align-items: center; justify-content: center; width: 96px; height: 75px; gap: 10px; border: 1px solid transparent; color: rgba(255, 255, 255, 0.55); font-size: 12px; text-decoration: none; flex-direction: column; }
+    .backdrop { position: fixed; inset: 0; z-index: 18; border: 0; background: rgba(0,0,0,.35); }
+    .nav { position: fixed; right: 0; bottom: 0; left: 0; z-index: 20; display: block; background: rgba(20, 20, 23, 1); padding: 5px; }
+    .items { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
+    .item { display: flex; min-width: 0; align-items: center; justify-content: center; height: 75px; gap: 10px; border: 1px solid transparent; color: rgba(255, 255, 255, 0.55); font-size: 12px; text-decoration: none; flex-direction: column; background: transparent; }
     .active { border-color: rgba(24, 173, 238, 0.45); background: linear-gradient(360deg, rgba(24, 173, 238, 0.08) 0%, rgba(24, 173, 238, 0) 100%); color: #fff; }
     .icon { width: 21px; height: 21px; color: currentColor; }
     .active .icon { color: rgba(24, 173, 238, 1); }
+    .menuGlyph { display: flex; width: 21px; height: 21px; flex-direction: column; justify-content: center; gap: 4px; }
+    .menuGlyph i { display: block; width: 21px; height: 2px; border-radius: 2px; background: currentColor; }
+    .menuPanel { position: fixed; right: 10px; bottom: 90px; left: 10px; z-index: 21; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 12px; border: 1px solid rgba(255,255,255,.08); border-radius: 16px; background: rgba(20,20,23,.98); box-shadow: 0 12px 40px rgba(0,0,0,.28); }
+    .menuLink { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 10px; border-radius: 10px; color: rgba(255,255,255,.65); font-size: 13px; text-decoration: none; }
+    .menuLinkActive { color: #fff; background: rgba(24,173,238,.12); }
+    .menuIcon { width: 20px; height: 20px; color: rgba(24,173,238,1); }
 }
