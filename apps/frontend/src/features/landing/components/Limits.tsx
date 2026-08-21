@@ -14,24 +14,24 @@ import { SectionHeader } from "./SectionHeader";
 
 const cards = [
   {
-    label: "Баланс",
-    value: "OnlyP2P",
-    text: "данные загружаются из внешнего сервиса",
+    label: "Начисляем  ",
+    value: "+7%",
+    text: "При пополнении баланса",
   },
   {
     label: "Мин. сумма заявки",
-    value: "API",
-    text: "значение задаётся правилами OnlyP2P",
+    value: "1 000₽",
+    text: "нижний порог",
   },
   {
     label: "Макс. сумма заявки",
-    value: "API",
-    text: "значение задаётся правилами OnlyP2P",
+    value: "500 000₽",
+    text: "на одну заявку",
   },
   {
-    label: "Поддержка",
-    value: "Pull",
-    text: "сообщения получаются через опрос API",
+    label: "Лимит в сутки",
+    value: "100 000₽",
+    text: "на один реквизит",
   },
 ];
 
@@ -45,7 +45,7 @@ export function Limits() {
               <>
                 Прозрачные условия,
                 <br />
-                никаких скрытых комиссий
+                без скрытых комиссий
               </>
             </SectionHeader>
           </StaggerItem>

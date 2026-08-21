@@ -63,14 +63,14 @@ letter-spacing: -0.4px;
     .aboveTitle {
         padding: 5px 6px;
         border-radius: 6px;
-        font-size: 8px;
+        font-size: 14px;
         letter-spacing: 0;
     }
 
     .title {
         max-width: 275px;
         margin-top: 12px;
-        font-size: 20px;
+        font-size: 22px;
         line-height: 1.08;
         letter-spacing: 0;
     }
@@ -78,7 +78,7 @@ letter-spacing: -0.4px;
     .right p {
         max-width: none;
         margin-top: 30px;
-        font-size: 9px;
+        font-size: 14px;
         line-height: 1.55;
         letter-spacing: 0;
     }
