@@ -326,3 +326,20 @@ border: 1px solid rgba(16, 174, 239, 1)
 
   color: rgba(98, 98, 99, 1);
 }
+
+@media (max-width: 700px) {
+  .page { height: auto; min-height: 0; padding-top: 0; }
+  .emptyState { flex: 0 0 auto; min-height: calc(100dvh - 62px - 85px - 170px); margin-top: 12px; padding: 28px 16px; }
+  .emptyIcon { width: 52px; height: 52px; margin-bottom: 12px; }
+  .emptyTitle { font-size: 20px; line-height: 1.25; }
+  .emptyDescription { max-width: 300px; margin-bottom: 18px; font-size: 14px; line-height: 1.45; }
+  .reqSteps { flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .reqStep { padding: 8px 12px; }
+  .reqStepContent { font-size: 13px; }
+  .reqStepArrow { height: 14px; }
+  .reloadButton { height: 42px; padding: 0 20px; font-size: 14px; }
+  .list { margin-top: 12px; }
+  .item { grid-template-columns: 40px minmax(0, 1fr); }
+  .actions { grid-column: 2 / -1; display: grid; grid-template-columns: auto 1fr; justify-content: start; }
+  .amountInput { width: 100%; }
+}

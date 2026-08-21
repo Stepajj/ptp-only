@@ -61,7 +61,6 @@ export function CabinetHeader() {
       </div>
       </div>
 
-      <div className={styles.mobileTitle}>{getPageHeader(pathname).title}</div>
       <div className={styles.mobileContent}>
         <Link href="/dashboard" className={styles.mobileLogo} aria-label="Кабинет">
           <Image src={logo} alt="ONLYP2P" width={103} height={27} priority />

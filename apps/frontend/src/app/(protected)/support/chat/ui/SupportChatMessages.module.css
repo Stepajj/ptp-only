@@ -35,3 +35,8 @@
   font-weight: 400;
   line-height: 20px;
 }
+
+@media (max-width: 700px) {
+  .messages { gap: 10px; padding: 14px 12px; overscroll-behavior: contain; }
+  .state { padding: 16px; text-align: center; }
+}

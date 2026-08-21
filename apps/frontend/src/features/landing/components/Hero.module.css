@@ -73,16 +73,17 @@ vertical-align: middle;
 
 
 
-.actions :last-child {
-    color: rgba(3, 6, 29, 1);  
-    border: 1px solid rgba(3, 6, 29, 0.1);
-    background: transparent;
-    font-weight: 500;
-}
-.actions :first-child {
+.actions > .actionLink:first-child button {
   background: linear-gradient(90deg, #18ADEE 0%, #FA90D9 100%);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 0;
   color: rgba(255, 255, 255, 1);
+}
+
+.actions > .actionLink:last-child button {
+  color: rgba(3, 6, 29, 1);
+  border: 1px solid rgba(3, 6, 29, 0.1);
+  background: #fff;
+  font-weight: 500;
 }
 
 .title{
