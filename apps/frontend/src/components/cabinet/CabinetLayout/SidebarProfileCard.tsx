@@ -1,6 +1,8 @@
 'use client';
 
 import { useAuthStore } from '@/features/auth/model/auth.store';
+import Image from 'next/image';
+import SettingsIcon from "./icons/settings.svg"
 
 import styles from './SidebarProfileCard.module.css';
 
