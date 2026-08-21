@@ -72,7 +72,8 @@
     line-height: 22px;
     font-weight: 400;
 
-    color: rgba(255,255,255,.8);
+    color: rgba(255,255,255);
+    opacity: 80%;
 }
 
 @media (max-width: 1024px) {

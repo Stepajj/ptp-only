@@ -195,7 +195,7 @@
     }
 
     .infoTitle {
-        font-size: 9px;
+        font-size: 14px;
     }
 
     .percent {
@@ -206,7 +206,7 @@
 
     .infoText {
         margin-top: 5px;
-        font-size: 8px;
+        font-size: 14px;
         line-height: 1.45;
         letter-spacing: 0;
     }
@@ -220,18 +220,18 @@
     }
 
     .card {
-        gap: 5px;
-        padding: 10px;
+        gap: 10px;
+        padding: 20px;
     }
 
     .cardLabel,
     .cardText {
-        font-size: 8px;
+        font-size: 14px;
         line-height: 1.35;
     }
 
     .cardValue {
-        font-size: 14px;
+        font-size: 22px;
     }
 
     .partnerBanner {

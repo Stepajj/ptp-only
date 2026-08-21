@@ -55,7 +55,7 @@ export function Limits() {
               <div className={styles.info}>
                 <h3 className={styles.infoTitle}>ВАША ВЫГОДА</h3>
 
-                <div className={styles.percent}>OnlyP2P</div>
+                <div className={styles.percent}>+7%</div>
 
                 <p className={styles.infoText}>
                   Баланс, пополнение, реквизиты и заявки

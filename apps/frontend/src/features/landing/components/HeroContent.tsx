@@ -29,12 +29,11 @@ export function HeroContent() {
       </motion.div>
 
       <motion.h1 className={styles.title} {...fadeUpInView(1 * staggerDelay)}>
-        Сервис работы с криптовалютой <br /> через инфраструктуру OnlyP2P
+         Cервис по продаже криптовалюты <br />с доплатой  <span>+7%</span> к курсу 
       </motion.h1>
 
       <motion.p className={styles.subtitle} {...fadeUpInView(2 * staggerDelay)}>
-        Пополнение, реквизиты, входящие заявки и поддержка доступны в одном
-        кабинете через backend-интеграцию с OnlyP2P.
+        Продавай USDT, BTC и LTC в один клик. Автоматический мэтчинг покупателей, честный курс и прозрачные параметры.
       </motion.p>
 
       <motion.div
@@ -50,7 +49,7 @@ export function HeroContent() {
       </motion.div>
 
       <motion.p className={styles.note} {...fadeUpInView(4 * staggerDelay)}>
-        Фактические лимиты и способы пополнения загружаются из OnlyP2P.
+        Мин. 1 000 ₽ · Макс. 50 000 ₽ · Минимум пополнения — эквивалент 10 USDT
       </motion.p>
 
       <motion.div {...fadeUpInView(heroImageDelay)}>
