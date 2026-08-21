@@ -1,6 +1,5 @@
 import { Container } from "@/components/Container/Container";
 import { AnimatedCard } from "@/components/motion/AnimatedCard";
-import { MotionButton } from "@/components/motion/MotionButton";
 import Image from "next/image";
 import Arrow from "@/assets/images/arrow.svg";
 import {
@@ -15,30 +14,30 @@ import { SectionHeader } from "./SectionHeader";
 
 const cards = [
   {
-    label: "Комиссия сети",
-    value: "200₽",
-    text: "при зачислении на карту",
+    label: "Баланс",
+    value: "OnlyP2P",
+    text: "данные загружаются из внешнего сервиса",
   },
   {
     label: "Мин. сумма заявки",
-    value: "1 000₽",
-    text: "нижний порог",
+    value: "API",
+    text: "значение задаётся правилами OnlyP2P",
   },
   {
     label: "Макс. сумма заявки",
-    value: "50 000₽",
-    text: "на одну заявку",
+    value: "API",
+    text: "значение задаётся правилами OnlyP2P",
   },
   {
-    label: "Лимит в сутки",
-    value: "100 000₽",
-    text: "на один реквизит",
+    label: "Поддержка",
+    value: "Pull",
+    text: "сообщения получаются через опрос API",
   },
 ];
 
 export function Limits() {
   return (
-    <section className={styles.limits}>
+    <section id="limits" className={styles.limits}>
       <Container>
         <StaggerContainer variant="section">
           <StaggerItem>
@@ -56,12 +55,12 @@ export function Limits() {
               <div className={styles.info}>
                 <h3 className={styles.infoTitle}>ВАША ВЫГОДА</h3>
 
-                <div className={styles.percent}>+7%</div>
+                <div className={styles.percent}>OnlyP2P</div>
 
                 <p className={styles.infoText}>
-                  к биржевому курсу при пополнении — ваша
+                  Баланс, пополнение, реквизиты и заявки
                   <br />
-                  выгода на каждой продаже крипты.
+                  работают через официальный API сервиса.
                 </p>
               </div>
 
@@ -98,9 +97,9 @@ export function Limits() {
                 </p>
               </div>
 
-              <MotionButton type="button" className={styles.partnerButton}>
-                Узнать про партнёрство  <Image alt="Arrow icon" style={{}} src={Arrow}/>
-              </MotionButton>
+              <a href="https://t.me/O_onlypays" target="_blank" rel="noreferrer" className={styles.partnerButton}>
+                Узнать про партнёрство <Image alt="Arrow icon" src={Arrow}/>
+              </a>
             </div>
           </StaggerItem>
         </StaggerContainer>

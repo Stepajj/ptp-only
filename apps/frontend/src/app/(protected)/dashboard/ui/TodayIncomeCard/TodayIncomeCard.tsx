@@ -35,7 +35,7 @@ export default function TodayIncomeCard() {
         Принято сегодня
       </p>
 
-      <span className={styles.profitGreen}>{count === null ? '—' : `${count} ${count === 1 ? 'заявка' : 'заявок'}`} <span className={styles.dot}></span> профит не передаётся API</span>
+      <span className={styles.profitGreen}>{count === null ? '—' : `${count} ${count === 1 ? 'заявка' : 'заявок'} завершено сегодня`}</span>
     </article>
   );
 }

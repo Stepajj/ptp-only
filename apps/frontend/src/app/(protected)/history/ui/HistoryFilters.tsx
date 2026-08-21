@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 import type {
   HistoryPeriod,
   HistoryStatus,
@@ -9,26 +7,29 @@ import type {
 
 import styles from "./HistoryFilters.module.css";
 
-export function HistoryFilters() {
-  const [period, setPeriod] =
-    useState<HistoryPeriod>("7d");
+interface HistoryFiltersProps {
+  period: HistoryPeriod;
+  requisite: string;
+  status: HistoryStatus | "all";
+  onPeriodChange: (value: HistoryPeriod) => void;
+  onRequisiteChange: (value: string) => void;
+  onStatusChange: (value: HistoryStatus | "all") => void;
+}
 
-  const [requisite, setRequisite] =
-    useState("all");
-
-  const [status, setStatus] =
-    useState<HistoryStatus | "all">("completed");
+export function HistoryFilters({
+  period,
+  requisite,
+  status,
+  onPeriodChange,
+  onRequisiteChange,
+  onStatusChange,
+}: HistoryFiltersProps) {
 
   return (
     <div className={styles.filters}>
       <select
         value={period}
-        onChange={(event) =>
-          setPeriod(
-            event.target
-              .value as HistoryPeriod,
-          )
-        }
+        onChange={(event) => onPeriodChange(event.target.value as HistoryPeriod)}
         className={styles.select}
       >
         <option value="1d">
@@ -50,9 +51,7 @@ export function HistoryFilters() {
 
       <select
         value={requisite}
-        onChange={(event) =>
-          setRequisite(event.target.value)
-        }
+        onChange={(event) => onRequisiteChange(event.target.value)}
         className={styles.select}
       >
         <option value="all">
@@ -66,13 +65,7 @@ export function HistoryFilters() {
 
       <select
         value={status}
-        onChange={(event) =>
-          setStatus(
-            event.target.value as
-              | HistoryStatus
-              | "all",
-          )
-        }
+        onChange={(event) => onStatusChange(event.target.value as HistoryStatus | "all")}
         className={styles.select}
       >
         <option value="all">

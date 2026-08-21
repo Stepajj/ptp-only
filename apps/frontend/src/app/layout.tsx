@@ -4,8 +4,19 @@ import './globals.css';
 import { AuthProvider } from '@/features/auth/providers/AuthProvider';
 
 export const metadata: Metadata = {
-  title: 'ONLYp2p White Label',
-  description: 'White-label fintech service for Only P2P users',
+  metadataBase: new URL('https://ptp-only.vercel.app'),
+  title: {
+    default: 'ONLYp2p',
+    template: '%s | ONLYp2p',
+  },
+  description: 'Сервис работы с криптовалютой через инфраструктуру OnlyP2P.',
+  openGraph: {
+    title: 'ONLYp2p',
+    description: 'Сервис работы с криптовалютой через инфраструктуру OnlyP2P.',
+    type: 'website',
+    url: 'https://ptp-only.vercel.app',
+    locale: 'ru_RU',
+  },
 };
 
 export default function RootLayout({

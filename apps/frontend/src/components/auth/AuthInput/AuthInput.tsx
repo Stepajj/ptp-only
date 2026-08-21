@@ -24,7 +24,7 @@ export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
             .join(' ')}
         />
 
-        {error && <span className={styles.errorText}>{error}</span>}
+        {error && <span id={props.id ? `${props.id}-error` : undefined} role="alert" className={styles.errorText}>{error}</span>}
       </div>
     );
   },

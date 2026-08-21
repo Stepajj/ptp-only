@@ -71,23 +71,18 @@ export function LoginForm() {
       <h1 className={styles.title}>С возвращением</h1>
 
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)} noValidate>
-        <AuthInput
-          placeholder="Email"
-          type="email"
-          autoComplete="email"
-          {...register("identifier")}
-          error={errors.identifier?.message}
-        />
+        <div className={styles.field}>
+          <label htmlFor="login-identifier">Email</label>
+          <AuthInput id="login-identifier" type="email" autoComplete="email" {...register("identifier")} aria-describedby={errors.identifier ? "login-identifier-error" : undefined} error={errors.identifier?.message} />
+        </div>
 
-        <PasswordInput
-          placeholder="Пароль"
-          autoComplete="current-password"
-          {...register("password")}
-          error={errors.password?.message}
-        />
+        <div className={styles.field}>
+          <label htmlFor="login-password">Пароль</label>
+          <PasswordInput id="login-password" autoComplete="current-password" {...register("password")} aria-describedby={errors.password ? "login-password-error" : undefined} error={errors.password?.message} />
+        </div>
 
         {errors.root?.message && (
-          <p className={styles.serverError}>{errors.root.message}</p>
+          <p className={styles.serverError} role="alert">{errors.root.message}</p>
         )}
 
         <div className={styles.formBtnsDwn}>

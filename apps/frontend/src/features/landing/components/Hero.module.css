@@ -59,6 +59,11 @@ vertical-align: middle;
   gap: 10px;
 }
 
+.actionLink {
+  display: inline-flex;
+  text-decoration: none;
+}
+
 .actions button {
   padding: 12px 25px;
   border-radius: 10px;

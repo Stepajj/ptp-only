@@ -43,14 +43,14 @@ export default function QuickActions() {
 
   const actions = [
     {
-      href: '#',
+      href: '/deposit',
       title: 'Пополнить баланс криптой',
       description: 'USDT, BTC, LTC, CryptoBot, xRocket',
       icon: <Image src={PlusIcon} alt="Plus" />,
       iconClassName: styles.depositIcon,
     },
     {
-      href: '#',
+      href: '/requisites/new',
       title: 'Добавить реквизит',
       description: 'Карта или СБП для приёма',
       icon: <Image src={CreditCard} alt="Credit Card" />,

@@ -35,14 +35,13 @@ export function AuthLayout({ children }: Props) {
 
         <footer className={styles.info}>
           <h2 className={styles.title}>
-            Продавайте крипту
+            Работайте с криптовалютой
             <br />
-            на 7% выше курса
+            через инфраструктуру OnlyP2P
           </h2>
 
           <p className={styles.description}>
-            73 000 пользователей • 6 лет стабильной работы • часть экосистемы
-            only
+            Пополнение, реквизиты, заявки и поддержка в одном кабинете.
           </p>
         </footer>
       </section>

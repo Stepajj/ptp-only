@@ -13,7 +13,7 @@ export function FAQ() {
     <section className={styles.faq}>
       <Container>
         <StaggerContainer className={styles.content} variant="section">
-          <StaggerItem>
+          <StaggerItem id="faq">
             <SectionHeader badge="FAQ">
               <>Частые вопросы</>
             </SectionHeader>

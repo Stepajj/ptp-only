@@ -76,30 +76,23 @@ export function RegisterForm() {
       <h1 className={styles.title}>Добро пожаловать</h1>
 
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)} noValidate>
-        <AuthInput
-          placeholder="Email"
-          type="email"
-          autoComplete="email"
-          {...register("identifier")}
-          error={errors.identifier?.message}
-        />
+        <div className={styles.field}>
+          <label htmlFor="register-identifier">Email</label>
+          <AuthInput id="register-identifier" type="email" autoComplete="email" {...register("identifier")} aria-describedby={errors.identifier ? "register-identifier-error" : undefined} error={errors.identifier?.message} />
+        </div>
 
-        <PasswordInput
-          placeholder="Пароль"
-          autoComplete="new-password"
-          {...register("password")}
-          error={errors.password?.message}
-        />
+        <div className={styles.field}>
+          <label htmlFor="register-password">Пароль</label>
+          <PasswordInput id="register-password" autoComplete="new-password" {...register("password")} aria-describedby={errors.password ? "register-password-error" : undefined} error={errors.password?.message} />
+        </div>
 
-        <PasswordInput
-          placeholder="Повторите пароль"
-          autoComplete="new-password"
-          {...register("repeatPassword")}
-          error={errors.repeatPassword?.message}
-        />
+        <div className={styles.field}>
+          <label htmlFor="register-repeat-password">Повторите пароль</label>
+          <PasswordInput id="register-repeat-password" autoComplete="new-password" {...register("repeatPassword")} aria-describedby={errors.repeatPassword ? "register-repeat-password-error" : undefined} error={errors.repeatPassword?.message} />
+        </div>
 
         {errors.root?.message && (
-          <p className={styles.serverError}>{errors.root.message}</p>
+          <p className={styles.serverError} role="alert">{errors.root.message}</p>
         )}
 
         <div className={styles.formBtnsDwn}>

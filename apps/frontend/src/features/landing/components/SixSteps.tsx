@@ -32,20 +32,20 @@ const steps = [
   },
   {
     number: "05",
-    title: "Получи +7% к курсу",
-    text: "Крипта конвертируется в рубли с премией — сразу на баланс.",
+    title: "Заверши заявку",
+    text: "После подтверждения получения данные операции обновляются в сервисе.",
   },
   {
     number: "06",
     title: "PROFIT",
-    text: "Забирай выгоду от продажи крипты по курсу с премией.",
+    text: "Контролируй операции, баланс и историю в личном кабинете.",
     highlight: true,
   },
 ];
 
 export function SixSteps() {
   return (
-    <section className={styles.sixSteps}>
+    <section id="how-it-works" className={styles.sixSteps}>
       <Container>
         <StaggerContainer variant="section">
           <StaggerItem>

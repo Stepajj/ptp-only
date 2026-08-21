@@ -19,7 +19,7 @@ export function DepositMethodCard({
       aria-label={`Пополнить через ${method.title}`}
     >
       <div className={`${styles.icon} ${styles[method.variant]}`}>
-        <Image src={method.icon} alt=""  />
+        {method.icon && <Image src={method.icon} alt="" />}
         
       </div>
 

@@ -70,25 +70,23 @@ export function PartnershipPage() {
 
       <nav className={styles.actions}>
         <a
-          href="#api-access"
+          href="https://t.me/O_onlypays"
+          target="_blank"
+          rel="noreferrer"
           className={`${styles.action} ${styles.actionPrimary}`}
         >
           API-доступ и ключи
         </a>
 
         <a
-          href="#white-label-request"
+          href="https://t.me/O_onlypays"
+          target="_blank"
+          rel="noreferrer"
           className={styles.action}
         >
           Заявка на White Label
         </a>
 
-        <a
-          href="#payout-history"
-          className={styles.action}
-        >
-          История выплат
-        </a>
       </nav>
     </main>
   );

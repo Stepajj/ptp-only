@@ -9,6 +9,7 @@ import {
   getRefreshTokenFromRequest,
   setRefreshTokenCookie,
 } from "./auth.cookies";
+import { verifyRefreshToken } from "./token.service";
 import {
   getBalance,
   getCurrentUser,
@@ -105,7 +106,18 @@ export const sessionsController: RequestHandler = async (request, response, next
 export const revokeSessionController: RequestHandler = async (request, response, next) => {
   try {
     if (!request.auth?.id) throw new AppError({ statusCode: 401, code: "UNAUTHORIZED", message: "Authentication required" });
-    await revokeSession(request.auth.id, sessionIdSchema.parse(request.params.sessionId));
+    const sessionId = sessionIdSchema.parse(request.params.sessionId);
+    await revokeSession(request.auth.id, sessionId);
+    const refreshToken = getRefreshTokenFromRequest(request);
+    if (refreshToken) {
+      try {
+        if (verifyRefreshToken(refreshToken).tokenId === sessionId) {
+          clearRefreshTokenCookie(response);
+        }
+      } catch {
+        clearRefreshTokenCookie(response);
+      }
+    }
     response.status(204).send();
   } catch (error) { next(error); }
 };

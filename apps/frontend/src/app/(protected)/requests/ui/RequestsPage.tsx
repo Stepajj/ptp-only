@@ -100,9 +100,9 @@ export function RequestsPage() {
           ))}
         </div>
 
-        <button type="button" className={styles.historyButton} onClick={() => setActiveStatus("finished")}>
+        <Link href="/history" className={styles.historyButton}>
           История заявок
-        </button>
+        </Link>
       </div>
 
       {error && (

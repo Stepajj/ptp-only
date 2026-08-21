@@ -34,23 +34,23 @@ export function Header() {
         >
           <ul className={styles.menu}>
             <li>
-              <a href="#">О сервисе</a>
+              <a href="#about-service">О сервисе</a>
             </li>
 
             <li>
-              <a href="#">Как работает</a>
+              <a href="#how-it-works">Как работает</a>
             </li>
 
             <li>
-              <a href="#">Тарифы</a>
+              <a href="#limits">Тарифы</a>
             </li>
 
             <li>
-              <a href="#">Партнерам</a>
+              <a href="https://t.me/O_onlypays" target="_blank" rel="noreferrer">Партнёрам</a>
             </li>
 
             <li>
-              <a href="#">FAQ</a>
+              <a href="#faq">FAQ</a>
             </li>
           </ul>
         </nav>

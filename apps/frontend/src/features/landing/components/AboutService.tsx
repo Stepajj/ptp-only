@@ -12,6 +12,7 @@ export function AboutService() {
     <Container>
       <StaggerContainer
         as="section"
+        id="about-service"
         className={styles.aboutServiceSection}
         variant="section"
       >
@@ -29,8 +30,8 @@ export function AboutService() {
         <StaggerItem className={styles.right}>
           <p>
             ONLYp2p соединяет продавцов криптовалюты и плательщиков напрямую.
-            Ты пополняешь баланс криптой и получаешь рубли по курсу +7% к
-            бирже, а затем принимаешь входящие переводы на свою карту или СБП.
+            Ты пополняешь баланс криптой, а затем принимаешь входящие переводы
+            на свою карту или СБП.
             <br />
             <br />
             Никаких форм вывода и долгих проверок: система автоматически

@@ -59,6 +59,36 @@ export default function AddRequisiteForm() {
       return;
     }
 
+    const minAmount = formData.minAmount ? Number(formData.minAmount) : undefined;
+    const maxAmount = formData.maxAmount ? Number(formData.maxAmount) : undefined;
+    const limitAmount = formData.limitAmount ? Number(formData.limitAmount) : undefined;
+    const limitMinutes = formData.limitAmountMinutes ? Number(formData.limitAmountMinutes) : undefined;
+
+    if ([minAmount, maxAmount, limitAmount, limitMinutes].some((value) => value !== undefined && (!Number.isInteger(value) || value <= 0))) {
+      setError('Лимиты должны быть положительными целыми числами');
+      return;
+    }
+    if (minAmount !== undefined && minAmount < 1000) {
+      setError('Минимальная сумма не может быть меньше 1 000 ₽');
+      return;
+    }
+    if (maxAmount !== undefined && maxAmount < 1000) {
+      setError('Максимальная сумма не может быть меньше 1 000 ₽');
+      return;
+    }
+    if (minAmount !== undefined && maxAmount !== undefined && minAmount > maxAmount) {
+      setError('Минимальная сумма не может быть больше максимальной');
+      return;
+    }
+    if ((limitAmount === undefined) !== (limitMinutes === undefined)) {
+      setError('Укажите лимит и период лимита вместе');
+      return;
+    }
+    if (limitMinutes !== undefined && limitMinutes > 1440) {
+      setError('Период лимита не может быть больше 1 440 минут');
+      return;
+    }
+
     try {
       setLoading(true);
       
@@ -69,15 +99,15 @@ export default function AddRequisiteForm() {
         ...(hasPhone ? { phone: formData.phone.replace(/\D/g, '') } : {}),
       };
 
-      if (formData.minAmount) {
-        input.minAmount = parseInt(formData.minAmount, 10);
+      if (minAmount !== undefined) {
+        input.minAmount = minAmount;
       }
-      if (formData.maxAmount) {
-        input.maxAmount = parseInt(formData.maxAmount, 10);
+      if (maxAmount !== undefined) {
+        input.maxAmount = maxAmount;
       }
-      if (formData.limitAmount && formData.limitAmountMinutes) {
-        input.limitAmount = parseInt(formData.limitAmount, 10);
-        input.limitAmountMinutes = parseInt(formData.limitAmountMinutes, 10);
+      if (limitAmount !== undefined && limitMinutes !== undefined) {
+        input.limitAmount = limitAmount;
+        input.limitAmountMinutes = limitMinutes;
       }
       if (formData.exactAmountOnly) {
         input.exactAmountOnly = true;
@@ -109,7 +139,7 @@ export default function AddRequisiteForm() {
 
   return (
     <section className={styles.card}>
-      <div className={styles.form}>
+      <form className={styles.form} onSubmit={(event) => void handleSubmit(event)} noValidate>
         {error && (
           <div className={styles.error}>
             {error}
@@ -125,6 +155,7 @@ export default function AddRequisiteForm() {
             name="bank"
             className={styles.select}
             value={formData.bankId}
+            required
             onChange={(e) => setFormData({ ...formData, bankId: e.target.value })}
             disabled={loading}
           >
@@ -150,6 +181,7 @@ export default function AddRequisiteForm() {
             className={styles.input}
             placeholder="Иванов Иван Иванович"
             value={formData.fio}
+            required
             onChange={(e) => setFormData({ ...formData, fio: e.target.value })}
             disabled={loading}
           />
@@ -198,6 +230,8 @@ export default function AddRequisiteForm() {
               type="number"
               className={styles.input}
               value={formData.minAmount}
+              min="1000"
+              step="1"
               onChange={(e) => setFormData({ ...formData, minAmount: e.target.value })}
               disabled={loading}
               placeholder="5000"
@@ -214,6 +248,8 @@ export default function AddRequisiteForm() {
               type="number"
               className={styles.input}
               value={formData.maxAmount}
+              min="1000"
+              step="1"
               onChange={(e) => setFormData({ ...formData, maxAmount: e.target.value })}
               disabled={loading}
               placeholder="50000"
@@ -230,6 +266,9 @@ export default function AddRequisiteForm() {
               type="number"
               className={styles.input}
               value={formData.limitAmount}
+              min="1000"
+              max="100000000"
+              step="1"
               onChange={(e) => setFormData({ ...formData, limitAmount: e.target.value })}
               disabled={loading}
               placeholder="100000"
@@ -246,6 +285,9 @@ export default function AddRequisiteForm() {
               type="number"
               className={styles.input}
               value={formData.limitAmountMinutes}
+              min="1"
+              max="1440"
+              step="1"
               onChange={(e) => setFormData({ ...formData, limitAmountMinutes: e.target.value })}
               disabled={loading}
               placeholder="1440"
@@ -267,9 +309,8 @@ export default function AddRequisiteForm() {
 
         <div className={styles.actions}>
           <button
-            type="button"
+            type="submit"
             className={styles.submitButton}
-            onClick={handleSubmit}
             disabled={loading}
           >
             {loading ? 'Сохранение...' : 'Сохранить'}
@@ -284,7 +325,7 @@ export default function AddRequisiteForm() {
             Отмена
           </button>
         </div>
-      </div>
+      </form>
     </section>
   );
 }

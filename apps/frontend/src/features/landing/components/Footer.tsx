@@ -14,22 +14,17 @@ const footerColumns = [
   {
     title: "Сервис",
     links: [
-      "О сервисе",
-      "Как работает",
-      "Тарифы и лимиты",
-      "Партнерам",
+      { label: "О сервисе", href: "#about-service" },
+      { label: "Как работает", href: "#how-it-works" },
+      { label: "FAQ", href: "#faq" },
     ],
   },
   {
     title: "Контакты",
-    links: ["Telegram-bot", "Поддержка", "Telegram-канал"],
-  },
-  {
-    title: "Документы",
     links: [
-      "Пользовательское соглашение",
-      "Политика конфиденциальности",
-      "Регламент работы с реквизитами",
+      { label: "Telegram-бот", href: "https://t.me/p2ponlywhitelabelbot" },
+      { label: "Партнёрство", href: "https://t.me/O_onlypays" },
+      { label: "OnlyP2P", href: "https://onlypays.net" },
     ],
   },
 ];
@@ -45,9 +40,7 @@ export function Footer() {
             <p className={styles.description}>
               Сервис по продаже криптовалюты с
               <br />
-              доплатой +7% к курсу. Продавайте
-              <br />
-              криптовалюту без посредников.
+              через инфраструктуру OnlyP2P.
             </p>
           </StaggerItem>
 
@@ -58,9 +51,14 @@ export function Footer() {
 
                 <ul className={styles.list}>
                   {column.links.map((link) => (
-                    <li key={link}>
-                      <a href="#" className={styles.link}>
-                        {link}
+                    <li key={link.label}>
+                      <a
+                        href={link.href}
+                        className={styles.link}
+                        target={link.href.startsWith("http") ? "_blank" : undefined}
+                        rel={link.href.startsWith("http") ? "noreferrer" : undefined}
+                      >
+                        {link.label}
                       </a>
                     </li>
                   ))}

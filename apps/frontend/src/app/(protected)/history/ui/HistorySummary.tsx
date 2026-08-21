@@ -30,7 +30,7 @@ export function HistorySummary({
       />
 
       <HistorySummaryCard
-        title="Выдано от +7%"
+        title="Профит"
         value={summary.bonusAmount === null ? "—" : `+${formatRubles(summary.bonusAmount)}`}
       />
     </section>

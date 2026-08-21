@@ -38,12 +38,11 @@ export function HeaderActions() {
 
   return (
     <div className={styles.actions}>
-      <MotionButton
-        type="button"
-        className={styles.registerButton}
-      >
-        Пополнить
-      </MotionButton>
+      <Link href="/deposit" className={styles.actionLink}>
+        <MotionButton type="button" className={styles.registerButton}>
+          Пополнить
+        </MotionButton>
+      </Link>
 
       <UserAvatar />
     </div>

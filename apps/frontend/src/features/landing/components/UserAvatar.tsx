@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import Link from 'next/link';
 
 import { useAuthStore } from '@/features/auth/model/auth.store';
 
@@ -13,38 +13,32 @@ export function UserAvatar() {
     return null;
   }
 
-  /**
-   * Пока backend не умеет отдавать аватар.
-   * Позже просто заменим null на user.avatarUrl.
-   */
-  const avatarUrl: string | null = null;
-
-  /**
-   * Берём первую букву.
-   * Позже backend сможет отдавать firstName/lastName,
-   * тогда логика останется прежней.
-   */
-  const initials =
-    user.id.charAt(0).toUpperCase();
+  const avatarUrl = user.avatarUrl ?? user.telegramPhotoUrl;
+  const initials = (user.displayName || user.identifier || user.id)
+    .trim()
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
-    <button
-      type="button"
+    <Link
+      href="/profile"
       className={styles.avatarButton}
       aria-label="Профиль пользователя"
     >
       {avatarUrl ? (
-        <Image
-          src={avatarUrl}
-          alt="Аватар пользователя"
-          fill
-          className={styles.avatarImage}
-        />
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={avatarUrl}
+            alt="Аватар пользователя"
+            className={styles.avatarImage}
+          />
+        </>
       ) : (
         <span className={styles.avatarInitials}>
           {initials}
         </span>
       )}
-    </button>
+    </Link>
   );
 }

@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import Image from "next/image";
-
 import { createTopup } from "@/features/deposit/api/deposit.api";
 import { getDepositMethod } from "@/features/deposit/model/deposit.catalog";
 import type { DepositDetails, DepositMethod } from "@/features/deposit/model/deposit.types";

@@ -8,16 +8,16 @@ import styles from "./Stats.module.css";
 
 const stats = [
   {
-    value: "6 лет",
-    description: "стабильно работы на рынке",
+    value: "REST API",
+    description: "интеграция через backend",
   },
   {
-    value: "73 000",
-    description: "активных пользователей",
+    value: "Pull",
+    description: "получение событий через опрос",
   },
   {
-    value: "+7%",
-    description: "к биржевому курсу при пополнении",
+    value: "OnlyP2P",
+    description: "балансы и операции на стороне сервиса",
   },
 ];
 
