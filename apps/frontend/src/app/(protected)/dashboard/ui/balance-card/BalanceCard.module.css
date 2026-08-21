@@ -132,3 +132,10 @@
 .button:active {
   opacity: 0.84;
 }
+
+@media (max-width: 700px) {
+  .card { min-height: 196px; padding: 20px; border-radius: 18px; }
+  .title { font-size: 14px; }
+  .balance { margin: 12px 0; font-size: 28px; }
+  .button { align-self: stretch; width: auto; margin-top: 16px; padding: 13px 15px; }
+}

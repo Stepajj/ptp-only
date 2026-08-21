@@ -17,8 +17,11 @@
     justify-content: flex-start;
 }
 
+@media (min-width: 900px) {
 .stat:not(:last-child) {
     border-right: 1px solid rgba(227, 227, 227, 1);
+}
+
 }
 
 .value {
@@ -47,6 +50,8 @@
 
     .stats {
         flex-wrap: wrap;
+        border-left: 1px solid rgba(227, 227, 227, 1);
+        border-right: 1px solid rgba(227, 227, 227, 1);
     }
 
     .stat {
@@ -58,4 +63,28 @@
         border-bottom: 1px solid rgba(227, 227, 227, 1);
     }
 
+}
+
+@media (max-width: 700px) {
+    .stats {
+        margin: 0 8px;
+    }
+
+    .stat {
+        min-height: 54px;
+        padding: 20px;
+        gap: 10px;
+    }
+
+    .value {
+        font-size: 28px;
+        line-height: 20px;
+    }
+
+    .description {
+        margin-top: 2px;
+        font-size: 14px;
+        line-height: 12px;
+        color: rgba(89, 96, 110, 1);
+    }
 }

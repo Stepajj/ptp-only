@@ -123,3 +123,16 @@
   width: 100%;
   max-width: 420px;
 }
+
+@media (max-width: 700px) {
+  .root { display: flex; flex-direction: column; min-height: 100vh; }
+  .left { flex: 0 0 auto; min-height: 218px; padding: 10px; }
+  .logo img { width: 70px; height: auto; }
+  .illustration { min-height: 70px; }
+  .illustration img { width: min(190px, 72vw); height: auto; }
+  .info { max-width: none; }
+  .title { margin-bottom: 10px; font-size: 22px; line-height: 1.1; }
+  .description { font-size: 14px; line-height: 1.25; }
+  .right { flex: 1; align-items: flex-start; padding: 30px 10px 24px; }
+  .content { max-width: 420px; }
+}

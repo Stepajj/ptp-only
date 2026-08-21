@@ -6,3 +6,13 @@
     max-width: 836px;
     margin: 0 auto;
 }
+
+@media (max-width: 700px) {
+    .faq > * {
+        padding: 46px 9px 48px;
+    }
+
+    .content {
+        max-width: none;
+    }
+}

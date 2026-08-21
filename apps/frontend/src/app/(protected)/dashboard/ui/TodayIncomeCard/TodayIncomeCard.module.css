@@ -113,3 +113,9 @@ letter-spacing: 0%;
 
   border-radius: 50%;   
 }
+
+@media (max-width: 700px) {
+  .card { min-height: 174px; padding: 20px; border-radius: 18px; }
+  .count { font-size: 24px; }
+  .label, .profitGreen { font-size: 14px; }
+}

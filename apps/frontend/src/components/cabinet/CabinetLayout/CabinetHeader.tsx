@@ -12,6 +12,7 @@ import styles from './CabinetHeader.module.css';
 import  TestIcon from './icons/headerWallet.svg';
 import  PlusIcon from './icons/headerPlus.svg';
 import Image from 'next/image';
+import logo from '../../../assets/images/logo.svg';
 
 export function CabinetHeader() {
   const pathname = usePathname();
@@ -38,6 +39,7 @@ export function CabinetHeader() {
 
   return (
     <header className={styles.header}>
+      <div className={styles.desktopContent}>
       <div className={styles.content}>
         <h1 className={styles.title}>{getPageHeader(pathname).title}</h1>
         <span className={styles.subtitle}>
@@ -55,6 +57,20 @@ export function CabinetHeader() {
           <span>Пополнить</span>
 
           <Image src={PlusIcon} alt="Plus" />
+        </Link>
+      </div>
+      </div>
+
+      <div className={styles.mobileContent}>
+        <Link href="/dashboard" className={styles.mobileLogo} aria-label="Кабинет">
+          <Image src={logo} alt="ONLYP2P" width={103} height={27} priority />
+        </Link>
+        <button className={styles.balanceButton} type="button">
+          <Image src={TestIcon} alt="Баланс" />
+          <span>{balance === null ? '— ₽' : formatRub(balance)}</span>
+        </button>
+        <Link href="/deposit" className={styles.mobileDepositButton} aria-label="Пополнить">
+          <Image src={PlusIcon} alt="" />
         </Link>
       </div>
     </header>

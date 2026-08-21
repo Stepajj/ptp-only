@@ -180,3 +180,95 @@
 .partnerButton:hover {
     opacity: .9;
 }
+
+@media (max-width: 700px) {
+    .limits > * {
+        padding: 48px 8px 44px;
+    }
+
+    .content {
+        display: block;
+    }
+
+    .info {
+        margin-top: 24px;
+    }
+
+    .infoTitle {
+        font-size: 9px;
+    }
+
+    .percent {
+        margin-top: 8px;
+        font-size: 27px;
+        letter-spacing: 0;
+    }
+
+    .infoText {
+        margin-top: 5px;
+        font-size: 8px;
+        line-height: 1.45;
+        letter-spacing: 0;
+    }
+
+    .grid {
+        display: grid;
+        width: 100%;
+        max-width: none;
+        grid-template-columns: 1fr;
+        margin-top: 16px;
+    }
+
+    .card {
+        gap: 5px;
+        padding: 10px;
+    }
+
+    .cardLabel,
+    .cardText {
+        font-size: 8px;
+        line-height: 1.35;
+    }
+
+    .cardValue {
+        font-size: 14px;
+    }
+
+    .partnerBanner {
+        display: block;
+        margin-top: 34px;
+        padding: 14px 12px 12px;
+        border-radius: 8px;
+    }
+
+    .partnerBadge {
+        font-size: 7px;
+    }
+
+    .partnerTitle {
+        max-width: 230px;
+        margin-top: 10px;
+        font-size: 16px;
+        line-height: 1.05;
+        letter-spacing: 0;
+    }
+
+    .partnerText {
+        margin-top: 9px;
+        font-size: 8px;
+        line-height: 1.4;
+    }
+
+    .partnerButton {
+        width: 100%;
+        margin-top: 12px;
+        padding: 8px 10px;
+        border-radius: 6px;
+        font-size: 8px;
+    }
+
+    .partnerButton img {
+        width: 8px;
+        height: auto;
+    }
+}

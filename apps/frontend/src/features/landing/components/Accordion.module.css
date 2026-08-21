@@ -7,6 +7,13 @@
     gap: 20px;
 }
 
+@media(max-width: 900px) {
+    .wrapper {
+        width: unset;
+        
+    }
+}
+
 .item {
     border-top: 1px solid rgba(227, 227, 227, 1);
 }
@@ -88,3 +95,5 @@
     line-height: 22px;
     letter-spacing: -0.4px;
 }
+
+

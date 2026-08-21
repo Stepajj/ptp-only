@@ -49,3 +49,9 @@
   font-size: 12px;
   line-height: 1.2;
 }
+
+@media (max-width: 700px) {
+  .title { font-size: 22px; line-height: 1.2; }
+  .form { gap: 14px; }
+  .field > label { font-size: 14px; }
+}

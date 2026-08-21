@@ -31,11 +31,10 @@
 }
 
 .heroEyebrow {
-  font-family: "Euclid Circular A", sans-serif;
   font-weight: 400;
   font-style: normal;
   font-size: 14px;
-  line-height: 100%;
+  line-height: 129%;
   letter-spacing: 0;
 
   color: rgba(247, 147, 26, 1);
@@ -44,11 +43,10 @@
 .heroTitle {
   margin: 0;
 
-  font-family: "Euclid Circular A", sans-serif;
   font-weight: 500;
   font-style: normal;
   font-size: 28px;
-  line-height: 100%;
+  line-height: 129%;
   letter-spacing: 0;
 
   color: #fff;

@@ -1,0 +1,9 @@
+.nav { display: none; }
+@media (max-width: 700px) {
+    .nav { position: fixed; right: 0; bottom: 0; left: 0; z-index: 20; display: block; overflow-x: auto; background: rgba(20, 20, 23, 1); padding: 5px; }
+    .items { display: flex; min-width: max-content; gap: 5px; }
+    .item { display: flex; flex: 0 0 96px; align-items: center; justify-content: center; width: 96px; height: 75px; gap: 10px; border: 1px solid transparent; color: rgba(255, 255, 255, 0.55); font-size: 12px; text-decoration: none; flex-direction: column; }
+    .active { border-color: rgba(24, 173, 238, 0.45); background: linear-gradient(360deg, rgba(24, 173, 238, 0.08) 0%, rgba(24, 173, 238, 0) 100%); color: #fff; }
+    .icon { width: 21px; height: 21px; color: currentColor; }
+    .active .icon { color: rgba(24, 173, 238, 1); }
+}

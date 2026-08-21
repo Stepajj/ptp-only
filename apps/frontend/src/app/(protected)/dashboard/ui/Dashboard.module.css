@@ -63,3 +63,12 @@
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.6);
 }
+
+@media (max-width: 700px) {
+  .dashboard { gap: 16px; }
+  .title { font-size: 22px; line-height: 1.25; }
+  .subtitle { flex-wrap: wrap; gap: 4px; margin-top: 8px; font-size: 14px; line-height: 1.4; }
+  .bold { margin-left: 0; }
+  .dot { margin: 0 4px; }
+  .statsGrid, .contentGrid { display: flex; flex-direction: column; gap: 16px; }
+}

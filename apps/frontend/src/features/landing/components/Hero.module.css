@@ -161,3 +161,80 @@ letter-spacing: -0.4px;
   margin-top: 50px;
   border-radius: 15px;
 }
+
+@media (max-width: 700px) {
+  .hero > * {
+    align-items: flex-start;
+    padding: 26px 8px 14px;
+    gap: 12px;
+    text-align: left;
+  }
+
+  .container {
+    width: auto;
+    height: 27px;
+    padding: 6px 8px;
+    gap: 8px;
+    border-radius: 7px;
+  }
+
+  .item {
+    gap: 6px;
+  }
+
+  .text {
+    font-size: 8px;
+    letter-spacing: 0;
+  }
+
+  .dot {
+    width: 3px;
+    height: 3px;
+  }
+
+  .title {
+    max-width: 362px;
+    margin-top: 0;
+    font-size: 22px;
+    line-height: 1.05;
+    letter-spacing: 0;
+    text-align: left;
+  }
+
+  .subtitle {
+    max-width: 300px;
+    font-size: 14px;
+    line-height: 1.45;
+    letter-spacing: 0;
+    text-align: left;
+  }
+
+  .actions {
+    width: 100%;
+    margin-top: 2px;
+    gap: 6px;
+  }
+
+  .actionLink {
+    flex: 1 1 0;
+  }
+
+  .actions button {
+    width: 100%;
+    padding: 7px 8px;
+    border-radius: 6px;
+    font-size: 14px;
+    max-width: 179px;
+  }
+
+  .note {
+    max-width: 290px;
+    font-size: 8px;
+    line-height: 1.45;
+    text-align: left;
+  }
+
+  .heroImage {
+    display: none;
+  }
+}

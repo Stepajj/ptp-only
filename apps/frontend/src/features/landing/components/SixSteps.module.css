@@ -86,3 +86,44 @@
         grid-template-columns: 1fr;
     }
 }
+
+@media (max-width: 700px) {
+    .sixSteps > * {
+        padding: 28px 9px 26px;
+    }
+
+    .grid {
+        gap: 8px;
+        margin-top: 22px;
+    }
+
+    .card {
+        min-height: 0;
+        padding: 10px;
+        background: #161619;
+    }
+
+    .highlight {
+        border: 1px solid rgba(227, 227, 227, .6);
+    }
+
+    .number,
+    .numberGradient {
+        width: 24px;
+        height: 24px;
+        border-radius: 5px;
+        font-size: 10px;
+    }
+
+    .cardTitle {
+        margin-top: 8px;
+        font-size: 10px;
+        line-height: 1.2;
+    }
+
+    .cardText {
+        margin-top: 5px;
+        font-size: 8px;
+        line-height: 1.45;
+    }
+}

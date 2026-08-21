@@ -2,6 +2,7 @@ import styles from './CabinetLayout.module.css';
 
 import { Sidebar } from './CabinetSidebar';
 import { CabinetHeader } from './CabinetHeader';
+import { MobileBottomNav } from './MobileBottomNav';
 
 type Props = {
   children: React.ReactNode;
@@ -17,6 +18,7 @@ export function CabinetLayout({ children }: Props) {
         <div className={styles.contentWrapper}>
             {children}
         </div>
+        <MobileBottomNav />
         
       </div>
     </div>

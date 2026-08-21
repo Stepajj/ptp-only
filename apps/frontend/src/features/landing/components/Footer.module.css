@@ -76,3 +76,47 @@
 .link:hover {
     opacity: 1;
 }
+
+@media (max-width: 700px) {
+    .footer > * {
+        padding: 42px 10px 24px;
+    }
+
+    .content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px 24px;
+    }
+
+    .brand {
+        grid-column: 1 / -1;
+        gap: 10px;
+    }
+
+    .brand img {
+        width: 45px;
+        height: auto;
+    }
+
+    .description {
+        max-width: 210px;
+        font-size: 9px;
+        line-height: 1.55;
+        letter-spacing: 0;
+    }
+
+    .column {
+        gap: 10px;
+    }
+
+    .title,
+    .link {
+        font-size: 9px;
+        line-height: 1.35;
+        letter-spacing: 0;
+    }
+
+    .list {
+        gap: 8px;
+    }
+}

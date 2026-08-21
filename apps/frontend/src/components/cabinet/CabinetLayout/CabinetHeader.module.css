@@ -104,3 +104,16 @@
 
     flex-shrink:0;
 }
+
+.desktopContent { display: contents; }
+.mobileContent { display: none; }
+
+@media (max-width: 700px) {
+    .header { min-height: 62px; padding: 12px 20px; }
+    .desktopContent { display: none; }
+    .mobileContent { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 10px; }
+    .mobileLogo { display: inline-flex; flex: 0 0 103px; width: 103px; }
+    .mobileContent .balanceButton { height: 41px; margin-left: auto; padding: 0 12px; font-size: 14px; }
+    .mobileDepositButton { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 41px; width: 41px; height: 41px; border-radius: 10px; background: linear-gradient(90deg, #18ADEE 0%, #FA90D9 100%); }
+    .mobileDepositButton img { width: 16px; height: 16px; }
+}

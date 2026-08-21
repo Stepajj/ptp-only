@@ -124,3 +124,77 @@ color: rgba(3, 6, 29, 0.5);
 
   user-select: none;
 }
+
+.mobileMenu {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .inner {
+    position: relative;
+    min-height: 55px;
+    padding: 10px 8px;
+  }
+
+  .logo img {
+    width: 52px;
+    height: auto;
+  }
+
+  .nav,
+  .actions {
+    display: none;
+  }
+
+  .mobileMenu {
+    display: block;
+    margin-left: auto;
+  }
+
+  .mobileMenu summary {
+    list-style: none;
+  }
+
+  .mobileMenu summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .mobileMenuButton {
+    display: flex;
+    width: 22px;
+    height: 22px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+
+  .mobileMenuButton span {
+    display: block;
+    width: 14px;
+    height: 1px;
+    margin-left: auto;
+    background: #159fe5;
+  }
+
+  .mobileNav {
+    position: absolute;
+    z-index: 10;
+    top: calc(100% + 1px);
+    right: 8px;
+    left: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+    border: 1px solid #e3e3e3;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 10px 24px rgba(20, 20, 23, .08);
+  }
+
+  .mobileNav a {
+    color: rgba(3, 6, 29, .8);
+    font-size: 14px;
+  }
+}

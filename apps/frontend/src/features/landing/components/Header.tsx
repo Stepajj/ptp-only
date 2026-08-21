@@ -55,6 +55,21 @@ export function Header() {
           </ul>
         </nav>
 
+        <details className={styles.mobileMenu}>
+          <summary aria-label="Открыть меню" className={styles.mobileMenuButton}>
+            <span />
+            <span />
+            <span />
+          </summary>
+          <nav className={styles.mobileNav} aria-label="Мобильное меню">
+            <a href="#about-service">О сервисе</a>
+            <a href="#how-it-works">Как работает</a>
+            <a href="#limits">Тарифы</a>
+            <a href="https://t.me/O_onlypays" target="_blank" rel="noreferrer">Партнёрам</a>
+            <a href="#faq">FAQ</a>
+          </nav>
+        </details>
+
         <HeaderActions />
       </AnimatedSection>
     </header>

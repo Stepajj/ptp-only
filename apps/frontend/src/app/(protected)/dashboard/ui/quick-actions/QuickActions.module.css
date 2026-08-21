@@ -103,3 +103,10 @@
   font-size: 18px;
   line-height: 1;
 }
+
+@media (max-width: 700px) {
+  .container { height: auto; padding: 20px; border-radius: 18px; }
+  .title { font-size: 16px; }
+  .list { gap: 10px; margin-top: 16px; }
+  .item { min-height: 80px; padding: 15px 14px; }
+}
