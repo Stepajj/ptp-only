@@ -63,7 +63,8 @@ export function DepositAddressCard({
       <div className={styles.networkBadge}>
         {details.badgeIcon && (
           <span className={iconClass}>
-            {details.badgeIcon}
+            <Image src={details.badgeIcon} alt=""  />
+           
           </span>
         )}
 
