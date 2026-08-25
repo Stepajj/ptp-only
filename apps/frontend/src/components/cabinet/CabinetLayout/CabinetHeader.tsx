@@ -35,6 +35,14 @@ export function CabinetHeader() {
     }
 
     void loadBalance(accessToken);
+    const intervalId = window.setInterval(() => void loadBalance(accessToken), 15000);
+    const handleFocus = () => void loadBalance(accessToken);
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   return (

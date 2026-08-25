@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Image from 'next/image';
 import BonusArrow from '../../assets/icons/bonusArrow.svg';
 import { getBalance } from '@/features/auth/api/auth.api';
@@ -13,6 +14,7 @@ export default function BalanceCard() {
 
   const [balance, setBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+  const [balanceError, setBalanceError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!accessToken) {
@@ -33,36 +35,45 @@ export default function BalanceCard() {
 
         if (!cancelled) {
           setBalance(result.data.balance);
+          setBalanceError(null);
           setLoading(false);
         }
       } catch (error) {
         console.error('[Balance] API error:', error);
 
         if (!cancelled) {
+          setBalanceError(error instanceof Error ? error.message : 'Не удалось загрузить баланс');
           setLoading(false);
         }
       }
     };
 
     void loadBalance();
+    const intervalId = window.setInterval(() => void loadBalance(), 15000);
+    const handleFocus = () => void loadBalance();
+    window.addEventListener('focus', handleFocus);
 
     return () => {
       cancelled = true;
+      window.clearInterval(intervalId);
+      window.removeEventListener('focus', handleFocus);
     };
   }, [accessToken]);
 
   const formattedBalance =
     balance === null
-      ? '—'
+      ? balanceError ? 'Ошибка' : '—'
       : `${new Intl.NumberFormat('ru-RU').format(balance)}₽`;
 
   return (
     <article className={styles.card}>
       <h2 className={styles.title}>ДОСТУПНЫЙ БАЛАНС</h2>
 
-      <p className={styles.balance}>
+      <p className={styles.balance} aria-live="polite" title={balanceError ?? undefined}>
         {loading ? 'Загрузка...' : formattedBalance}
       </p>
+
+      {balanceError && <p className={styles.error} role="alert">{balanceError}</p>}
 
       <div className={styles.bonus}>
         <Image src={BonusArrow} alt="Bonus arrow"  />
@@ -72,12 +83,12 @@ export default function BalanceCard() {
         </span>
       </div>
 
-      <button
-        type="button"
+      <Link
+        href="/deposit"
         className={styles.button}
       >
         Пополнить криптой
-      </button>
+      </Link>
     </article>
   );
 }
