@@ -34,8 +34,8 @@ export default function RequisiteSettings({ requisiteId }: { requisiteId: string
         setRequisite(found);
         setFormData({
           status: found.status,
-          minAmount: found.minAmount.toString(),
-          maxAmount: found.maxAmount.toString(),
+          minAmount: found.minAmount?.toString() ?? '',
+          maxAmount: found.maxAmount?.toString() ?? '',
           limitAmount: found.limitAmount?.toString() || '',
           limitAmountMinutes: found.limitAmountMinutes?.toString() || '',
           exactAmountOnly: found.exactAmountOnly,

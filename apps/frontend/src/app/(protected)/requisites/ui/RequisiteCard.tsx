@@ -63,8 +63,7 @@ export default function RequisiteCard({
           </p>
 
           <p className={styles.limits}>
-            Мин: {requisite.minAmount.toLocaleString('ru-RU')} ₽ · 
-            Макс: {requisite.maxAmount.toLocaleString('ru-RU')} ₽
+            Мин: {formatLimit(requisite.minAmount)} · Макс: {formatLimit(requisite.maxAmount)}
           </p>
         </div>
 
@@ -76,4 +75,8 @@ export default function RequisiteCard({
       </div>
     </article>
   );
+}
+
+function formatLimit(value: number | null): string {
+  return value === null ? '—' : `${value.toLocaleString('ru-RU')} ₽`;
 }

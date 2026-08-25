@@ -11,8 +11,8 @@ export interface Requisite {
   tier1: boolean;
   status: 'on' | 'off';
   method: 'both' | 'card' | 'sbp' | null;
-  minAmount: number;
-  maxAmount: number;
+  minAmount: number | null;
+  maxAmount: number | null;
   limitAmount: number | null;
   limitAmountMinutes: number | null;
   exactAmountOnly: boolean;

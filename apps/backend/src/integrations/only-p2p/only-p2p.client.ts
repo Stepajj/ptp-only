@@ -56,8 +56,8 @@ export interface OnlyP2PRequisite {
   tier1: boolean;
   status: "on" | "off";
   method: "both" | "card" | "sbp" | null;
-  minAmount: number;
-  maxAmount: number;
+  minAmount: number | null;
+  maxAmount: number | null;
   limitAmount: number | null;
   limitAmountMinutes: number | null;
   exactAmountOnly: boolean;
@@ -408,7 +408,7 @@ function parseOnlyP2PRequisitesResponse(raw: unknown): OnlyP2PRequisite[] {
         return Number.isSafeInteger(value) ? value : null;
       }
 
-      if (typeof value === "string" && /^\d+$/.test(value)) {
+      if (typeof value === "string" && value.trim() !== "") {
         const parsed = Number(value);
         return Number.isSafeInteger(parsed) ? parsed : null;
       }
@@ -417,12 +417,24 @@ function parseOnlyP2PRequisitesResponse(raw: unknown): OnlyP2PRequisite[] {
     };
     const requisiteId = readInteger(requisite.requisite_id);
     const bankId = readInteger(requisite.bank_id);
-    const minAmount = readInteger(requisite.min_amount);
-    const maxAmount = readInteger(requisite.max_amount);
+    const minAmount = requisite.min_amount === undefined || requisite.min_amount === null
+      ? null
+      : readInteger(requisite.min_amount);
+    const maxAmount = requisite.max_amount === undefined || requisite.max_amount === null
+      ? null
+      : readInteger(requisite.max_amount);
     const optionalLimit = (value: unknown): number | null =>
       value === undefined || value === null ? null : readInteger(value);
     const limitAmount = optionalLimit(requisite.limit_amount);
     const limitAmountMinutes = optionalLimit(requisite.limit_amount_minutes);
+    const readBoolean = (value: unknown): boolean | null => {
+      if (typeof value === "boolean") return value;
+      if (value === 1 || value === "1" || value === "true") return true;
+      if (value === 0 || value === "0" || value === "false") return false;
+      return null;
+    };
+    const tier1 = readBoolean(requisite.tier_1);
+    const exactAmountOnly = readBoolean(requisite.exact_amount_only);
 
     if (
       requisiteId === null ||
@@ -430,26 +442,27 @@ function parseOnlyP2PRequisitesResponse(raw: unknown): OnlyP2PRequisite[] {
       (requisite.phone !== undefined && requisite.phone !== null && typeof requisite.phone !== "string") ||
       typeof requisite.fio !== "string" || typeof requisite.bank !== "string" ||
       bankId === null ||
-      typeof requisite.tier_1 !== "boolean" || (status !== "on" && status !== "off") ||
+      tier1 === null || (status !== "on" && status !== "off") ||
       (method !== "both" && method !== "card" && method !== "sbp" && method !== null) ||
-      minAmount === null || maxAmount === null ||
-      (requisite.exact_amount_only !== undefined && requisite.exact_amount_only !== null && typeof requisite.exact_amount_only !== "boolean") ||
+      (requisite.min_amount !== undefined && requisite.min_amount !== null && minAmount === null) ||
+      (requisite.max_amount !== undefined && requisite.max_amount !== null && maxAmount === null) ||
+      (requisite.exact_amount_only !== undefined && requisite.exact_amount_only !== null && exactAmountOnly === null) ||
       (requisite.limit_amount !== undefined && requisite.limit_amount !== null && limitAmount === null) ||
       (requisite.limit_amount_minutes !== undefined && requisite.limit_amount_minutes !== null && limitAmountMinutes === null)
     ) {
       const invalidFields = Object.entries({
         requisite_id: requisiteId === null,
         bank_id: bankId === null,
-        min_amount: minAmount === null,
-        max_amount: maxAmount === null,
+        min_amount: requisite.min_amount !== undefined && requisite.min_amount !== null && minAmount === null,
+        max_amount: requisite.max_amount !== undefined && requisite.max_amount !== null && maxAmount === null,
         card: requisite.card !== undefined && requisite.card !== null && typeof requisite.card !== "string",
         phone: requisite.phone !== undefined && requisite.phone !== null && typeof requisite.phone !== "string",
         fio: typeof requisite.fio !== "string",
         bank: typeof requisite.bank !== "string",
-        tier_1: typeof requisite.tier_1 !== "boolean",
+        tier_1: tier1 === null,
         status: status !== "on" && status !== "off",
         method: method !== "both" && method !== "card" && method !== "sbp" && method !== null,
-        exact_amount_only: requisite.exact_amount_only !== undefined && requisite.exact_amount_only !== null && typeof requisite.exact_amount_only !== "boolean",
+        exact_amount_only: requisite.exact_amount_only !== undefined && requisite.exact_amount_only !== null && exactAmountOnly === null,
         limit_amount: requisite.limit_amount !== undefined && requisite.limit_amount !== null && limitAmount === null,
         limit_amount_minutes: requisite.limit_amount_minutes !== undefined && requisite.limit_amount_minutes !== null && limitAmountMinutes === null,
       })
@@ -476,14 +489,14 @@ function parseOnlyP2PRequisitesResponse(raw: unknown): OnlyP2PRequisite[] {
       fio: requisite.fio,
       bank: requisite.bank,
       bankId,
-      tier1: requisite.tier_1,
+      tier1,
       status,
       method,
       minAmount,
       maxAmount,
       limitAmount,
       limitAmountMinutes,
-      exactAmountOnly: requisite.exact_amount_only ?? false,
+      exactAmountOnly: exactAmountOnly ?? false,
     };
   });
 }

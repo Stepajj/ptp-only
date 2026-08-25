@@ -14,8 +14,8 @@ export interface Requisite {
   tier1: boolean;
   status: RequisiteStatus;
   method: RequisiteType;
-  minAmount: number;
-  maxAmount: number;
+  minAmount: number | null;
+  maxAmount: number | null;
   limitAmount: number | null;
   limitAmountMinutes: number | null;
   exactAmountOnly: boolean;
