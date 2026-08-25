@@ -372,8 +372,27 @@ async function postOnlyP2P(path: string, body: Record<string, unknown>): Promise
   }
 }
 
+function describeResponseShape(raw: unknown): Record<string, unknown> {
+  if (!raw || typeof raw !== "object") {
+    return { type: typeof raw };
+  }
+
+  const record = raw as Record<string, unknown>;
+  const data = record.data;
+
+  return {
+    keys: Object.keys(record),
+    dataType: Array.isArray(data) ? "array" : typeof data,
+    dataLength: Array.isArray(data) ? data.length : undefined,
+  };
+}
+
 function parseOnlyP2PRequisitesResponse(raw: unknown): OnlyP2PRequisite[] {
   if (!raw || typeof raw !== "object" || !Array.isArray((raw as { data?: unknown }).data)) {
+    logger.warn(
+      { endpoint: "/op2p_api/requisites", responseShape: describeResponseShape(raw) },
+      "OnlyP2P returned an invalid requisites list payload",
+    );
     throw new AppError({ statusCode: 502, code: "ONLY_P2P_INVALID_RESPONSE", message: "External service returned an invalid requisites response" });
   }
 
@@ -414,7 +433,7 @@ function parseOnlyP2PRequisitesResponse(raw: unknown): OnlyP2PRequisite[] {
       typeof requisite.tier_1 !== "boolean" || (status !== "on" && status !== "off") ||
       (method !== "both" && method !== "card" && method !== "sbp" && method !== null) ||
       minAmount === null || maxAmount === null ||
-      (requisite.exact_amount_only !== undefined && typeof requisite.exact_amount_only !== "boolean") ||
+      (requisite.exact_amount_only !== undefined && requisite.exact_amount_only !== null && typeof requisite.exact_amount_only !== "boolean") ||
       (requisite.limit_amount !== undefined && requisite.limit_amount !== null && limitAmount === null) ||
       (requisite.limit_amount_minutes !== undefined && requisite.limit_amount_minutes !== null && limitAmountMinutes === null)
     ) {
@@ -430,7 +449,7 @@ function parseOnlyP2PRequisitesResponse(raw: unknown): OnlyP2PRequisite[] {
         tier_1: typeof requisite.tier_1 !== "boolean",
         status: status !== "on" && status !== "off",
         method: method !== "both" && method !== "card" && method !== "sbp" && method !== null,
-        exact_amount_only: requisite.exact_amount_only !== undefined && typeof requisite.exact_amount_only !== "boolean",
+        exact_amount_only: requisite.exact_amount_only !== undefined && requisite.exact_amount_only !== null && typeof requisite.exact_amount_only !== "boolean",
         limit_amount: requisite.limit_amount !== undefined && requisite.limit_amount !== null && limitAmount === null,
         limit_amount_minutes: requisite.limit_amount_minutes !== undefined && requisite.limit_amount_minutes !== null && limitAmountMinutes === null,
       })
