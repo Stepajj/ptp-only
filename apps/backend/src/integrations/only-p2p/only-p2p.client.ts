@@ -381,37 +381,80 @@ function parseOnlyP2PRequisitesResponse(raw: unknown): OnlyP2PRequisite[] {
       throw new AppError({ statusCode: 502, code: "ONLY_P2P_INVALID_RESPONSE", message: "External service returned an invalid requisite" });
     }
     const requisite = item as Record<string, unknown>;
-    const method = requisite.method;
+    const method = requisite.method === undefined ? null : requisite.method;
     const status = requisite.status;
-    const optionalLimit = (value: unknown): number | null => value === null ? null : typeof value === "number" ? value : Number.NaN;
+    const readInteger = (value: unknown): number | null => {
+      if (typeof value === "number") {
+        return Number.isSafeInteger(value) ? value : null;
+      }
+
+      if (typeof value === "string" && /^\d+$/.test(value)) {
+        const parsed = Number(value);
+        return Number.isSafeInteger(parsed) ? parsed : null;
+      }
+
+      return null;
+    };
+    const requisiteId = readInteger(requisite.requisite_id);
+    const bankId = readInteger(requisite.bank_id);
+    const minAmount = readInteger(requisite.min_amount);
+    const maxAmount = readInteger(requisite.max_amount);
+    const optionalLimit = (value: unknown): number | null =>
+      value === undefined || value === null ? null : readInteger(value);
     const limitAmount = optionalLimit(requisite.limit_amount);
     const limitAmountMinutes = optionalLimit(requisite.limit_amount_minutes);
 
     if (
-      typeof requisite.requisite_id !== "number" || !Number.isSafeInteger(requisite.requisite_id) ||
+      requisiteId === null ||
       typeof requisite.card !== "string" || typeof requisite.phone !== "string" ||
       typeof requisite.fio !== "string" || typeof requisite.bank !== "string" ||
-      typeof requisite.bank_id !== "number" || !Number.isSafeInteger(requisite.bank_id) ||
+      bankId === null ||
       typeof requisite.tier_1 !== "boolean" || (status !== "on" && status !== "off") ||
       (method !== "both" && method !== "card" && method !== "sbp" && method !== null) ||
-      typeof requisite.min_amount !== "number" || typeof requisite.max_amount !== "number" ||
-      typeof requisite.exact_amount_only !== "boolean" || Number.isNaN(limitAmount) || Number.isNaN(limitAmountMinutes)
+      minAmount === null || maxAmount === null ||
+      typeof requisite.exact_amount_only !== "boolean" ||
+      (requisite.limit_amount !== undefined && requisite.limit_amount !== null && limitAmount === null) ||
+      (requisite.limit_amount_minutes !== undefined && requisite.limit_amount_minutes !== null && limitAmountMinutes === null)
     ) {
-      throw new AppError({ statusCode: 502, code: "ONLY_P2P_INVALID_RESPONSE", message: "External service returned an invalid requisite" });
+      const invalidFields = Object.entries({
+        requisite_id: requisiteId === null,
+        bank_id: bankId === null,
+        min_amount: minAmount === null,
+        max_amount: maxAmount === null,
+        card: typeof requisite.card !== "string",
+        phone: typeof requisite.phone !== "string",
+        fio: typeof requisite.fio !== "string",
+        bank: typeof requisite.bank !== "string",
+        tier_1: typeof requisite.tier_1 !== "boolean",
+        status: status !== "on" && status !== "off",
+        method: method !== "both" && method !== "card" && method !== "sbp" && method !== null,
+        exact_amount_only: typeof requisite.exact_amount_only !== "boolean",
+        limit_amount: requisite.limit_amount !== undefined && requisite.limit_amount !== null && limitAmount === null,
+        limit_amount_minutes: requisite.limit_amount_minutes !== undefined && requisite.limit_amount_minutes !== null && limitAmountMinutes === null,
+      })
+        .filter(([, invalid]) => invalid)
+        .map(([field]) => field);
+
+      throw new AppError({
+        statusCode: 502,
+        code: "ONLY_P2P_INVALID_RESPONSE",
+        message: "External service returned an invalid requisite",
+        details: { invalidFields },
+      });
     }
 
     return {
-      requisiteId: requisite.requisite_id,
+      requisiteId,
       card: requisite.card,
       phone: requisite.phone,
       fio: requisite.fio,
       bank: requisite.bank,
-      bankId: requisite.bank_id,
+      bankId,
       tier1: requisite.tier_1,
       status,
       method,
-      minAmount: requisite.min_amount,
-      maxAmount: requisite.max_amount,
+      minAmount,
+      maxAmount,
       limitAmount,
       limitAmountMinutes,
       exactAmountOnly: requisite.exact_amount_only,

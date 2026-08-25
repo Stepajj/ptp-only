@@ -7,6 +7,7 @@ import RequisitesEmpty from './RequisitesEmpty';
 import RequisitesError from './RequisitesError';
 import { getRequisites } from '@/features/requisites/api/requisites.api';
 import type { Requisite } from '@/features/requisites/api/requisites.api';
+import { ApiError } from '@/shared/api/http';
 
 import styles from './RequisitesList.module.css';
 
@@ -23,7 +24,7 @@ export default function RequisitesList() {
         const data = await getRequisites();
         setRequisites(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load requisites');
+        setError(getRequisitesErrorMessage(err));
       } finally {
         setLoading(false);
       }
@@ -71,4 +72,20 @@ export default function RequisitesList() {
       ))}
     </section>
   );
+}
+
+function getRequisitesErrorMessage(error: unknown): string {
+  if (error instanceof ApiError) {
+    if (error.status === 401) {
+      return 'Сессия истекла. Войдите в аккаунт снова.';
+    }
+
+    if (error.code === 'ONLY_P2P_INVALID_RESPONSE') {
+      return 'Партнёр временно вернул неполные данные реквизита. Повторите загрузку позже.';
+    }
+
+    return error.message;
+  }
+
+  return error instanceof Error ? error.message : 'Не удалось загрузить список реквизитов';
 }

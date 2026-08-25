@@ -1,5 +1,6 @@
-import { refresh, me } from '../api/auth.api';
+import { me } from '../api/auth.api';
 import { useAuthStore } from '../model/auth.store';
+import { refreshSession } from './refreshSession';
 
 let bootstrapPromise: Promise<void> | null = null;
 
@@ -9,9 +10,11 @@ async function performBootstrapAuth(): Promise<void> {
   authStore.setLoading();
 
   try {
-    const refreshResponse = await refresh();
+    const accessToken = await refreshSession();
 
-    const accessToken = refreshResponse.data.accessToken;
+    if (!accessToken) {
+      return;
+    }
 
     const meResponse = await me(accessToken);
 

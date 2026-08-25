@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { getBanks } from '@/features/requisites/api/banks.api';
 import { createRequisite } from '@/features/requisites/api/requisites.api';
 import type { Bank } from '@/features/requisites/api/banks.api';
+import { ApiError } from '@/shared/api/http';
 
 import styles from './AddRequisiteForm.module.css';
 
@@ -31,7 +32,7 @@ export default function AddRequisiteForm() {
         const data = await getBanks();
         setBanks(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Не удалось загрузить список банков');
+        setError(getRequisiteErrorMessage(err, 'Не удалось загрузить список банков'));
       }
     }
     loadBanks();
@@ -116,7 +117,7 @@ export default function AddRequisiteForm() {
       await createRequisite(input);
       router.push('/requisites');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Не удалось создать реквизит');
+      setError(getRequisiteErrorMessage(err, 'Не удалось создать реквизит'));
     } finally {
       setLoading(false);
     }
@@ -332,4 +333,16 @@ export default function AddRequisiteForm() {
       </form>
     </section>
   );
+}
+
+function getRequisiteErrorMessage(error: unknown, fallback: string): string {
+  if (error instanceof ApiError) {
+    if (error.status === 401) {
+      return 'Сессия истекла. Войдите в аккаунт снова.';
+    }
+
+    return error.message;
+  }
+
+  return error instanceof Error ? error.message : fallback;
 }

@@ -1,3 +1,6 @@
+import { refreshSession } from '@/features/auth/lib/refreshSession';
+import { useAuthStore } from '@/features/auth/model/auth.store';
+
 const DEFAULT_API_URL = 'http://localhost:4000';
 
 export class ApiError extends Error {
@@ -73,35 +76,53 @@ export async function requestJson<T>(
   path: string,
   options: RequestOptions = {},
 ): Promise<T> {
-  const url = `${getApiUrl()}${path}`;
-  const headers = new Headers(options.headers);
+  const send = async (accessToken: string | undefined) => {
+    const url = `${getApiUrl()}${path}`;
+    const headers = new Headers(options.headers);
 
-  if (options.accessToken) {
-    headers.set('Authorization', `Bearer ${options.accessToken}`);
+    if (accessToken) {
+      headers.set('Authorization', `Bearer ${accessToken}`);
+    }
+
+    let body: BodyInit | undefined;
+
+    if (options.body instanceof FormData) {
+      body = options.body;
+    } else if (isJsonObject(options.body)) {
+      headers.set('Content-Type', 'application/json');
+      body = JSON.stringify(options.body);
+    } else if (typeof options.body === 'string') {
+      body = options.body;
+    } else if (options.body instanceof Blob || options.body instanceof ArrayBuffer) {
+      body = options.body;
+    }
+
+    const { accessToken: _ignoredAccessToken, body: _ignoredBody, ...fetchOptions } = options;
+    const response = await fetch(url, {
+      ...fetchOptions,
+      headers,
+      body,
+      credentials: 'include',
+      cache: 'no-store',
+    });
+
+    return { response, payload: await parseResponseBody(response) };
+  };
+
+  const originalAccessToken = options.accessToken;
+  let { response, payload } = await send(originalAccessToken);
+
+  if (response.status === 401 && originalAccessToken && !path.startsWith('/auth/refresh')) {
+    const currentAccessToken = useAuthStore.getState().accessToken;
+    const replacementToken =
+      currentAccessToken && currentAccessToken !== originalAccessToken
+        ? currentAccessToken
+        : await refreshSession();
+
+    if (replacementToken) {
+      ({ response, payload } = await send(replacementToken));
+    }
   }
-
-  let body: BodyInit | undefined;
-
-  if (options.body instanceof FormData) {
-    body = options.body;
-  } else if (isJsonObject(options.body)) {
-    headers.set('Content-Type', 'application/json');
-    body = JSON.stringify(options.body);
-  } else if (typeof options.body === 'string') {
-    body = options.body;
-  } else if (options.body instanceof Blob || options.body instanceof ArrayBuffer) {
-    body = options.body;
-  }
-
-  const response = await fetch(url, {
-    ...options,
-    headers,
-    body,
-    credentials: 'include',
-    cache: 'no-store',
-  });
-
-  const payload = await parseResponseBody(response);
 
   if (!response.ok) {
     const message = extractErrorMessage(payload);

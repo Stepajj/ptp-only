@@ -68,7 +68,14 @@ export const refreshController: RequestHandler = async (request, response, next)
     setRefreshTokenCookie(response, result.refreshToken);
     response.status(200).json(result.response);
   } catch (error) {
-    clearRefreshTokenCookie(response);
+    // Do not destroy a still-valid session on a transient database/server error.
+    // Clear the cookie only when the server has positively rejected the session.
+    if (
+      error instanceof AppError &&
+      (error.statusCode === 401 || error.code === "USER_NOT_ACTIVE")
+    ) {
+      clearRefreshTokenCookie(response);
+    }
     next(error);
   }
 };
