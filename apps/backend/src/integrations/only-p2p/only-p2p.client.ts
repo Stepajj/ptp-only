@@ -1,5 +1,6 @@
 import { config } from "../../config";
 import { AppError } from "../../shared/errors/app-error";
+import { logger } from "../../shared/logger/logger";
 export type OnlyP2PTopupMethod =
   | "btc"
   | "ltc"
@@ -376,7 +377,7 @@ function parseOnlyP2PRequisitesResponse(raw: unknown): OnlyP2PRequisite[] {
     throw new AppError({ statusCode: 502, code: "ONLY_P2P_INVALID_RESPONSE", message: "External service returned an invalid requisites response" });
   }
 
-  return (raw as { data: unknown[] }).data.map((item) => {
+  return (raw as { data: unknown[] }).data.map((item, itemIndex) => {
     if (!item || typeof item !== "object") {
       throw new AppError({ statusCode: 502, code: "ONLY_P2P_INVALID_RESPONSE", message: "External service returned an invalid requisite" });
     }
@@ -406,13 +407,14 @@ function parseOnlyP2PRequisitesResponse(raw: unknown): OnlyP2PRequisite[] {
 
     if (
       requisiteId === null ||
-      typeof requisite.card !== "string" || typeof requisite.phone !== "string" ||
+      (requisite.card !== undefined && requisite.card !== null && typeof requisite.card !== "string") ||
+      (requisite.phone !== undefined && requisite.phone !== null && typeof requisite.phone !== "string") ||
       typeof requisite.fio !== "string" || typeof requisite.bank !== "string" ||
       bankId === null ||
       typeof requisite.tier_1 !== "boolean" || (status !== "on" && status !== "off") ||
       (method !== "both" && method !== "card" && method !== "sbp" && method !== null) ||
       minAmount === null || maxAmount === null ||
-      typeof requisite.exact_amount_only !== "boolean" ||
+      (requisite.exact_amount_only !== undefined && typeof requisite.exact_amount_only !== "boolean") ||
       (requisite.limit_amount !== undefined && requisite.limit_amount !== null && limitAmount === null) ||
       (requisite.limit_amount_minutes !== undefined && requisite.limit_amount_minutes !== null && limitAmountMinutes === null)
     ) {
@@ -421,19 +423,24 @@ function parseOnlyP2PRequisitesResponse(raw: unknown): OnlyP2PRequisite[] {
         bank_id: bankId === null,
         min_amount: minAmount === null,
         max_amount: maxAmount === null,
-        card: typeof requisite.card !== "string",
-        phone: typeof requisite.phone !== "string",
+        card: requisite.card !== undefined && requisite.card !== null && typeof requisite.card !== "string",
+        phone: requisite.phone !== undefined && requisite.phone !== null && typeof requisite.phone !== "string",
         fio: typeof requisite.fio !== "string",
         bank: typeof requisite.bank !== "string",
         tier_1: typeof requisite.tier_1 !== "boolean",
         status: status !== "on" && status !== "off",
         method: method !== "both" && method !== "card" && method !== "sbp" && method !== null,
-        exact_amount_only: typeof requisite.exact_amount_only !== "boolean",
+        exact_amount_only: requisite.exact_amount_only !== undefined && typeof requisite.exact_amount_only !== "boolean",
         limit_amount: requisite.limit_amount !== undefined && requisite.limit_amount !== null && limitAmount === null,
         limit_amount_minutes: requisite.limit_amount_minutes !== undefined && requisite.limit_amount_minutes !== null && limitAmountMinutes === null,
       })
         .filter(([, invalid]) => invalid)
         .map(([field]) => field);
+
+      logger.warn(
+        { endpoint: "/op2p_api/requisites", itemIndex, invalidFields },
+        "OnlyP2P returned an invalid requisite payload",
+      );
 
       throw new AppError({
         statusCode: 502,
@@ -445,8 +452,8 @@ function parseOnlyP2PRequisitesResponse(raw: unknown): OnlyP2PRequisite[] {
 
     return {
       requisiteId,
-      card: requisite.card,
-      phone: requisite.phone,
+      card: typeof requisite.card === "string" ? requisite.card : "-",
+      phone: typeof requisite.phone === "string" ? requisite.phone : "-",
       fio: requisite.fio,
       bank: requisite.bank,
       bankId,
@@ -457,7 +464,7 @@ function parseOnlyP2PRequisitesResponse(raw: unknown): OnlyP2PRequisite[] {
       maxAmount,
       limitAmount,
       limitAmountMinutes,
-      exactAmountOnly: requisite.exact_amount_only,
+      exactAmountOnly: requisite.exact_amount_only ?? false,
     };
   });
 }

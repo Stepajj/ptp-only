@@ -72,6 +72,16 @@ function extractErrorMessage(payload: unknown): string {
   return 'Request failed';
 }
 
+function isPublicAuthEndpoint(path: string): boolean {
+  return [
+    '/auth/login',
+    '/auth/register',
+    '/auth/telegram',
+    '/auth/refresh',
+    '/auth/logout',
+  ].some((endpoint) => path === endpoint || path.startsWith(`${endpoint}?`));
+}
+
 export async function requestJson<T>(
   path: string,
   options: RequestOptions = {},
@@ -112,7 +122,7 @@ export async function requestJson<T>(
   const originalAccessToken = options.accessToken;
   let { response, payload } = await send(originalAccessToken);
 
-  if (response.status === 401 && originalAccessToken && !path.startsWith('/auth/refresh')) {
+  if (response.status === 401 && !isPublicAuthEndpoint(path)) {
     const currentAccessToken = useAuthStore.getState().accessToken;
     const replacementToken =
       currentAccessToken && currentAccessToken !== originalAccessToken
