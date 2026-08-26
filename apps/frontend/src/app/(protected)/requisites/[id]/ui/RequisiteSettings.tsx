@@ -46,12 +46,30 @@ useEffect(() => {
       setLoading(true);
       setError(null);
 
+      const id = parseInt(requisiteId, 10);
+
+      // UI mock
+      if (id === -900001) {
+        setRequisite(demoRequisite);
+
+        setFormData({
+          status: demoRequisite.status,
+          minAmount: demoRequisite.minAmount?.toString() ?? '',
+          maxAmount: demoRequisite.maxAmount?.toString() ?? '',
+          limitAmount: demoRequisite.limitAmount?.toString() ?? '',
+          limitAmountMinutes:
+            demoRequisite.limitAmountMinutes?.toString() ?? '',
+          exactAmountOnly: demoRequisite.exactAmountOnly,
+        });
+
+        return;
+      }
+
+      // Реальная логика
       const requisites = await getRequisites();
 
-      const allRequisites = [...requisites, demoRequisite];
-
-      const found = allRequisites.find(
-        (r) => r.requisiteId === parseInt(requisiteId, 10)
+      const found = requisites.find(
+        (r) => r.requisiteId === id
       );
 
       if (!found) {
@@ -65,8 +83,9 @@ useEffect(() => {
         status: found.status,
         minAmount: found.minAmount?.toString() ?? '',
         maxAmount: found.maxAmount?.toString() ?? '',
-        limitAmount: found.limitAmount?.toString() || '',
-        limitAmountMinutes: found.limitAmountMinutes?.toString() || '',
+        limitAmount: found.limitAmount?.toString() ?? '',
+        limitAmountMinutes:
+          found.limitAmountMinutes?.toString() ?? '',
         exactAmountOnly: found.exactAmountOnly,
       });
     } catch (err) {
