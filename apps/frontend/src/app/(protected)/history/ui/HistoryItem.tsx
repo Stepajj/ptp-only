@@ -61,6 +61,7 @@ export function HistoryItem({
             item.amount,
             item.currency,
           )}
+          {item.uiMock ? " · Демо" : null}
         </div>
 
         <div className={styles.meta}>

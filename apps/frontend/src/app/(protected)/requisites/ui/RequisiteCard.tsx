@@ -2,6 +2,7 @@ import RequisiteActions from './RequisiteActions';
 import type { Requisite } from '@/features/requisites/api/requisites.api';
 
 import styles from './RequisiteCard.module.css';
+import { UI_MOCK_BADGE } from '@/shared/testing/ui-mocks';
 
 type RequisiteCardProps = {
   requisite: Requisite;
@@ -56,6 +57,7 @@ export default function RequisiteCard({
         <div className={styles.content}>
           <p className={styles.title}>
             {requisite.bank} · {type} · {value}
+            {requisite.uiMock ? ` · ${UI_MOCK_BADGE}` : null}
           </p>
 
           <p className={styles.description}>
@@ -71,6 +73,7 @@ export default function RequisiteCard({
           requisiteId={requisite.requisiteId.toString()}
           isActive={isActive}
           onStatusChange={(newStatus) => onStatusChange?.(requisite.requisiteId, newStatus)}
+          disabled={requisite.uiMock === true}
         />
       </div>
     </article>

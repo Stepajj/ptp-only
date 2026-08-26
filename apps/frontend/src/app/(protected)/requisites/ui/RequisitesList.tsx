@@ -10,6 +10,25 @@ import type { Requisite } from '@/features/requisites/api/requisites.api';
 import { ApiError } from '@/shared/api/http';
 
 import styles from './RequisitesList.module.css';
+import { UI_MOCKS_ENABLED } from '@/shared/testing/ui-mocks';
+
+const demoRequisite: Requisite = {
+  requisiteId: -900001,
+  card: '0000000000000000',
+  phone: '-',
+  fio: 'Демо реквизит',
+  bank: 'Визуальный пример',
+  bankId: 1,
+  tier1: false,
+  status: 'off',
+  method: 'card',
+  minAmount: null,
+  maxAmount: null,
+  limitAmount: null,
+  limitAmountMinutes: null,
+  exactAmountOnly: false,
+  uiMock: true,
+};
 
 export default function RequisitesList() {
   const [requisites, setRequisites] = useState<Requisite[]>([]);
@@ -22,7 +41,7 @@ export default function RequisitesList() {
         setLoading(true);
         setError(null);
         const data = await getRequisites();
-        setRequisites(data);
+        setRequisites(UI_MOCKS_ENABLED ? [...data, demoRequisite] : data);
       } catch (err) {
         setError(getRequisitesErrorMessage(err));
       } finally {

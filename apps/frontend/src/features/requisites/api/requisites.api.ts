@@ -16,6 +16,7 @@ export interface Requisite {
   limitAmount: number | null;
   limitAmountMinutes: number | null;
   exactAmountOnly: boolean;
+  uiMock?: boolean;
 }
 
 export interface CreateRequisiteInput {

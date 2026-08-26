@@ -1,6 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
+import SettingsIcon from '../assets/icons/settings.svg';
+import DeletesIcon from '../assets/icons/trash.svg';
 import { useState } from 'react';
 import { editRequisite, deleteRequisite } from '@/features/requisites/api/requisites.api';
 
@@ -14,12 +17,14 @@ type RequisiteActionsProps = {
   requisiteId: string;
   isActive: boolean;
   onStatusChange?: (newStatus: boolean) => void;
+  disabled?: boolean;
 };
 
 export default function RequisiteActions({
   requisiteId,
   isActive,
   onStatusChange,
+  disabled = false,
 }: RequisiteActionsProps) {
   const [active, setActive] = useState(isActive);
   const [loading, setLoading] = useState(false);
@@ -74,7 +79,7 @@ export default function RequisiteActions({
         aria-pressed={active}
         aria-label={active ? 'Выключить реквизит' : 'Включить реквизит'}
         onClick={handleToggle}
-        disabled={loading}
+        disabled={loading || disabled}
       >
         <span className={styles.toggleThumb} />
       </button>
@@ -84,12 +89,14 @@ export default function RequisiteActions({
         className={styles.actionButton}
         aria-label="Настройки реквизита"
         onClick={(e) => {
-          if (loading) {
+          if (loading || disabled) {
             e.preventDefault();
           }
         }}
       >
-        <span aria-hidden="true">⚙</span>
+        <span aria-hidden="true">
+          <Image src={SettingsIcon} alt="" />
+        </span>
       </Link>
 
       <button
@@ -97,9 +104,11 @@ export default function RequisiteActions({
         className={`${styles.actionButton} ${styles.deleteButton}`}
         aria-label="Удалить реквизит"
         onClick={handleDelete}
-        disabled={loading}
+        disabled={loading || disabled}
       >
-        <span aria-hidden="true">♧</span>
+        <span aria-hidden="true">
+          <Image src={DeletesIcon} alt="" />
+        </span>
       </button>
     </div>
   );

@@ -10,6 +10,19 @@ import { HistoryFilters } from "./HistoryFilters";
 import { HistoryList } from "./HistoryList";
 import { HistorySummary } from "./HistorySummary";
 import styles from "./HistoryPage.module.css";
+import { UI_MOCKS_ENABLED } from "@/shared/testing/ui-mocks";
+
+const demoHistoryItem = {
+  id: "ui-demo-history-1",
+  amount: 24000,
+  currency: "RUB",
+  orderNumber: "demo-10501",
+  paymentMethod: "Карта",
+  bankName: "Сбербанк",
+  createdAt: new Date().toISOString(),
+  status: "completed" as const,
+  uiMock: true,
+};
 
 export function HistoryPage() {
   const [data, setData] = useState<HistoryResponse | null>(null);
@@ -25,7 +38,11 @@ export function HistoryPage() {
 
   useEffect(() => {
     queueMicrotask(() => {
-      void getHistory().then(setData).catch((reason: unknown) => {
+      void getHistory().then((response) => setData(
+        UI_MOCKS_ENABLED
+          ? { ...response, items: [...response.items, demoHistoryItem] }
+          : response,
+      )).catch((reason: unknown) => {
         setError(reason instanceof Error ? reason.message : "Не удалось загрузить историю");
       });
     });

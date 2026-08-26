@@ -15,6 +15,23 @@ import {
 } from "@/features/requests/api/requests.api";
 
 import styles from "./RequestsPage.module.css";
+import { UI_MOCKS_ENABLED } from "@/shared/testing/ui-mocks";
+
+const demoRequest: IncomingRequest = {
+  id: "ui-demo-request-1",
+  amountRub: 24000,
+  receivedRubAmount: null,
+  requisiteId: -900002,
+  requisite: "Демо реквизит · ••• 4242",
+  fio: "Демо покупатель",
+  bank: "Сбербанк",
+  method: "card",
+  status: "waiting",
+  awaitingProof: false,
+  deadline: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+  created: new Date().toISOString(),
+  dateFinished: null,
+};
 
 const tabs: Array<{ status: IncomingRequestStatus; label: string }> = [
   { status: "waiting", label: "Ожидают" },
@@ -49,7 +66,8 @@ export function RequestsPage() {
     try {
       setLoading(true);
       setError(null);
-      setRequests(await getIncomingRequests());
+      const data = await getIncomingRequests();
+      setRequests(UI_MOCKS_ENABLED ? [...data, demoRequest] : data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Не удалось загрузить заявки");
     } finally {
@@ -64,6 +82,10 @@ export function RequestsPage() {
   }, [loadRequests]);
 
   const handleConfirm = async (request: IncomingRequest) => {
+    if (request.id === demoRequest.id) {
+      setRequests((current) => current.filter((item) => item.id !== request.id));
+      return;
+    }
     const customAmount = receivedAmounts[request.id]?.trim();
     const amount = customAmount ? Number(customAmount) : undefined;
 
@@ -157,6 +179,16 @@ export function RequestsPage() {
         <div className={styles.list}>
           {visibleRequests.map((request) => (
             <article key={request.id} className={styles.item}>
+              {request.id === demoRequest.id ? (
+                <div className={styles.itemLink}>
+                  <div className={styles.icon}>▶</div>
+                  <div className={styles.content}>
+                    <div className={styles.amount}>{formatRub(request.amountRub)} · Демо</div>
+                    <div className={styles.meta}>Покупатель · {request.bank} → ваш реквизит</div>
+                    <div className={styles.requisite}>{request.requisite}</div>
+                  </div>
+                </div>
+              ) : (
               <Link href={`/requests/${encodeURIComponent(request.id)}`} className={styles.itemLink}>
                 <div className={styles.icon}>▶</div>
                 <div className={styles.content}>
@@ -167,6 +199,7 @@ export function RequestsPage() {
                   <div className={styles.requisite}>{request.requisite}</div>
                 </div>
               </Link>
+              )}
 
               <div className={styles.actions}>
                 <span className={`${styles.status} ${styles[request.status]}`}>
