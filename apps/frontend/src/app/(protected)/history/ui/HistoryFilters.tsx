@@ -61,6 +61,10 @@ export function HistoryFilters({
         <option value="sbp">
           Реквизит: СБП
         </option>
+
+        <option value="card">
+          Реквизит: карта
+        </option>
       </select>
 
       <select
@@ -76,17 +80,6 @@ export function HistoryFilters({
           Только: завершённые
         </option>
 
-        <option value="pending">
-          Только: ожидающие
-        </option>
-
-        <option value="processing">
-          Только: в обработке
-        </option>
-
-        <option value="cancelled">
-          Только: отменённые
-        </option>
       </select>
     </div>
   );

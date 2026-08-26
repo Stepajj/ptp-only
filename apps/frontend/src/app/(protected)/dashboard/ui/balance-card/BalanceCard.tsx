@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import BonusArrow from '../../assets/icons/bonusArrow.svg';
@@ -15,6 +15,7 @@ export default function BalanceCard() {
   const [balance, setBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [balanceError, setBalanceError] = useState<string | null>(null);
+  const hasBalanceRef = useRef(false);
 
   useEffect(() => {
     if (!accessToken) {
@@ -30,11 +31,12 @@ export default function BalanceCard() {
       }
 
       try {
-        setLoading(true);
+        if (!cancelled && !hasBalanceRef.current) setLoading(true);
         const result = await getBalance(accessToken);
 
         if (!cancelled) {
           setBalance(result.data.balance);
+          hasBalanceRef.current = true;
           setBalanceError(null);
           setLoading(false);
         }

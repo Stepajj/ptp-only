@@ -60,3 +60,18 @@
   font-weight: 500;
   color: inherit; /* inherit from .item */
 }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  margin-left: auto;
+  padding: 0 5px;
+  border-radius: 50%;
+  background: #fa90d9;
+  color: #17191c;
+  font-size: 12px;
+  font-weight: 600;
+}

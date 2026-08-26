@@ -8,24 +8,6 @@ import Image from 'next/image';
 import TBankIcon from '../../assets/icons/TBank.svg';
 import SbpIcon from '../../assets/icons/sbp.svg';
 
-const demoRequisite: Requisite = {
-  requisiteId: -900001,
-  card: '0000000000000000',
-  phone: '-',
-  fio: 'Демо реквизит',
-  bank: 'Визуальный пример',
-  bankId: 1,
-  tier1: false,
-  status: 'on',
-  method: 'card',
-  minAmount: 1000,
-  maxAmount: 50000,
-  limitAmount: 100000,
-  limitAmountMinutes: 60,
-  exactAmountOnly: false,
-  uiMock: true,
-};
-
 function getBankIcon(bankName: string) {
   const normalized = bankName.toLowerCase();
   if (normalized.includes('т-банк') || normalized.includes('тинькофф')) return TBankIcon;
@@ -57,8 +39,6 @@ export default function RequisiteSettings({ requisiteId }: { requisiteId: string
     limitAmountMinutes: '',
     exactAmountOnly: false,
   });
-  const isDemo = parseInt(requisiteId, 10) === demoRequisite.requisiteId;
-
 useEffect(() => {
   async function loadRequisite() {
     try {
@@ -67,24 +47,6 @@ useEffect(() => {
 
       const id = parseInt(requisiteId, 10);
 
-      // UI mock
-      if (id === -900001) {
-        setRequisite(demoRequisite);
-
-        setFormData({
-          status: demoRequisite.status,
-          minAmount: demoRequisite.minAmount?.toString() ?? '',
-          maxAmount: demoRequisite.maxAmount?.toString() ?? '',
-          limitAmount: demoRequisite.limitAmount?.toString() ?? '',
-          limitAmountMinutes:
-            demoRequisite.limitAmountMinutes?.toString() ?? '',
-          exactAmountOnly: demoRequisite.exactAmountOnly,
-        });
-
-        return;
-      }
-
-      // Реальная логика
       const requisites = await getRequisites();
 
       const found = requisites.find(
@@ -160,19 +122,6 @@ useEffect(() => {
     try {
       setSaving(true);
 
-      if (isDemo) {
-        setRequisite((current) => current ? {
-          ...current,
-          status: formData.status,
-          minAmount: Number(formData.minAmount),
-          maxAmount: Number(formData.maxAmount),
-          limitAmount: Number(formData.limitAmount),
-          limitAmountMinutes: Number(formData.limitAmountMinutes),
-          exactAmountOnly: formData.exactAmountOnly,
-        } : current);
-        return;
-      }
-      
       const input: Parameters<typeof editRequisite>[1] = {
         status: formData.status,
         exactAmountOnly: formData.exactAmountOnly,
@@ -202,7 +151,7 @@ useEffect(() => {
     if (!confirm('Удалить этот реквизит?')) return;
     try {
       setSaving(true);
-      if (!isDemo) await deleteRequisite(parseInt(requisiteId, 10));
+      await deleteRequisite(parseInt(requisiteId, 10));
       router.push('/requisites');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Не удалось удалить реквизит');

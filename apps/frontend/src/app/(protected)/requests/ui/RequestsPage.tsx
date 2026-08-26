@@ -17,8 +17,9 @@ import {
 import styles from "./RequestsPage.module.css";
 import { UI_MOCKS_ENABLED } from "@/shared/testing/ui-mocks";
 
-const demoRequest: IncomingRequest = {
-  id: "ui-demo-request-1",
+const demoRequests: IncomingRequest[] = [
+{
+  id: "ui-demo-request-waiting",
   amountRub: 24000,
   receivedRubAmount: null,
   requisiteId: -900002,
@@ -31,7 +32,38 @@ const demoRequest: IncomingRequest = {
   deadline: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
   created: new Date().toISOString(),
   dateFinished: null,
-};
+},
+{
+  id: "ui-demo-request-cancelled",
+  amountRub: 18500,
+  receivedRubAmount: null,
+  requisiteId: -900003,
+  requisite: "Демо реквизит · ••• 4242",
+  fio: "Демо покупатель",
+  bank: "Т-Банк",
+  method: "card",
+  status: "cancelled",
+  awaitingProof: true,
+  deadline: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+  created: new Date().toISOString(),
+  dateFinished: null,
+},
+{
+  id: "ui-demo-request-finished",
+  amountRub: 32000,
+  receivedRubAmount: 32000,
+  requisiteId: -900004,
+  requisite: "Демо реквизит · ••• 4242",
+  fio: "Демо покупатель",
+  bank: "Сбербанк",
+  method: "card",
+  status: "finished",
+  awaitingProof: false,
+  deadline: null,
+  created: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+  dateFinished: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+},
+];
 
 const tabs: Array<{ status: IncomingRequestStatus; label: string }> = [
   { status: "waiting", label: "Ожидают" },
@@ -67,7 +99,7 @@ export function RequestsPage() {
       setLoading(true);
       setError(null);
       const data = await getIncomingRequests();
-      setRequests(UI_MOCKS_ENABLED ? [...data, demoRequest] : data);
+      setRequests(UI_MOCKS_ENABLED ? [...data, ...demoRequests] : data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Не удалось загрузить заявки");
     } finally {
@@ -82,7 +114,7 @@ export function RequestsPage() {
   }, [loadRequests]);
 
   const handleConfirm = async (request: IncomingRequest) => {
-    if (request.id === demoRequest.id) {
+    if (request.id.startsWith("ui-demo-request-")) {
       setRequests((current) => current.filter((item) => item.id !== request.id));
       return;
     }
@@ -179,7 +211,7 @@ export function RequestsPage() {
         <div className={styles.list}>
           {visibleRequests.map((request) => (
             <article key={request.id} className={styles.item}>
-              {request.id === demoRequest.id ? (
+              {request.id.startsWith("ui-demo-request-") ? (
                 <div className={styles.itemLink}>
                   <div className={styles.icon}>▶</div>
                   <div className={styles.content}>

@@ -2,10 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 
 import styles from './SidebarItem.module.css';
 import { ICONS, IconName } from './icons';
+import { getIncomingRequests } from '@/features/requests/api/requests.api';
+import { getAuthAccessToken } from '@/features/auth/lib/getAuthAccessToken';
+import { UI_MOCKS_ENABLED } from '@/shared/testing/ui-mocks';
 
 type Props = {
   href: string;
@@ -19,12 +23,30 @@ export function SidebarItem({ href, title, icon }: Props) {
   const isActive = pathname === href || pathname.startsWith(`${href}/`);
 
   const Icon = ICONS[icon] ?? null;
+  const [waitingCount, setWaitingCount] = useState(0);
+
+  useEffect(() => {
+    if (href !== '/requests') return;
+    const load = async () => {
+      if (!getAuthAccessToken()) return;
+      try {
+        const data = await getIncomingRequests('waiting');
+        setWaitingCount(data.length + (UI_MOCKS_ENABLED ? 1 : 0));
+      } catch {
+        // Sidebar badge must not make navigation fail.
+      }
+    };
+    void load();
+    const timer = window.setInterval(() => void load(), 15000);
+    return () => window.clearInterval(timer);
+  }, [href]);
 
   return (
     <Link href={href} className={clsx(styles.item, isActive && styles.active)}>
       {Icon ? <Icon className={styles.icon} /> : null}
 
       <span className={styles.label}>{title}</span>
+      {href === '/requests' && waitingCount > 0 ? <span className={styles.badge}>{waitingCount}</span> : null}
     </Link>
   );
 }
