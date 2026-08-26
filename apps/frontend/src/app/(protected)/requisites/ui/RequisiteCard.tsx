@@ -1,5 +1,8 @@
 import RequisiteActions from './RequisiteActions';
 import type { Requisite } from '@/features/requisites/api/requisites.api';
+import Image, { type StaticImageData } from 'next/image';
+import TBankIcon from '../assets/icons/TBank.svg';
+import SbpIcon from '../assets/icons/sbp.svg';
 
 import styles from './RequisiteCard.module.css';
 import { UI_MOCK_BADGE } from '@/shared/testing/ui-mocks';
@@ -23,8 +26,11 @@ function formatPhoneNumber(phone: string): string {
   return phone;
 }
 
-function getBankIcon(bankName: string): string {
-  return bankName.charAt(0).toUpperCase();
+function getBankIcon(bankName: string): StaticImageData | null {
+  const normalized = bankName.toLowerCase();
+  if (normalized.includes('т-банк') || normalized.includes('тинькофф')) return TBankIcon;
+  if (normalized.includes('сбп')) return SbpIcon;
+  return null;
 }
 
 function getDisplayInfo(requisite: Requisite): { type: string; value: string } {
@@ -51,7 +57,11 @@ export default function RequisiteCard({
     <article className={styles.card}>
       <div className={styles.main}>
         <div className={styles.bankIcon} aria-hidden="true">
-          {getBankIcon(requisite.bank)}
+          {getBankIcon(requisite.bank) ? (
+            <Image src={getBankIcon(requisite.bank) as StaticImageData} alt="" />
+          ) : (
+            requisite.bank.charAt(0).toUpperCase()
+          )}
         </div>
 
         <div className={styles.content}>
@@ -65,8 +75,20 @@ export default function RequisiteCard({
           </p>
 
           <p className={styles.limits}>
-            Мин: {formatLimit(requisite.minAmount)} · Макс: {formatLimit(requisite.maxAmount)}
+            Лимит сегодня: {formatLimit(requisite.limitAmount)}
           </p>
+        </div>
+
+        <div
+          className={styles.progress}
+          role="progressbar"
+          aria-label={requisite.limitAmount === null ? 'Лимит не задан' : `Лимит до ${formatLimit(requisite.limitAmount)}`}
+          aria-valuemin={0}
+          aria-valuemax={requisite.limitAmount ?? undefined}
+          aria-valuenow={0}
+          title="Текущий расход не предоставляется API OnlyP2P"
+        >
+          <span className={styles.progressValue} />
         </div>
 
         <RequisiteActions
