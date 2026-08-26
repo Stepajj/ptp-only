@@ -10,7 +10,7 @@ import type { Requisite } from '@/features/requisites/api/requisites.api';
 import { ApiError } from '@/shared/api/http';
 
 import styles from './RequisitesList.module.css';
-import { UI_MOCKS_ENABLED } from '@/shared/testing/ui-mocks';
+
 
 const demoRequisite: Requisite = {
   requisiteId: -900001,
@@ -41,7 +41,7 @@ export default function RequisitesList() {
         setLoading(true);
         setError(null);
         const data = await getRequisites();
-        setRequisites(UI_MOCKS_ENABLED ? [...data, demoRequisite] : data);
+       setRequisites([...data, demoRequisite]);
       } catch (err) {
         setError(getRequisitesErrorMessage(err));
       } finally {
