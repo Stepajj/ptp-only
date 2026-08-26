@@ -583,3 +583,114 @@
   cursor: not-allowed;
 }
 */
+
+.page {
+  width: 100%;
+  max-width: 851px;
+}
+
+.back {
+  display: flex;
+  gap: 10px;
+  margin: 22px 0 0;
+  color: rgba(0, 0, 0, 0.6);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+@media (min-width: 701px) {
+  .card {
+    width: 460px;
+    margin: 14px 0 0;
+    border-radius: 14px;
+  }
+
+  .form {
+    padding: 18px 15px 15px;
+  }
+
+  .title {
+    display: none;
+  }
+
+  .info {
+    margin-bottom: 16px;
+    padding-top: 0;
+  }
+
+  .infoItem {
+    justify-content: flex-start;
+    gap: 8px;
+    min-height: 25px;
+  }
+
+  .infoLabel {
+    display: none;
+  }
+
+  .infoValue {
+    max-width: 100%;
+    text-align: left;
+  }
+
+  .form > form {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px 8px;
+  }
+
+  .form > form > .field:first-child,
+  .form > form > .field:nth-child(5),
+  .form > form > .actions {
+    grid-column: 1 / -1;
+  }
+
+  .form > form > .field:nth-child(2),
+  .form > form > .field:nth-child(3),
+  .form > form > .field:nth-child(4) {
+    margin-bottom: 0;
+  }
+
+  .form > form > .resetButton,
+  .form > form > .field:nth-child(7) {
+    display: none;
+  }
+}
+
+.deleteButton {
+  min-width: 84px;
+  min-height: 42px;
+  padding: 0 18px;
+  border: 1px solid #ff6268;
+  border-radius: 9px;
+  background: #fff;
+  color: #f0444c;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.deleteButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+@media (max-width: 700px) {
+  .page {
+    max-width: 100%;
+  }
+
+  .back {
+    margin: 16px 16px 0;
+  }
+
+  .card {
+    width: calc(100% - 32px);
+    margin: 14px 16px 24px;
+  }
+
+  .form > form > .field {
+    margin-bottom: 16px;
+  }
+}

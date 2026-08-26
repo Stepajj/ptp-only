@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getRequisites, editRequisite } from '@/features/requisites/api/requisites.api';
+import { getRequisites, editRequisite, deleteRequisite } from '@/features/requisites/api/requisites.api';
 import type { Requisite } from '@/features/requisites/api/requisites.api';
 
 const demoRequisite: Requisite = {
@@ -205,6 +205,19 @@ useEffect(() => {
     }
   };
 
+  const handleDelete = async () => {
+    if (!confirm('Удалить этот реквизит?')) return;
+    try {
+      setSaving(true);
+      if (!isDemo) await deleteRequisite(parseInt(requisiteId, 10));
+      router.push('/requisites');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Не удалось удалить реквизит');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (loading) {
     return (
       <section className={styles.card}>
@@ -368,11 +381,11 @@ useEffect(() => {
 
             <button
               type="button"
-              className={styles.cancelButton}
-              onClick={() => router.push('/requisites')}
+              className={styles.deleteButton}
+              onClick={() => void handleDelete()}
               disabled={saving}
             >
-              Отмена
+              Удалить
             </button>
           </div>
         </form>

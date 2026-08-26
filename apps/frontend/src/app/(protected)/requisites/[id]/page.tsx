@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import RequisiteSettings from './ui/RequisiteSettings';
+import styles from './ui/RequisiteSettings.module.css';
 
 export default function RequisiteSettingsPage({
   params,
@@ -12,9 +13,9 @@ export default function RequisiteSettingsPage({
 async function RequisiteSettingsRoute({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   return (
-    <main>
+    <main className={styles.page}>
       <Link
-        style={{ margin: '25px 0px 0px 30px', display: 'flex', gap: '10px' }}
+        className={styles.back}
         href="/requisites"
       >
         <span style={{ opacity: '30%' }}>←</span>
