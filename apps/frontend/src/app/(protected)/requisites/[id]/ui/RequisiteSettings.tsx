@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getRequisites, editRequisite, deleteRequisite } from '@/features/requisites/api/requisites.api';
 import type { Requisite } from '@/features/requisites/api/requisites.api';
+import Image from 'next/image';
+import TBankIcon from '../../assets/icons/TBank.svg';
+import SbpIcon from '../../assets/icons/sbp.svg';
 
 const demoRequisite: Requisite = {
   requisiteId: -900001,
@@ -22,6 +25,21 @@ const demoRequisite: Requisite = {
   exactAmountOnly: false,
   uiMock: true,
 };
+
+function getBankIcon(bankName: string) {
+  const normalized = bankName.toLowerCase();
+  if (normalized.includes('т-банк') || normalized.includes('тинькофф')) return TBankIcon;
+  if (normalized.includes('сбп')) return SbpIcon;
+  return null;
+}
+
+function getRequisiteValue(requisite: Requisite): string {
+  if (requisite.method === 'sbp' || (requisite.method === 'both' && requisite.phone !== '-')) {
+    return requisite.phone === '-' ? 'СБП' : `СБП · ${requisite.phone}`;
+  }
+  const card = requisite.card.replace(/\s/g, '');
+  return card.length >= 4 ? `•• ${card.slice(-4)}` : 'Карта';
+}
 
 import styles from './RequisiteSettings.module.css';
 
@@ -133,6 +151,11 @@ useEffect(() => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (Boolean(formData.limitAmount) !== Boolean(formData.limitAmountMinutes)) {
+      setError('Укажите лимит и период лимита вместе');
+      return;
+    }
 
     try {
       setSaving(true);
@@ -246,54 +269,36 @@ useEffect(() => {
         )}
 
         <div className={styles.info}>
-          <div className={styles.infoItem}>
-            <span className={styles.infoLabel}>Банк:</span>
-            <span className={styles.infoValue}>{requisite.bank}</span>
+          <div className={styles.bankIcon} aria-hidden="true">
+            {getBankIcon(requisite.bank) ? <Image src={getBankIcon(requisite.bank)!} alt="" /> : requisite.bank.charAt(0)}
           </div>
-          <div className={styles.infoItem}>
-            <span className={styles.infoLabel}>Карта:</span>
-            <span className={styles.infoValue}>{requisite.card}</span>
+          <div className={styles.infoContent}>
+            <strong className={styles.infoTitle}>{requisite.bank} · {getRequisiteValue(requisite)}</strong>
+            <span className={styles.infoSubtitle}>{requisite.status === 'on' ? 'Активен · подбор включён' : 'Выключен · подбор отключён'}</span>
           </div>
-          <div className={styles.infoItem}>
-            <span className={styles.infoLabel}>Телефон:</span>
-            <span className={styles.infoValue}>{requisite.phone}</span>
+        </div>
+
+        <div className={styles.statusRow}>
+          <div>
+            <strong className={styles.statusTitle}>Приём заявок</strong>
+            <span className={styles.statusDescription}>Выключите, если отходите офлайн</span>
           </div>
-          <div className={styles.infoItem}>
-            <span className={styles.infoLabel}>ФИО:</span>
-            <span className={styles.infoValue}>{requisite.fio}</span>
-          </div>
+          <button
+            type="button"
+            className={`${styles.switch} ${formData.status === 'on' ? styles.switchOn : ''}`}
+            aria-label={formData.status === 'on' ? 'Выключить приём заявок' : 'Включить приём заявок'}
+            aria-pressed={formData.status === 'on'}
+            onClick={() => setFormData({ ...formData, status: formData.status === 'on' ? 'off' : 'on' })}
+            disabled={saving}
+          >
+            <span className={styles.switchThumb} />
+          </button>
         </div>
 
         <form onSubmit={handleSubmit}>
           <div className={styles.field}>
-            <label className={styles.label}>Статус</label>
-            <div className={styles.statusToggle}>
-              <button
-                type="button"
-                className={`${styles.statusButton} ${
-                  formData.status === 'on' ? styles.statusButtonActive : ''
-                }`}
-                onClick={() => setFormData({ ...formData, status: 'on' })}
-                disabled={saving}
-              >
-                Включен
-              </button>
-              <button
-                type="button"
-                className={`${styles.statusButton} ${
-                  formData.status === 'off' ? styles.statusButtonActive : ''
-                }`}
-                onClick={() => setFormData({ ...formData, status: 'off' })}
-                disabled={saving}
-              >
-                Выключен
-              </button>
-            </div>
-          </div>
-
-          <div className={styles.field}>
             <label htmlFor="minAmount" className={styles.label}>
-              Минимальная сумма заявки, ₽
+              Мин, ₽
             </label>
             <input
               id="minAmount"
@@ -307,7 +312,7 @@ useEffect(() => {
 
           <div className={styles.field}>
             <label htmlFor="maxAmount" className={styles.label}>
-              Максимальная сумма заявки, ₽
+              Макс, ₽
             </label>
             <input
               id="maxAmount"
@@ -321,7 +326,7 @@ useEffect(() => {
 
           <div className={styles.field}>
             <label htmlFor="limitAmount" className={styles.label}>
-              Лимит суммы заявок, ₽
+              В сутки, ₽
             </label>
             <input
               id="limitAmount"
