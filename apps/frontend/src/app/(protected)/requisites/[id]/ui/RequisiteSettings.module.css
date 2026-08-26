@@ -724,7 +724,7 @@
   }
 
   .form > form > .actions {
-    grid-column: 1 / -1;
+    
   }
 }
 
@@ -807,7 +807,7 @@
   .form > form > .field:first-child,
   .form > form > .field:nth-child(5),
   .form > form > .actions {
-    grid-column: 1 / -1;
+   
   }
 
   .form > form > .field:nth-child(2),
