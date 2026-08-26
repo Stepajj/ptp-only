@@ -1,4 +1,375 @@
 .card {
+  width: min(100%, 620px);
+  margin: 48px auto 0;
+  padding: 0;
+  background: #ffffff;
+  border: 1px solid #e3e5e8;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(26, 31, 36, 0.04);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 28px;
+  color: #17191c;
+}
+
+.title {
+  margin: 0 0 22px;
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #17191c;
+}
+
+.loading {
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  color: #8a9098;
+  font-size: 14px;
+  background: #fff;
+}
+
+.error {
+  margin: 16px 28px 0;
+  padding: 12px 14px;
+  background: #fff4f4;
+  border: 1px solid #ffd2d2;
+  border-radius: 10px;
+  color: #e5484d;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.form > .error {
+  margin: 0 0 18px;
+}
+
+/* Реквизиты */
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 28px;
+  padding: 16px 0 0;
+  background: transparent;
+  border: 0;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 34px;
+  padding: 0;
+  border-bottom: 1px solid #eceef1;
+}
+
+.infoItem:last-child {
+  border-bottom: 0;
+}
+
+.infoLabel {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #858b93;
+}
+
+.infoValue {
+  max-width: 70%;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 600;
+  color: #1b1e22;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Поля формы */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.label {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 500;
+  color: #747a82;
+}
+
+.input {
+  width: 100%;
+  height: 42px;
+  box-sizing: border-box;
+  padding: 0 13px;
+  background: #fff;
+  border: 1px solid #dfe2e6;
+  border-radius: 9px;
+  color: #191c20;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 42px;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.input::placeholder {
+  color: #a3a8af;
+}
+
+.input:hover:not(:disabled) {
+  border-color: #cbd0d6;
+}
+
+.input:focus {
+  border-color: #aeb4bc;
+  box-shadow: 0 0 0 3px rgba(24, 29, 35, 0.05);
+}
+
+.input:disabled {
+  background: #f7f8f9;
+  color: #9ca1a8;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+.input[type='number']::-webkit-outer-spin-button,
+.input[type='number']::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Переключатель статуса */
+.statusToggle {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.statusButton {
+  min-height: 42px;
+  padding: 0 14px;
+  background: #fff;
+  border: 1px solid #dfe2e6;
+  border-radius: 9px;
+  color: #7a8088;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.statusButton:hover:not(:disabled) {
+  border-color: #c7ccd3;
+  color: #2a2e33;
+}
+
+.statusButtonActive {
+  background: #f4f5f7;
+  border-color: #bcc2ca;
+  color: #1d2024;
+  box-shadow: inset 0 0 0 1px rgba(29, 32, 36, 0.02);
+}
+
+.statusButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Кнопка сброса */
+.resetButton {
+  align-self: flex-start;
+  min-height: 36px;
+  margin: -2px 0 18px;
+  padding: 0 13px;
+  background: #fff;
+  border: 1px solid #ffb6b8;
+  border-radius: 8px;
+  color: #e5484d;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.resetButton:hover:not(:disabled) {
+  background: #fff6f6;
+  border-color: #ff8f92;
+}
+
+.resetButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Чекбокс */
+.checkboxLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  cursor: pointer;
+  color: #2e3237;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.checkboxLabel input[type='checkbox'] {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: #262b31;
+  cursor: pointer;
+}
+
+.checkboxLabel input[type='checkbox']:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* Кнопки */
+.actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.submitButton,
+.cancelButton {
+  min-height: 42px;
+  box-sizing: border-box;
+  padding: 0 22px;
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.submitButton {
+  border: 0;
+  color: #fff;
+  background: linear-gradient(100deg, #20ace0 0%, #6e8fe5 49%, #ef6cc1 100%);
+  box-shadow: 0 4px 10px rgba(96, 145, 218, 0.16);
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(96, 145, 218, 0.22);
+}
+
+.submitButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submitButton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.cancelButton {
+  min-width: 108px;
+  background: #fff;
+  border: 1px solid #e2e4e8;
+  color: #6f757d;
+}
+
+.cancelButton:hover:not(:disabled) {
+  border-color: #cdd1d6;
+  background: #fafbfc;
+  color: #25292e;
+}
+
+.cancelButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 700px) {
+  .card {
+    width: calc(100% - 32px);
+    margin: 24px auto;
+    border-radius: 14px;
+  }
+
+  .form {
+    padding: 22px 20px;
+  }
+}
+
+@media (max-width: 520px) {
+  .form {
+    padding: 20px 16px;
+  }
+
+  .title {
+    margin-bottom: 18px;
+    font-size: 21px;
+  }
+
+  .info {
+    margin-bottom: 22px;
+  }
+
+  .infoItem {
+    min-height: 32px;
+  }
+
+  .infoValue {
+    max-width: 62%;
+  }
+
+  .actions {
+    grid-template-columns: 1fr;
+  }
+
+  .cancelButton {
+    width: 100%;
+  }
+}
+
+
+/*.card {
   max-width: 600px;
   margin: 20px auto;
   padding: 24px;
@@ -211,3 +582,4 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+*/
