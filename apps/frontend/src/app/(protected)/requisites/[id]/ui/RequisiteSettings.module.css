@@ -56,8 +56,8 @@
 /* Реквизиты */
 .info {
   display: flex;
-  flex-direction: column;
-  gap: 0;
+  
+  gap: 15px;
   margin-bottom: 28px;
   padding: 16px 0 0;
   background: transparent;
@@ -600,7 +600,7 @@
 
 .info {
   display: flex;
-  align-items: center;
+
   gap: 12px;
   margin: 0 0 14px;
   padding: 0 0 14px;
@@ -796,6 +796,7 @@
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 10px 8px;
+    margin-top: 15px; 
   }
 
   .form > form > .field {
