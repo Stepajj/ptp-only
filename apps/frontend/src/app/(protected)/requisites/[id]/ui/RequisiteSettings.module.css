@@ -715,7 +715,12 @@
   }
 
   .form > form > .field:nth-child(4) {
-    grid-column: 1 / -1;
+    display: none;
+  }
+
+  .form > form > .resetButton,
+  .form > form > .field:nth-child(6) {
+    display: none;
   }
 
   .form > form > .actions {
@@ -735,6 +740,12 @@
   .card {
     width: calc(100% - 32px);
     margin: 14px 16px 24px;
+  }
+
+  .form > form > .field:nth-child(4),
+  .form > form > .resetButton,
+  .form > form > .field:nth-child(6) {
+    display: none;
   }
 }
 
