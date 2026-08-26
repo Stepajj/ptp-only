@@ -52,13 +52,14 @@ export default function RequisiteCard({
 }: RequisiteCardProps) {
   const { type, value } = getDisplayInfo(requisite);
   const isActive = requisite.status === 'on';
+  const bankIcon = getBankIcon(requisite.bank);
 
   return (
     <article className={styles.card}>
       <div className={styles.main}>
         <div className={styles.bankIcon} aria-hidden="true">
-          {getBankIcon(requisite.bank) ? (
-            <Image src={getBankIcon(requisite.bank) as StaticImageData} alt="" />
+          {bankIcon ? (
+            <Image src={bankIcon} alt="" />
           ) : (
             requisite.bank.charAt(0).toUpperCase()
           )}
@@ -79,18 +80,8 @@ export default function RequisiteCard({
           </p>
         </div>
 
-        <div
-          className={styles.progress}
-          role="progressbar"
-          aria-label={requisite.limitAmount === null ? 'Лимит не задан' : `Лимит до ${formatLimit(requisite.limitAmount)}`}
-          aria-valuemin={0}
-          aria-valuemax={requisite.limitAmount ?? undefined}
-          aria-valuenow={0}
-          title="Текущий расход не предоставляется API OnlyP2P"
-        >
-          <span className={styles.progressValue} />
-        </div>
-
+      </div>
+      <div className={styles.actions}>
         <RequisiteActions
           requisiteId={requisite.requisiteId.toString()}
           isActive={isActive}
