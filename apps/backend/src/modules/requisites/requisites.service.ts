@@ -17,12 +17,36 @@ async function getExternalUserId(userId: string): Promise<string> {
   return externalClient.externalUserId;
 }
 
+function normalize(value: string): string {
+  return value.trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+function normalizeDigits(value: string | undefined): string {
+  return (value ?? "").replace(/\D/g, "");
+}
+
 export async function getRequisites(userId: string) {
   return { success: true as const, data: await getOnlyP2PRequisites(await getExternalUserId(userId)) };
 }
 
 export async function createRequisite(userId: string, input: CreateRequisiteDto) {
   const externalUserId = await getExternalUserId(userId);
+  const existing = await getOnlyP2PRequisites(externalUserId);
+  const duplicate = existing.some((requisite) => {
+    const sameOwner = requisite.bankId === input.bankId && normalize(requisite.fio) === normalize(input.fio);
+    const sameCard = Boolean(input.card) && requisite.card !== "-" && normalizeDigits(requisite.card) === normalizeDigits(input.card);
+    const samePhone = Boolean(input.phone) && requisite.phone !== "-" && normalizeDigits(requisite.phone) === normalizeDigits(input.phone);
+    return sameOwner && (sameCard || samePhone);
+  });
+
+  if (duplicate) {
+    throw new AppError({
+      statusCode: 409,
+      code: "REQUISITE_ALREADY_EXISTS",
+      message: "Такой реквизит уже добавлен",
+    });
+  }
+
   const requisiteId = await createOnlyP2PRequisite(externalUserId, input);
   const settings = {
     ...(input.minAmount !== undefined ? { minAmount: input.minAmount } : {}),
