@@ -798,21 +798,12 @@
     gap: 10px 8px;
   }
 
-  .form > form > .field:first-child,
-  .form > form > .field:nth-child(5),
-  .form > form > .actions {
-    grid-column: 1 / -1;
-  }
-
-  .form > form > .field:nth-child(2),
-  .form > form > .field:nth-child(3),
-  .form > form > .field:nth-child(4) {
+  .form > form > .field {
     margin-bottom: 0;
   }
 
-  .form > form > .resetButton,
-  .form > form > .field:nth-child(7) {
-    display: none;
+  .form > form > .actions {
+    grid-column: 1 / -1;
   }
 }
 

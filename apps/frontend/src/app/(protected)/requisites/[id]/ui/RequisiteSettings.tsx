@@ -198,36 +198,6 @@ useEffect(() => {
     }
   };
 
-  const handleResetLimits = async () => {
-    if (!confirm('Сбросить все лимиты?')) {
-      return;
-    }
-
-    try {
-      setSaving(true);
-      if (isDemo) {
-        setFormData((current) => ({ ...current, minAmount: '', maxAmount: '', limitAmount: '', limitAmountMinutes: '' }));
-        setRequisite((current) => current ? { ...current, minAmount: null, maxAmount: null, limitAmount: null, limitAmountMinutes: null } : current);
-        return;
-      }
-      await editRequisite(parseInt(requisiteId, 10), { resetLimits: true });
-      const requisites = await getRequisites();
-      const found = requisites.find((r) => r.requisiteId === parseInt(requisiteId, 10));
-      if (found) {
-        setRequisite(found);
-        setFormData({
-          ...formData,
-          limitAmount: found.limitAmount?.toString() || '',
-          limitAmountMinutes: found.limitAmountMinutes?.toString() || '',
-        });
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Не удалось сбросить лимиты');
-    } finally {
-      setSaving(false);
-    }
-  };
-
   const handleDelete = async () => {
     if (!confirm('Удалить этот реквизит?')) return;
     try {
@@ -337,42 +307,6 @@ useEffect(() => {
               disabled={saving}
               placeholder="Не ограничен"
             />
-          </div>
-
-          <div className={styles.field}>
-            <label htmlFor="limitAmountMinutes" className={styles.label}>
-              Период лимита, минут
-            </label>
-            <input
-              id="limitAmountMinutes"
-              type="number"
-              className={styles.input}
-              value={formData.limitAmountMinutes}
-              onChange={(e) => setFormData({ ...formData, limitAmountMinutes: e.target.value })}
-              disabled={saving}
-              placeholder="Не ограничен"
-            />
-          </div>
-
-          <button
-            type="button"
-            className={styles.resetButton}
-            onClick={handleResetLimits}
-            disabled={saving}
-          >
-            Сбросить лимиты
-          </button>
-
-          <div className={styles.field}>
-            <label className={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                checked={formData.exactAmountOnly}
-                onChange={(e) => setFormData({ ...formData, exactAmountOnly: e.target.checked })}
-                disabled={saving}
-              />
-              <span>Принимать только точную сумму</span>
-            </label>
           </div>
 
           <div className={styles.actions}>
