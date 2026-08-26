@@ -39,6 +39,7 @@ export default function RequisiteSettings({ requisiteId }: { requisiteId: string
     limitAmountMinutes: '',
     exactAmountOnly: false,
   });
+  const isDemo = parseInt(requisiteId, 10) === demoRequisite.requisiteId;
 
 useEffect(() => {
   async function loadRequisite() {
@@ -135,6 +136,19 @@ useEffect(() => {
 
     try {
       setSaving(true);
+
+      if (isDemo) {
+        setRequisite((current) => current ? {
+          ...current,
+          status: formData.status,
+          minAmount: Number(formData.minAmount),
+          maxAmount: Number(formData.maxAmount),
+          limitAmount: Number(formData.limitAmount),
+          limitAmountMinutes: Number(formData.limitAmountMinutes),
+          exactAmountOnly: formData.exactAmountOnly,
+        } : current);
+        return;
+      }
       
       const input: Parameters<typeof editRequisite>[1] = {
         status: formData.status,
@@ -168,6 +182,11 @@ useEffect(() => {
 
     try {
       setSaving(true);
+      if (isDemo) {
+        setFormData((current) => ({ ...current, minAmount: '', maxAmount: '', limitAmount: '', limitAmountMinutes: '' }));
+        setRequisite((current) => current ? { ...current, minAmount: null, maxAmount: null, limitAmount: null, limitAmountMinutes: null } : current);
+        return;
+      }
       await editRequisite(parseInt(requisiteId, 10), { resetLimits: true });
       const requisites = await getRequisites();
       const found = requisites.find((r) => r.requisiteId === parseInt(requisiteId, 10));

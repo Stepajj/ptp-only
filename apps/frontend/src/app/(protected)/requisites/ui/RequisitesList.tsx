@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import RequisiteCard from './RequisiteCard';
 import RequisiteCardSkeleton from './RequisiteCardSkeleton';
 import RequisitesEmpty from './RequisitesEmpty';
@@ -12,45 +12,26 @@ import { ApiError } from '@/shared/api/http';
 import styles from './RequisitesList.module.css';
 
 
-const demoRequisite: Requisite = {
-  requisiteId: -900001,
-  card: '0000000000000000',
-  phone: '-',
-  fio: 'Демо реквизит',
-  bank: 'Визуальный пример',
-  bankId: 1,
-  tier1: false,
-  status: 'off',
-  method: 'card',
-  minAmount: null,
-  maxAmount: null,
-  limitAmount: null,
-  limitAmountMinutes: null,
-  exactAmountOnly: false,
-  uiMock: true,
-};
-
 export default function RequisitesList() {
   const [requisites, setRequisites] = useState<Requisite[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function loadRequisites() {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await getRequisites();
-       setRequisites([...data, demoRequisite]);
-      } catch (err) {
-        setError(getRequisitesErrorMessage(err));
-      } finally {
-        setLoading(false);
-      }
+  const loadRequisites = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      setRequisites(await getRequisites());
+    } catch (err) {
+      setError(getRequisitesErrorMessage(err));
+    } finally {
+      setLoading(false);
     }
-
-    loadRequisites();
   }, []);
+
+  useEffect(() => {
+    queueMicrotask(() => { void loadRequisites(); });
+  }, [loadRequisites]);
 
   const handleStatusChange = (requisiteId: number, newStatus: boolean) => {
     setRequisites((prev) =>
@@ -73,7 +54,7 @@ export default function RequisitesList() {
   }
 
   if (error) {
-    return <RequisitesError onRetry={() => window.location.reload()} message={error} />;
+    return <RequisitesError onRetry={() => void loadRequisites()} message={error} />;
   }
 
   if (requisites.length === 0) {

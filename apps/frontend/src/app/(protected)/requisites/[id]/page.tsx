@@ -4,8 +4,13 @@ import RequisiteSettings from './ui/RequisiteSettings';
 export default function RequisiteSettingsPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  return <RequisiteSettingsRoute params={params} />;
+}
+
+async function RequisiteSettingsRoute({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   return (
     <main>
       <Link
@@ -16,7 +21,7 @@ export default function RequisiteSettingsPage({
         <span style={{ opacity: '60%' }}>К реквизитам</span>
       </Link>
 
-      <RequisiteSettings requisiteId={params.id} />
+      <RequisiteSettings requisiteId={id} />
     </main>
   );
 }
