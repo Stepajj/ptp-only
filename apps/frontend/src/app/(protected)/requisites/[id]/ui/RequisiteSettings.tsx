@@ -5,6 +5,24 @@ import { useRouter } from 'next/navigation';
 import { getRequisites, editRequisite } from '@/features/requisites/api/requisites.api';
 import type { Requisite } from '@/features/requisites/api/requisites.api';
 
+const demoRequisite: Requisite = {
+  requisiteId: -900001,
+  card: '0000000000000000',
+  phone: '-',
+  fio: 'Демо реквизит',
+  bank: 'Визуальный пример',
+  bankId: 1,
+  tier1: false,
+  status: 'on',
+  method: 'card',
+  minAmount: 1000,
+  maxAmount: 50000,
+  limitAmount: 100000,
+  limitAmountMinutes: 60,
+  exactAmountOnly: false,
+  uiMock: true,
+};
+
 import styles from './RequisiteSettings.module.css';
 
 export default function RequisiteSettings({ requisiteId }: { requisiteId: string }) {
@@ -22,7 +40,50 @@ export default function RequisiteSettings({ requisiteId }: { requisiteId: string
     exactAmountOnly: false,
   });
 
-  useEffect(() => {
+useEffect(() => {
+  async function loadRequisite() {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const requisites = await getRequisites();
+
+      const allRequisites = [...requisites, demoRequisite];
+
+      const found = allRequisites.find(
+        (r) => r.requisiteId === parseInt(requisiteId, 10)
+      );
+
+      if (!found) {
+        setError('Реквизит не найден');
+        return;
+      }
+
+      setRequisite(found);
+
+      setFormData({
+        status: found.status,
+        minAmount: found.minAmount?.toString() ?? '',
+        maxAmount: found.maxAmount?.toString() ?? '',
+        limitAmount: found.limitAmount?.toString() || '',
+        limitAmountMinutes: found.limitAmountMinutes?.toString() || '',
+        exactAmountOnly: found.exactAmountOnly,
+      });
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Не удалось загрузить реквизит'
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  loadRequisite();
+}, [requisiteId]);
+
+  /*useEffect(() => {
     async function loadRequisite() {
       try {
         const requisites = await getRequisites();
@@ -47,7 +108,7 @@ export default function RequisiteSettings({ requisiteId }: { requisiteId: string
       }
     }
     loadRequisite();
-  }, [requisiteId]);
+  }, [requisiteId]);*/
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
