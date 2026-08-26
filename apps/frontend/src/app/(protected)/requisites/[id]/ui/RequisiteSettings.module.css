@@ -719,12 +719,12 @@
   }
 
   .form > form > .resetButton,
-  .form > form > .field:nth-child(6) {
+  .form > form > .field:nth-child(5) {
     display: none;
   }
 
   .form > form > .actions {
-    
+    grid-column: 1 / -1;
   }
 }
 
@@ -740,12 +740,6 @@
   .card {
     width: calc(100% - 32px);
     margin: 14px 16px 24px;
-  }
-
-  .form > form > .field:nth-child(4),
-  .form > form > .resetButton,
-  .form > form > .field:nth-child(6) {
-    display: none;
   }
 }
 
@@ -807,7 +801,7 @@
   .form > form > .field:first-child,
   .form > form > .field:nth-child(5),
   .form > form > .actions {
-   
+    grid-column: 1 / -1;
   }
 
   .form > form > .field:nth-child(2),
