@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from 'next/image';
-import SbpIcon from '../assets/icons/sbp.svg';
+import SbpIcon from '../../requisites/assets/icons/sbp.svg';
 import TBankIcon from '../../requisites/assets/icons/TBank.svg';
 import ArrowsIcon from "../assets/icons/EmptyArrows.svg";
 import GreenCircle from "../assets/icons/GreenCircle.svg";

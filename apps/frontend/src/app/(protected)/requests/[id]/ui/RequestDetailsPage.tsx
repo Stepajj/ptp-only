@@ -13,7 +13,7 @@ import {
 } from "@/features/requests/api/requests.api";
 
 import styles from "./RequestDetailsPage.module.css";
-import SbpIcon from "../../assets/icons/sbp.svg";
+import SbpIcon from "../../../requisites/assets/icons/sbp.svg";
 import TBankIcon from "../../../requisites/assets/icons/TBank.svg";
 
 const demoActiveRequest: IncomingRequest = {
