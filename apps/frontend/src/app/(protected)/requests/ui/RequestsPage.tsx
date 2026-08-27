@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from 'next/image';
+import SbpIcon from '../assets/icons/sbp.svg';
+import TBankIcon from '../../requisites/assets/icons/TBank.svg';
 import ArrowsIcon from "../assets/icons/EmptyArrows.svg";
 import GreenCircle from "../assets/icons/GreenCircle.svg";
 import StepsArrow from "../assets/icons/StepsArrow.svg";
@@ -212,7 +214,7 @@ export function RequestsPage() {
             <article key={request.id} className={styles.item}>
               {request.id.startsWith("ui-demo-request-") ? (
                 <div className={styles.itemLink}>
-                  <div className={styles.icon}>▶</div>
+                  <RequestIcon request={request} />
                   <div className={styles.content}>
                     <div className={styles.amount}>{formatRub(request.amountRub)} · Демо</div>
                     <div className={styles.meta}>Перевод · {request.bank} → ваш реквизит</div>
@@ -221,7 +223,7 @@ export function RequestsPage() {
                 </div>
               ) : (
               <Link href={`/requests/${encodeURIComponent(request.id)}`} className={styles.itemLink}>
-                <div className={styles.icon}>▶</div>
+                <RequestIcon request={request} />
                 <div className={styles.content}>
                   <div className={styles.amount}>{formatRub(request.amountRub)}</div>
                   <div className={styles.meta}>
@@ -284,6 +286,18 @@ function formatRub(value: number): string {
     currency: "RUB",
     maximumFractionDigits: 0,
   }).format(value);
+}
+
+function RequestIcon({ request }: { request: IncomingRequest }) {
+  const isSbp = request.method === 'sbp';
+  const isTBank = request.bank.toLowerCase().includes('т-банк') || request.bank.toLowerCase().includes('тинькофф');
+  const icon = isSbp ? SbpIcon : isTBank ? TBankIcon : null;
+
+  return (
+    <div className={styles.icon} aria-hidden="true">
+      {icon ? <Image src={icon} alt="" /> : request.bank.charAt(0).toUpperCase()}
+    </div>
+  );
 }
 
 function getStatusLabel(request: IncomingRequest): string {

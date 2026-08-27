@@ -13,6 +13,8 @@ import {
 } from "@/features/requests/api/requests.api";
 
 import styles from "./RequestDetailsPage.module.css";
+import SbpIcon from "../../assets/icons/sbp.svg";
+import TBankIcon from "../../../requisites/assets/icons/TBank.svg";
 
 const demoActiveRequest: IncomingRequest = {
   id: "ui-demo-request-active",
@@ -120,6 +122,9 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
       <Link href="/requests" className={styles.back}>← К списку заявок</Link>
       <section className={styles.card}>
         <div className={styles.header}>
+          <div className={styles.icon} aria-hidden="true">
+            <Image src={request.method === "sbp" ? SbpIcon : getBankIcon(request.bank)} alt="" />
+          </div>
           <div>
             <div className={styles.amount}>{formatRub(request.amountRub)}</div>
             <div className={styles.meta}>Заявка #{request.id} · перевод по {request.method === "sbp" ? "СБП" : "карте"}</div>
@@ -142,3 +147,8 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
 
 function formatRub(value: number) { return `${value.toLocaleString("ru-RU")} ₽`; }
 function formatDate(value: string) { return new Intl.DateTimeFormat("ru-RU", { dateStyle: "short", timeStyle: "short" }).format(new Date(value)); }
+
+function getBankIcon(bank: string) {
+  const normalized = bank.toLowerCase();
+  return normalized.includes("т-банк") || normalized.includes("тинькофф") ? TBankIcon : SbpIcon;
+}
