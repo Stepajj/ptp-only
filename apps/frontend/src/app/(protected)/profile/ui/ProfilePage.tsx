@@ -11,6 +11,8 @@ import { TelegramLoginButton } from '@/components/auth/TelegramLoginButton/Teleg
 import type { Profile } from '@/features/profile/model/profile.types';
 
 import styles from './ProfilePage.module.css';
+import Image from 'next/image';
+import ShieldIcon from "./shield.svg"
 
 function formatRubles(value: number | null): string {
   return value === null ? '—' : `${new Intl.NumberFormat('ru-RU').format(value)} ₽`;
@@ -167,7 +169,7 @@ export default function ProfilePage() {
         className={styles.securityCard}
       >
         <div className={styles.securityIcon}>
-          ♢
+          <Image src={ShieldIcon} alt="" />
         </div>
 
         <div className={styles.securityContent}>
