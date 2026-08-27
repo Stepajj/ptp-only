@@ -417,10 +417,12 @@ function parseOnlyP2PRequisitesResponse(raw: unknown): OnlyP2PRequisite[] {
     };
     const requisiteId = readInteger(requisite.requisite_id);
     const bankId = readInteger(requisite.bank_id);
-    const minAmount = requisite.min_amount === undefined || requisite.min_amount === null
+    const isEmptyLimit = (value: unknown): boolean =>
+      value === undefined || value === null || value === "" || value === "-";
+    const minAmount = isEmptyLimit(requisite.min_amount)
       ? null
       : readInteger(requisite.min_amount);
-    const maxAmount = requisite.max_amount === undefined || requisite.max_amount === null
+    const maxAmount = isEmptyLimit(requisite.max_amount)
       ? null
       : readInteger(requisite.max_amount);
     const optionalLimit = (value: unknown): number | null =>

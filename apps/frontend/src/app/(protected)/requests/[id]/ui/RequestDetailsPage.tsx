@@ -116,6 +116,7 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
     ? Math.max(0, Math.floor((new Date(request.deadline).getTime() - now) / 1000))
     : null;
   const timer = secondsLeft === null ? "—" : `${String(Math.floor(secondsLeft / 60)).padStart(2, "0")}:${String(secondsLeft % 60).padStart(2, "0")}`;
+  const bankIcon = request.method === "sbp" ? SbpIcon : getBankIcon(request.bank);
 
   return (
     <main className={styles.page}>
@@ -123,7 +124,7 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
       <section className={styles.card}>
         <div className={styles.header}>
           <div className={styles.icon} aria-hidden="true">
-            <Image src={request.method === "sbp" ? SbpIcon : getBankIcon(request.bank)} alt="" />
+            {bankIcon ? <Image src={bankIcon} alt="" /> : request.bank.charAt(0).toUpperCase()}
           </div>
           <div>
             <div className={styles.amount}>{formatRub(request.amountRub)}</div>
@@ -138,7 +139,16 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
           <div><span>Владелец реквизита</span><strong>{request.fio}</strong></div>
         </div>
         {request.status === "finished" ? <p className={styles.success}>Получение денег подтверждено {request.dateFinished ? formatDate(request.dateFinished) : ""}</p> : <p className={styles.notice}>Подтверждайте получение только после фактического поступления денег на счёт.</p>}
-        {canConfirm && <button type="button" className={styles.confirm} onClick={() => void confirm()} disabled={confirming}>{confirming ? "Подтверждение..." : "Подтвердить получение"}</button>}
+        {canConfirm && (
+          <div className={styles.actions}>
+            <button type="button" className={styles.confirm} onClick={() => void confirm()} disabled={confirming}>
+              {confirming ? "Подтверждение..." : "Подтвердить получение"}
+            </button>
+            <Link className={styles.noMoney} href={`/support/chat?requestId=${encodeURIComponent(request.id)}`}>
+              Денег нет
+            </Link>
+          </div>
+        )}
         {request.status === "cancelled" && request.awaitingProof && <label className={styles.proof}>Загрузить пруф (видео или PDF)<input type="file" accept=".mp4,.mov,.avi,.mkv,.webm,.m4v,.gif,.pdf" onChange={(event) => void uploadProof(event)} disabled={uploading} />{uploading && <span>Отправка...</span>}</label>}
       </section>
     </main>
@@ -150,5 +160,5 @@ function formatDate(value: string) { return new Intl.DateTimeFormat("ru-RU", { d
 
 function getBankIcon(bank: string) {
   const normalized = bank.toLowerCase();
-  return normalized.includes("т-банк") || normalized.includes("тинькофф") ? TBankIcon : SbpIcon;
+  return normalized.includes("т-банк") || normalized.includes("тинькофф") ? TBankIcon : null;
 }

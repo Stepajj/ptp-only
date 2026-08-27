@@ -19,6 +19,7 @@ import styles from './SupportChatPage.module.css';
 export default function SupportChatPage() {
   const searchParams = useSearchParams();
   const topic = searchParams.get('topic');
+  const requestId = searchParams.get('requestId');
 
   const [messages, setMessages] = useState<SupportMessage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -124,7 +125,7 @@ export default function SupportChatPage() {
       </Link>
 
       <section className={styles.chat}>
-        <SupportChatHeader topic={topic} />
+        <SupportChatHeader topic={topic} requestId={requestId} />
 
         <SupportChatMessages
           messages={messages}

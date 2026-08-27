@@ -2,10 +2,12 @@ import styles from './SupportChatHeader.module.css';
 
 interface SupportChatHeaderProps {
   topic: string | null;
+  requestId: string | null;
 }
 
 export default function SupportChatHeader({
   topic,
+  requestId,
 }: SupportChatHeaderProps) {
   const topicLabel = topic ? topic.replace(/[-_]/g, ' ') : 'Общий вопрос';
   return (
@@ -26,7 +28,7 @@ export default function SupportChatHeader({
       </div>
 
       <div className={styles.ticket}>
-        Тема: {topicLabel}
+        {requestId ? `Заявка: ${requestId}` : `Тема: ${topicLabel}`}
       </div>
     </header>
   );
