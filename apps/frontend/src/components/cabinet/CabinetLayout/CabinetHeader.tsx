@@ -56,10 +56,10 @@ export function CabinetHeader() {
       </div>
 
       <div className={styles.actions}>
-        <button className={styles.balanceButton} type="button">
+        <Link href="/deposit" className={styles.balanceButton}>
           <Image src={TestIcon} alt="Wallet" />
           <span>{balance === null ? '— ₽' : formatRub(balance)}</span>
-        </button>
+        </Link>
 
         <Link href="/deposit" className={styles.depositButton}>
           <span>Пополнить</span>
@@ -73,10 +73,10 @@ export function CabinetHeader() {
         <Link href="/dashboard" className={styles.mobileLogo} aria-label="Кабинет">
           <Image src={logo} alt="ONLYP2P" width={103} height={27} priority />
         </Link>
-        <button className={styles.balanceButton} type="button">
+        <Link href="/deposit" className={styles.balanceButton}>
           <Image src={TestIcon} alt="Баланс" />
           <span>{balance === null ? '— ₽' : formatRub(balance)}</span>
-        </button>
+        </Link>
         <Link href="/deposit" className={styles.mobileDepositButton} aria-label="Пополнить">
           <Image src={PlusIcon} alt="" />
         </Link>

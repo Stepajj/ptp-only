@@ -40,13 +40,12 @@ async function performRefresh(): Promise<string | null> {
     });
     const payload = await parsePayload(response);
 
-    if (
-      !response.ok ||
-      !payload ||
-      typeof payload !== 'object' ||
-      !('data' in payload)
-    ) {
+    if (response.status === 401) {
       useAuthStore.getState().clearSession();
+      return null;
+    }
+
+    if (!response.ok || !payload || typeof payload !== 'object' || !('data' in payload)) {
       return null;
     }
 
@@ -58,7 +57,6 @@ async function performRefresh(): Promise<string | null> {
       !data.accessToken ||
       !data.user
     ) {
-      useAuthStore.getState().clearSession();
       return null;
     }
 
@@ -69,7 +67,7 @@ async function performRefresh(): Promise<string | null> {
 
     return data.accessToken;
   } catch {
-    useAuthStore.getState().clearSession();
+    // A network failure must not log out a valid local session.
     return null;
   }
 }

@@ -29,7 +29,7 @@ export function HeroContent() {
       </motion.div>
 
       <motion.h1 className={styles.title} {...fadeUpInView(1 * staggerDelay)}>
-         Cервис по продаже криптовалюты <br />с доплатой  <span>+7%</span> к курсу 
+         Сервис по продаже криптовалюты <br />с доплатой  <span>+7%</span> к курсу 
       </motion.h1>
 
       <motion.p className={styles.subtitle} {...fadeUpInView(2 * staggerDelay)}>

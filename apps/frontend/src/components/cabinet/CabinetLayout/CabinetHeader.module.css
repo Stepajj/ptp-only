@@ -51,6 +51,7 @@
     font-weight:500;
 
     transition:.2s;
+    text-decoration:none;
 }
 
 .balanceButton:hover{

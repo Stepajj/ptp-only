@@ -38,7 +38,7 @@ export function Footer() {
             <Image src={logo} alt="Логотип" width={56} height={44} />
 
             <p className={styles.description}>
-              Сервис по продаже криптовалюты с
+              Сервис по продаже криптовалюты
               <br />
               через инфраструктуру OnlyP2P.
             </p>

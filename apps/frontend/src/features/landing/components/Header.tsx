@@ -1,3 +1,6 @@
+"use client";
+
+import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -10,6 +13,9 @@ import { HeaderActions } from "./HeaderActions";
 import styles from "./Header.module.css";
 
 export function Header() {
+  const mobileMenuRef = useRef<HTMLDetailsElement>(null);
+  const closeMobileMenu = () => mobileMenuRef.current?.removeAttribute("open");
+
   return (
     <header className={styles.header}>
       <AnimatedSection
@@ -55,18 +61,20 @@ export function Header() {
           </ul>
         </nav>
 
-        <details className={styles.mobileMenu}>
+        <details ref={mobileMenuRef} className={styles.mobileMenu}>
           <summary aria-label="Открыть меню" className={styles.mobileMenuButton}>
             <span />
             <span />
             <span />
           </summary>
           <nav className={styles.mobileNav} aria-label="Мобильное меню">
-            <a href="#about-service">О сервисе</a>
-            <a href="#how-it-works">Как работает</a>
-            <a href="#limits">Тарифы</a>
-            <a href="https://t.me/O_onlypays" target="_blank" rel="noreferrer">Партнёрам</a>
-            <a href="#faq">FAQ</a>
+            <a href="#about-service" onClick={closeMobileMenu}>О сервисе</a>
+            <a href="#how-it-works" onClick={closeMobileMenu}>Как работает</a>
+            <a href="#limits" onClick={closeMobileMenu}>Тарифы</a>
+            <a href="https://t.me/O_onlypays" target="_blank" rel="noreferrer" onClick={closeMobileMenu}>Партнёрам</a>
+            <a href="#faq" onClick={closeMobileMenu}>FAQ</a>
+            <a href="/login" onClick={closeMobileMenu}>Войти</a>
+            <a href="/register" onClick={closeMobileMenu}>Создать аккаунт</a>
           </nav>
         </details>
 
