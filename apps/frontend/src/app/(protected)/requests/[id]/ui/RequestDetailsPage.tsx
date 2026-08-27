@@ -16,22 +16,6 @@ import styles from "./RequestDetailsPage.module.css";
 import SbpIcon from "../../../requisites/assets/icons/sbp.svg";
 import TBankIcon from "../../../requisites/assets/icons/TBank.svg";
 
-const demoActiveRequest: IncomingRequest = {
-  id: "ui-demo-request-active",
-  amountRub: 24000,
-  receivedRubAmount: null,
-  requisiteId: -900005,
-  requisite: "•••• 4242",
-  fio: "Демо владелец",
-  bank: "Сбербанк",
-  method: "card",
-  status: "waiting",
-  awaitingProof: false,
-  deadline: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-  created: new Date().toISOString(),
-  dateFinished: null,
-};
-
 export function RequestDetailsPage({ requestId }: { requestId: string }) {
   const [request, setRequest] = useState<IncomingRequest | null>(null);
   const [loading, setLoading] = useState(true);
@@ -43,11 +27,6 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
   const loadRequest = useCallback(async () => {
     try {
       setError(null);
-      if (requestId === demoActiveRequest.id) {
-        setRequest(demoActiveRequest);
-        setLoading(false);
-        return;
-      }
       const requests = await getIncomingRequests();
       setRequest(requests.find((item) => item.id === requestId) ?? null);
     } catch (reason) {
@@ -72,16 +51,6 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
     try {
       setConfirming(true);
       setError(null);
-      if (request.id === demoActiveRequest.id) {
-        setRequest((current) => current ? {
-          ...current,
-          status: "finished",
-          receivedRubAmount: current.amountRub,
-          dateFinished: new Date().toISOString(),
-          deadline: null,
-        } : current);
-        return;
-      }
       await confirmIncomingRequest(request.id);
       await loadRequest();
     } catch (reason) {

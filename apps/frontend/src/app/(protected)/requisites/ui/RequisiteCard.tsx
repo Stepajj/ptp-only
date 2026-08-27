@@ -84,7 +84,6 @@ export default function RequisiteCard({
           requisiteId={requisite.requisiteId.toString()}
           isActive={isActive}
           onStatusChange={(newStatus) => onStatusChange?.(requisite.requisiteId, newStatus)}
-          disabled={requisite.uiMock === true}
         />
       </div>
     </article>

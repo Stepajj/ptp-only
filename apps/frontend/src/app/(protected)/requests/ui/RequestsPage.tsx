@@ -18,54 +18,6 @@ import {
 
 import styles from "./RequestsPage.module.css";
 
-const demoRequests: IncomingRequest[] = [
-{
-  id: "ui-demo-request-waiting",
-  amountRub: 24000,
-  receivedRubAmount: null,
-  requisiteId: -900002,
-  requisite: "Демо реквизит · ••• 4242",
-  fio: "Демо покупатель",
-  bank: "Сбербанк",
-  method: "card",
-  status: "waiting",
-  awaitingProof: false,
-  deadline: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-  created: new Date().toISOString(),
-  dateFinished: null,
-},
-{
-  id: "ui-demo-request-cancelled",
-  amountRub: 18500,
-  receivedRubAmount: null,
-  requisiteId: -900003,
-  requisite: "Демо реквизит · ••• 4242",
-  fio: "Демо покупатель",
-  bank: "Т-Банк",
-  method: "card",
-  status: "cancelled",
-  awaitingProof: true,
-  deadline: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
-  created: new Date().toISOString(),
-  dateFinished: null,
-},
-{
-  id: "ui-demo-request-finished",
-  amountRub: 32000,
-  receivedRubAmount: 32000,
-  requisiteId: -900004,
-  requisite: "Демо реквизит · ••• 4242",
-  fio: "Демо покупатель",
-  bank: "Сбербанк",
-  method: "card",
-  status: "finished",
-  awaitingProof: false,
-  deadline: null,
-  created: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
-  dateFinished: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
-},
-];
-
 const tabs: Array<{ status: IncomingRequestStatus; label: string }> = [
   { status: "waiting", label: "Ожидают" },
   { status: "cancelled", label: "Отменённые" },
@@ -100,7 +52,7 @@ export function RequestsPage() {
       setLoading(true);
       setError(null);
       const data = await getIncomingRequests();
-      setRequests([...data, ...demoRequests]);
+      setRequests(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Не удалось загрузить заявки");
     } finally {
@@ -115,10 +67,6 @@ export function RequestsPage() {
   }, [loadRequests]);
 
   const handleConfirm = async (request: IncomingRequest) => {
-    if (request.id.startsWith("ui-demo-request-")) {
-      setRequests((current) => current.filter((item) => item.id !== request.id));
-      return;
-    }
     const customAmount = receivedAmounts[request.id]?.trim();
     const amount = customAmount ? Number(customAmount) : undefined;
 
@@ -212,16 +160,6 @@ export function RequestsPage() {
         <div className={styles.list}>
           {visibleRequests.map((request) => (
             <article key={request.id} className={styles.item}>
-              {request.id.startsWith("ui-demo-request-") ? (
-                <div className={styles.itemLink}>
-                  <RequestIcon request={request} />
-                  <div className={styles.content}>
-                    <div className={styles.amount}>{formatRub(request.amountRub)} · Демо</div>
-                    <div className={styles.meta}>Перевод · {request.bank} → ваш реквизит</div>
-                    <div className={styles.requisite}>{request.requisite}</div>
-                  </div>
-                </div>
-              ) : (
               <Link href={`/requests/${encodeURIComponent(request.id)}`} className={styles.itemLink}>
                 <RequestIcon request={request} />
                 <div className={styles.content}>
@@ -232,7 +170,6 @@ export function RequestsPage() {
                   <div className={styles.requisite}>{request.requisite}</div>
                 </div>
               </Link>
-              )}
 
               <div className={styles.actions}>
                 <span className={`${styles.status} ${styles[request.status]}`}>

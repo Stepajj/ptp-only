@@ -21,7 +21,6 @@ export interface HistoryItem {
   bankName: string;
   createdAt: string;
   status: HistoryStatus;
-  uiMock?: boolean;
 }
 
 export interface HistorySummary {

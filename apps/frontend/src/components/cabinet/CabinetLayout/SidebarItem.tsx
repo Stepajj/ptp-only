@@ -30,7 +30,7 @@ export function SidebarItem({ href, title, icon }: Props) {
       if (!getAuthAccessToken()) return;
       try {
         const data = await getIncomingRequests('waiting');
-        setWaitingCount(data.length + 1);
+        setWaitingCount(data.length);
       } catch {
         // Sidebar badge must not make navigation fail.
       }
