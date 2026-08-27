@@ -215,7 +215,7 @@ export function RequestsPage() {
                   <div className={styles.icon}>▶</div>
                   <div className={styles.content}>
                     <div className={styles.amount}>{formatRub(request.amountRub)} · Демо</div>
-                    <div className={styles.meta}>Покупатель · {request.bank} → ваш реквизит</div>
+                    <div className={styles.meta}>Перевод · {request.bank} → ваш реквизит</div>
                     <div className={styles.requisite}>{request.requisite}</div>
                   </div>
                 </div>
@@ -225,7 +225,7 @@ export function RequestsPage() {
                 <div className={styles.content}>
                   <div className={styles.amount}>{formatRub(request.amountRub)}</div>
                   <div className={styles.meta}>
-                    Покупатель · {request.bank} → ваш {request.method === "sbp" ? "СБП" : "реквизит"}
+                    Перевод · {request.bank} → ваш {request.method === "sbp" ? "СБП" : "реквизит"}
                   </div>
                   <div className={styles.requisite}>{request.requisite}</div>
                 </div>
@@ -237,7 +237,7 @@ export function RequestsPage() {
                   {getStatusLabel(request)}
                 </span>
 
-                {request.status !== "finished" && (
+                {(request.status === "waiting" || (request.status === "cancelled" && request.awaitingProof)) && (
                   <>
                     <input
                       className={styles.amountInput}
