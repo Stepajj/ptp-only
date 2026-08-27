@@ -9,7 +9,6 @@ import styles from './SidebarItem.module.css';
 import { ICONS, IconName } from './icons';
 import { getIncomingRequests } from '@/features/requests/api/requests.api';
 import { getAuthAccessToken } from '@/features/auth/lib/getAuthAccessToken';
-import { UI_MOCKS_ENABLED } from '@/shared/testing/ui-mocks';
 
 type Props = {
   href: string;
@@ -31,7 +30,7 @@ export function SidebarItem({ href, title, icon }: Props) {
       if (!getAuthAccessToken()) return;
       try {
         const data = await getIncomingRequests('waiting');
-        setWaitingCount(data.length + (UI_MOCKS_ENABLED ? 1 : 0));
+        setWaitingCount(data.length + 1);
       } catch {
         // Sidebar badge must not make navigation fail.
       }

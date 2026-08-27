@@ -10,7 +10,6 @@ import { HistoryFilters } from "./HistoryFilters";
 import { HistoryList } from "./HistoryList";
 import { HistorySummary } from "./HistorySummary";
 import styles from "./HistoryPage.module.css";
-import { UI_MOCKS_ENABLED } from "@/shared/testing/ui-mocks";
 
 const demoHistoryItem = {
   id: "ui-demo-history-1",
@@ -39,9 +38,7 @@ export function HistoryPage() {
   useEffect(() => {
     queueMicrotask(() => {
       void getHistory().then((response) => setData(
-        UI_MOCKS_ENABLED
-          ? { ...response, items: [...response.items, demoHistoryItem] }
-          : response,
+        { ...response, items: [...response.items, demoHistoryItem] },
       )).catch((reason: unknown) => {
         setError(reason instanceof Error ? reason.message : "Не удалось загрузить историю");
       });

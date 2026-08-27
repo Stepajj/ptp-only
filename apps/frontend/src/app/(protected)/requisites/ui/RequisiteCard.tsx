@@ -5,7 +5,6 @@ import TBankIcon from '../assets/icons/TBank.svg';
 import SbpIcon from '../assets/icons/sbp.svg';
 
 import styles from './RequisiteCard.module.css';
-import { UI_MOCK_BADGE } from '@/shared/testing/ui-mocks';
 
 type RequisiteCardProps = {
   requisite: Requisite;
@@ -68,7 +67,6 @@ export default function RequisiteCard({
         <div className={styles.content}>
           <p className={styles.title}>
             {requisite.bank} · {type} · {value}
-            {requisite.uiMock ? ` · ${UI_MOCK_BADGE}` : null}
           </p>
 
           <p className={styles.description}>

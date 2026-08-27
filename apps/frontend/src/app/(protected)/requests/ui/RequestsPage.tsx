@@ -15,7 +15,6 @@ import {
 } from "@/features/requests/api/requests.api";
 
 import styles from "./RequestsPage.module.css";
-import { UI_MOCKS_ENABLED } from "@/shared/testing/ui-mocks";
 
 const demoRequests: IncomingRequest[] = [
 {
@@ -99,7 +98,7 @@ export function RequestsPage() {
       setLoading(true);
       setError(null);
       const data = await getIncomingRequests();
-      setRequests(UI_MOCKS_ENABLED ? [...data, ...demoRequests] : data);
+      setRequests([...data, ...demoRequests]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Не удалось загрузить заявки");
     } finally {
