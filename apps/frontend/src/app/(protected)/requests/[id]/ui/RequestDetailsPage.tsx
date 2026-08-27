@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import Image from "next/image";
+import TimerIcon from "../../assets/icons/timer.svg";
 
 import {
   confirmIncomingRequest,
@@ -122,7 +124,9 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
             <div className={styles.amount}>{formatRub(request.amountRub)}</div>
             <div className={styles.meta}>Заявка #{request.id} · перевод по {request.method === "sbp" ? "СБП" : "карте"}</div>
           </div>
-          <div className={styles.timer}>{timer}</div>
+          <div className={styles.timer}>
+            <Image src={TimerIcon} alt="Таймер" />
+            {timer}</div>
         </div>
         <div className={styles.fields}>
           <div><span>Реквизит</span><strong>{request.bank} · {request.requisite}</strong></div>
