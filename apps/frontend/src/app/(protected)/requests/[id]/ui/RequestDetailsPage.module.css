@@ -4,7 +4,7 @@
 .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 18px; border-bottom: 1px solid #ececec; }
 .amount { font-size: 20px; font-weight: 700; color: #111; }
 .meta { margin-top: 6px; color: #707070; font-size: 13px; }
-.timer { padding: 10px 18px; border-radius: 8px; background: #151515; color: #fff; font-variant-numeric: tabular-nums; }
+.timer { padding: 10px 18px; border-radius: 8px; background: #151515; color: #fff; font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 10px; }
 .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
 .fields > div { padding: 12px; border: 1px solid #ececec; border-radius: 8px; }
 .fields span, .fields strong { display: block; }
