@@ -171,12 +171,12 @@ export function RequestsPage() {
           {setup && <div className={styles.reqSteps}>
             <Link href="/deposit" className={`${styles.reqStep} ${getStepClass(1, setup.currentStep)}`}>
               <div className={`${styles.reqStepCircle} ${getStepCircleClass(1, setup.currentStep)}`}>{getStepMarker(1, setup.currentStep)}</div>
-              <div className={styles.reqStepContent}>Крипта залита</div>
+              <div className={styles.reqStepContent}>{getStepLabel(1, setup.currentStep)}</div>
             </Link>
             <div className={styles.reqStepArrow}><Image alt="" src={StepsArrow} /> </div>
             <Link href="/requisites" className={`${styles.reqStep} ${getStepClass(2, setup.currentStep)}`}>
               <div className={`${styles.reqStepCircle} ${getStepCircleClass(2, setup.currentStep)}`}>{getStepMarker(2, setup.currentStep)}</div>
-              <div className={styles.reqStepContent}>Подключить реквизиты</div>
+              <div className={styles.reqStepContent}>{getStepLabel(2, setup.currentStep)}</div>
             </Link>
             <div className={styles.reqStepArrow}><Image alt="" src={StepsArrow} /></div>
             <Link href="/requests" className={`${styles.reqStep} ${getStepClass(3, setup.currentStep)}`}>
@@ -272,6 +272,11 @@ function getSetupDescription(currentStep: 1 | 2 | 3): string {
   if (currentStep === 1) return "Пополните баланс, чтобы система могла начать подбирать входящие переводы.";
   if (currentStep === 2) return "Подключите и включите карту или СБП, чтобы система могла подбирать входящие переводы.";
   return "Реквизит подключён. Когда OnlyP2P назначит реальный перевод, заявка появится здесь.";
+}
+
+function getStepLabel(step: 1 | 2, currentStep: 1 | 2 | 3): string {
+  if (step === 1) return currentStep > 1 ? "Крипта залита" : "Залить крипту";
+  return currentStep > 2 ? "Реквизиты подключены" : "Подключить реквизиты";
 }
 
 function formatRub(value: number): string {
