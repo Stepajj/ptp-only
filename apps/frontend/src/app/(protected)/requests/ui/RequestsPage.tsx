@@ -165,17 +165,17 @@ export function RequestsPage() {
           </p>
           {setup && <div className={styles.reqSteps}>
             <Link href="/deposit" className={`${styles.reqStep} ${getStepClass(1, setup.currentStep)}`}>
-              <div className={styles.reqStepCircle}>{getStepMarker(1, setup.currentStep)}</div>
+              <div className={`${styles.reqStepCircle} ${getStepCircleClass(1, setup.currentStep)}`}>{getStepMarker(1, setup.currentStep)}</div>
               <div className={styles.reqStepContent}>Крипта залита</div>
             </Link>
             <div className={styles.reqStepArrow}><Image alt="" src={StepsArrow} /> </div>
             <Link href="/requisites" className={`${styles.reqStep} ${getStepClass(2, setup.currentStep)}`}>
-              <div className={styles.reqStepCircle}>{getStepMarker(2, setup.currentStep)}</div>
+              <div className={`${styles.reqStepCircle} ${getStepCircleClass(2, setup.currentStep)}`}>{getStepMarker(2, setup.currentStep)}</div>
               <div className={styles.reqStepContent}>Подключить реквизиты</div>
             </Link>
             <div className={styles.reqStepArrow}><Image alt="" src={StepsArrow} /></div>
             <Link href="/requests" className={`${styles.reqStep} ${getStepClass(3, setup.currentStep)}`}>
-              <div className={styles.reqStepCircle}>{getStepMarker(3, setup.currentStep)}</div>
+              <div className={`${styles.reqStepCircle} ${getStepCircleClass(3, setup.currentStep)}`}>{getStepMarker(3, setup.currentStep)}</div>
               <div className={styles.reqStepContent}>Приём заявок</div>
             </Link>
             
@@ -254,7 +254,13 @@ function getStepClass(step: 1 | 2 | 3, currentStep: 1 | 2 | 3): string {
 
 function getStepMarker(step: 1 | 2 | 3, currentStep: 1 | 2 | 3): React.ReactNode {
   if (step < currentStep) return <Image alt="" src={GreenCircle} />;
-  return <span className={step === currentStep ? styles.blueCircle : styles.grayCircle}>{step}</span>;
+  return step;
+}
+
+function getStepCircleClass(step: 1 | 2 | 3, currentStep: 1 | 2 | 3): string {
+  if (step === currentStep) return styles.blueCircle;
+  if (step > currentStep) return styles.grayCircle;
+  return "";
 }
 
 function getSetupDescription(currentStep: 1 | 2 | 3): string {

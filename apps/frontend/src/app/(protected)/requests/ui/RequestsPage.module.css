@@ -313,9 +313,9 @@ font-size: 14px;
 }
 
 .reqStepCircle img {
- 
-  
-
+  width: 20px;
+  height: 20px;
+  display: block;
 }
 
 .blueStep{
