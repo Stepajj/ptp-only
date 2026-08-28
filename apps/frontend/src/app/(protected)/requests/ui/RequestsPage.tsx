@@ -8,6 +8,9 @@ import ArrowsIcon from "../assets/icons/EmptyArrows.svg";
 import GreenCircle from "../assets/icons/GreenCircle.svg";
 import StepsArrow from "../assets/icons/StepsArrow.svg";
 import Link from "next/link";
+import { getBalance } from "@/features/auth/api/auth.api";
+import { getAuthAccessToken } from "@/features/auth/lib/getAuthAccessToken";
+import { getRequisites } from "@/features/requisites/api/requisites.api";
 
 import {
   confirmIncomingRequest,
@@ -31,6 +34,8 @@ export function RequestsPage() {
   const [error, setError] = useState<string | null>(null);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [receivedAmounts, setReceivedAmounts] = useState<Record<string, string>>({});
+  const [setup, setSetup] = useState<{ currentStep: 1 | 2 | 3 } | null>(null);
+  const [setupError, setSetupError] = useState<string | null>(null);
 
   const visibleRequests = useMemo(
     () => requests.filter((request) => request.status === activeStatus),
@@ -60,11 +65,39 @@ export function RequestsPage() {
     }
   }, []);
 
+  const loadSetup = useCallback(async () => {
+    try {
+      setSetupError(null);
+      const accessToken = getAuthAccessToken();
+      if (!accessToken) {
+        throw new Error("Сессия недоступна");
+      }
+
+      const [balanceResponse, requisites] = await Promise.all([
+        getBalance(accessToken),
+        getRequisites(),
+      ]);
+      const hasBalance = balanceResponse.data.balance > 0;
+      const hasActiveRequisite = requisites.some((requisite) => requisite.status === "on");
+
+      setSetup({
+        currentStep: !hasBalance ? 1 : !hasActiveRequisite ? 2 : 3,
+      });
+    } catch (reason) {
+      setSetup(null);
+      setSetupError(reason instanceof Error ? reason.message : "Не удалось определить состояние аккаунта");
+    }
+  }, []);
+
+  const loadAll = useCallback(async () => {
+    await Promise.all([loadRequests(), loadSetup()]);
+  }, [loadRequests, loadSetup]);
+
   useEffect(() => {
     queueMicrotask(() => {
-      void loadRequests();
+      void loadAll();
     });
-  }, [loadRequests]);
+  }, [loadAll]);
 
   const handleConfirm = async (request: IncomingRequest) => {
     const customAmount = receivedAmounts[request.id]?.trim();
@@ -128,29 +161,26 @@ export function RequestsPage() {
           </div>
           <h3 className={styles.emptyTitle}>Пока нет заявок на приём</h3>
           <p className={styles.emptyDescription}>
-           Чтобы система начала подбирать вам входящие переводы, подключите реквизит — карту или СБП. Это один шаг до первой продажи.
+            {setup ? getSetupDescription(setup.currentStep) : setupError ?? "Проверяем состояние аккаунта..."}
           </p>
-          <div className={styles.reqSteps}>
-            <div className={styles.reqStep}>
-
-              <div className={styles.reqStepCircle}><Image alt="" src={GreenCircle} /></div>
+          {setup && <div className={styles.reqSteps}>
+            <Link href="/deposit" className={`${styles.reqStep} ${getStepClass(1, setup.currentStep)}`}>
+              <div className={styles.reqStepCircle}>{getStepMarker(1, setup.currentStep)}</div>
               <div className={styles.reqStepContent}>Крипта залита</div>
-            </div>
+            </Link>
             <div className={styles.reqStepArrow}><Image alt="" src={StepsArrow} /> </div>
-            <div className={`${styles.reqStep} ${styles.blueStep}`}>
-
-              <div className={`${styles.reqStepCircle} ${styles.blueCircle}`}>2</div>
+            <Link href="/requisites" className={`${styles.reqStep} ${getStepClass(2, setup.currentStep)}`}>
+              <div className={styles.reqStepCircle}>{getStepMarker(2, setup.currentStep)}</div>
               <div className={styles.reqStepContent}>Подключить реквизиты</div>
-            </div>
+            </Link>
             <div className={styles.reqStepArrow}><Image alt="" src={StepsArrow} /></div>
-            <div className={styles.reqStep}>
-
-              <div className={`${styles.reqStepCircle} ${styles.grayCircle}`}>3</div>
+            <Link href="/requests" className={`${styles.reqStep} ${getStepClass(3, setup.currentStep)}`}>
+              <div className={styles.reqStepCircle}>{getStepMarker(3, setup.currentStep)}</div>
               <div className={styles.reqStepContent}>Приём заявок</div>
-            </div>
+            </Link>
             
-          </div>
-          <button type="button" className={styles.reloadButton} onClick={() => void loadRequests()}>
+          </div>}
+          <button type="button" className={styles.reloadButton} onClick={() => void loadAll()}>
             Обновить список
           </button>
         </div>
@@ -215,6 +245,23 @@ export function RequestsPage() {
       )}
     </main>
   );
+}
+
+function getStepClass(step: 1 | 2 | 3, currentStep: 1 | 2 | 3): string {
+  if (step < currentStep) return styles.completedStep;
+  if (step === currentStep) return styles.blueStep;
+  return styles.futureStep;
+}
+
+function getStepMarker(step: 1 | 2 | 3, currentStep: 1 | 2 | 3): React.ReactNode {
+  if (step < currentStep) return <Image alt="" src={GreenCircle} />;
+  return step;
+}
+
+function getSetupDescription(currentStep: 1 | 2 | 3): string {
+  if (currentStep === 1) return "Пополните баланс, чтобы система могла начать подбирать входящие переводы.";
+  if (currentStep === 2) return "Подключите и включите карту или СБП, чтобы система могла подбирать входящие переводы.";
+  return "Реквизит подключён. Когда OnlyP2P назначит реальный перевод, заявка появится здесь.";
 }
 
 function formatRub(value: number): string {
