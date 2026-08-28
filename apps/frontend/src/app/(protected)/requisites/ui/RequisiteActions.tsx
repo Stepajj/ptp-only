@@ -17,6 +17,7 @@ type RequisiteActionsProps = {
   requisiteId: string;
   isActive: boolean;
   onStatusChange?: (newStatus: boolean) => void;
+  onDelete?: () => void;
   disabled?: boolean;
 };
 
@@ -24,6 +25,7 @@ export default function RequisiteActions({
   requisiteId,
   isActive,
   onStatusChange,
+  onDelete,
   disabled = false,
 }: RequisiteActionsProps) {
   const [active, setActive] = useState(isActive);
@@ -52,7 +54,7 @@ export default function RequisiteActions({
     try {
       setLoading(true);
       await deleteRequisite(parseInt(requisiteId, 10));
-      window.location.reload();
+      onDelete?.();
     } catch (error) {
       console.error('Failed to delete requisite:', error);
       alert(getErrorMessage(error, 'Не удалось удалить реквизит'));
@@ -103,7 +105,7 @@ export default function RequisiteActions({
         type="button"
         className={`${styles.actionButton} ${styles.deleteButton}`}
         aria-label="Удалить реквизит"
-        onClick={handleDelete}
+      onClick={() => void handleDelete()}
         disabled={loading || disabled}
       >
         <span aria-hidden="true">

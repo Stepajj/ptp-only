@@ -248,14 +248,13 @@ export function RequestsPage() {
 }
 
 function getStepClass(step: 1 | 2 | 3, currentStep: 1 | 2 | 3): string {
-  if (step < currentStep) return styles.completedStep;
   if (step === currentStep) return styles.blueStep;
-  return styles.futureStep;
+  return "";
 }
 
 function getStepMarker(step: 1 | 2 | 3, currentStep: 1 | 2 | 3): React.ReactNode {
   if (step < currentStep) return <Image alt="" src={GreenCircle} />;
-  return step;
+  return <span className={step === currentStep ? styles.blueCircle : styles.grayCircle}>{step}</span>;
 }
 
 function getSetupDescription(currentStep: 1 | 2 | 3): string {

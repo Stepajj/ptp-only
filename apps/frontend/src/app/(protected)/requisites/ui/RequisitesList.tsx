@@ -43,6 +43,10 @@ export default function RequisitesList() {
     );
   };
 
+  const handleDelete = (requisiteId: number) => {
+    setRequisites((current) => current.filter((requisite) => requisite.requisiteId !== requisiteId));
+  };
+
   if (loading) {
     return (
       <section className={styles.list}>
@@ -68,6 +72,7 @@ export default function RequisitesList() {
           key={requisite.requisiteId}
           requisite={requisite}
           onStatusChange={handleStatusChange}
+          onDelete={handleDelete}
         />
       ))}
     </section>

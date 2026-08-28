@@ -714,15 +714,6 @@
     margin-bottom: 0;
   }
 
-  .form > form > .field:nth-child(4) {
-    display: none;
-  }
-
-  .form > form > .resetButton,
-  .form > form > .field:nth-child(5) {
-    display: none;
-  }
-
   .form > form > .actions {
    
   }

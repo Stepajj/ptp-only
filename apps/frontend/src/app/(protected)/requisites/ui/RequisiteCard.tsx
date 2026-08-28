@@ -9,6 +9,7 @@ import styles from './RequisiteCard.module.css';
 type RequisiteCardProps = {
   requisite: Requisite;
   onStatusChange?: (requisiteId: number, newStatus: boolean) => void;
+  onDelete?: (requisiteId: number) => void;
 };
 
 function formatCardNumber(card: string): string {
@@ -48,6 +49,7 @@ function getDisplayInfo(requisite: Requisite): { type: string; value: string } {
 export default function RequisiteCard({
   requisite,
   onStatusChange,
+  onDelete,
 }: RequisiteCardProps) {
   const { type, value } = getDisplayInfo(requisite);
   const isActive = requisite.status === 'on';
@@ -84,6 +86,7 @@ export default function RequisiteCard({
           requisiteId={requisite.requisiteId.toString()}
           isActive={isActive}
           onStatusChange={(newStatus) => onStatusChange?.(requisite.requisiteId, newStatus)}
+          onDelete={() => onDelete?.(requisite.requisiteId)}
         />
       </div>
     </article>
