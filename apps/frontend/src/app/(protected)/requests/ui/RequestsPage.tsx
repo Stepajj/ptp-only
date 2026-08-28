@@ -52,9 +52,9 @@ export function RequestsPage() {
     );
   }, [requests]);
 
-  const loadRequests = useCallback(async () => {
+  const loadRequests = useCallback(async (showLoading = true) => {
     try {
-      setLoading(true);
+      if (showLoading) setLoading(true);
       setError(null);
       const data = await getIncomingRequests();
       setRequests(data);
@@ -97,7 +97,12 @@ export function RequestsPage() {
     queueMicrotask(() => {
       void loadAll();
     });
-  }, [loadAll]);
+    const intervalId = window.setInterval(() => {
+      void loadRequests(false);
+    }, 15_000);
+
+    return () => window.clearInterval(intervalId);
+  }, [loadAll, loadRequests]);
 
   const handleConfirm = async (request: IncomingRequest) => {
     const customAmount = receivedAmounts[request.id]?.trim();

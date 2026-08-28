@@ -714,6 +714,12 @@
     margin-bottom: 0;
   }
 
+  .form > form > .advancedField,
+  .form > form > .checkboxLabel,
+  .form > form > .resetButton {
+    grid-column: 1 / -1;
+  }
+
   .form > form > .actions {
    
   }

@@ -271,7 +271,7 @@ useEffect(() => {
             />
           </div>
 
-          <div className={styles.field}>
+          <div className={`${styles.field} ${styles.advancedField}`}>
             <label htmlFor="limitAmountMinutes" className={styles.label}>Период, мин</label>
             <input
               id="limitAmountMinutes"
