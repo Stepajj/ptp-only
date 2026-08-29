@@ -361,7 +361,29 @@ async function postOnlyP2P(path: string, body: Record<string, unknown>): Promise
       throw onlyP2PError(baseResponse.error);
     }
 
-    return JSON.parse(rawBody) as unknown;
+    const parsed = JSON.parse(rawBody) as unknown;
+
+    if (path === "/op2p_api/requests") {
+      const record = parsed && typeof parsed === "object"
+        ? parsed as { success?: unknown; data?: unknown }
+        : undefined;
+      const items = Array.isArray(record?.data) ? record.data as unknown[] : undefined;
+      const firstItem = items?.[0];
+
+      logger.info(
+        {
+          endpoint: path,
+          success: record?.success === true,
+          itemCount: items?.length ?? null,
+          itemKeys: firstItem && typeof firstItem === "object"
+            ? Object.keys(firstItem as Record<string, unknown>)
+            : [],
+        },
+        "OnlyP2P requests response received",
+      );
+    }
+
+    return parsed;
   } catch (error) {
     if (error instanceof AppError) {
       throw error;
