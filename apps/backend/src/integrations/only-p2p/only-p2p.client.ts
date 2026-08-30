@@ -378,6 +378,36 @@ async function postOnlyP2P(path: string, body: Record<string, unknown>): Promise
           itemKeys: firstItem && typeof firstItem === "object"
             ? Object.keys(firstItem as Record<string, unknown>)
             : [],
+          statusCounts: items?.reduce<Record<string, number>>((counts, item) => {
+            if (!item || typeof item !== "object") return counts;
+            const status = (item as Record<string, unknown>).status;
+            if (typeof status === "string") counts[status] = (counts[status] ?? 0) + 1;
+            return counts;
+          }, {}) ?? {},
+          timingFields: items?.reduce<{
+            deadline: number;
+            expiresAt: number;
+            awaitingProof: number;
+          }>(
+            (summary, item) => {
+              if (!item || typeof item !== "object") return summary;
+              const request = item as Record<string, unknown>;
+              if (typeof request.deadline === "string") summary.deadline += 1;
+              if (typeof request.expires_at === "string") summary.expiresAt += 1;
+              if (request.awaiting_proof === true) summary.awaitingProof += 1;
+              return summary;
+            },
+            { deadline: 0, expiresAt: 0, awaitingProof: 0 },
+          ) ?? { deadline: 0, expiresAt: 0, awaitingProof: 0 },
+          timingSamples: items
+            ?.filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === "object")
+            .slice(0, 3)
+            .map((request) => ({
+              status: typeof request.status === "string" ? request.status : null,
+              awaitingProof: request.awaiting_proof === true,
+              hasDeadline: typeof request.deadline === "string",
+              deadline: typeof request.deadline === "string" ? request.deadline : null,
+            })) ?? [],
         },
         "OnlyP2P requests response received",
       );
@@ -540,7 +570,13 @@ function parseOnlyP2PRequestsResponse(raw: unknown): OnlyP2PRequest[] {
     const status = request.status;
     const receivedRubAmount = request.received_rub_amount;
     const deadline = request.deadline;
+    const expiresAt = request.expires_at;
     const dateFinished = request.date_finished;
+    const effectiveDeadline = typeof deadline === "string"
+      ? deadline
+      : typeof expiresAt === "string"
+        ? expiresAt
+        : null;
 
     if (
       typeof request.id !== "string" ||
@@ -555,9 +591,13 @@ function parseOnlyP2PRequestsResponse(raw: unknown): OnlyP2PRequest[] {
       method !== "card" && method !== "sbp" ||
       status !== "waiting" && status !== "cancelled" && status !== "finished" ||
       typeof request.awaiting_proof !== "boolean" ||
-      typeof deadline !== "string" && deadline !== null ||
+      typeof deadline !== "string" && deadline !== null && deadline !== undefined ||
+      typeof expiresAt !== "string" && expiresAt !== null && expiresAt !== undefined ||
       typeof request.created !== "string" ||
-      typeof dateFinished !== "string" && dateFinished !== null
+      typeof dateFinished !== "string" && dateFinished !== null ||
+      effectiveDeadline !== null && Number.isNaN(new Date(effectiveDeadline).getTime()) ||
+      Number.isNaN(new Date(request.created).getTime()) ||
+      typeof dateFinished === "string" && Number.isNaN(new Date(dateFinished).getTime())
     ) {
       throw new AppError({ statusCode: 502, code: "ONLY_P2P_INVALID_RESPONSE", message: "External service returned an invalid request" });
     }
@@ -573,7 +613,7 @@ function parseOnlyP2PRequestsResponse(raw: unknown): OnlyP2PRequest[] {
       method,
       status,
       awaitingProof: request.awaiting_proof,
-      deadline,
+      deadline: effectiveDeadline,
       created: request.created,
       dateFinished,
     };

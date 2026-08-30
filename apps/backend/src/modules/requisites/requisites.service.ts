@@ -8,6 +8,7 @@ import { AppError } from "../../shared/errors/app-error";
 import { findExternalClientByUserId } from "../auth/auth.repository";
 
 import type { CreateRequisiteDto, EditRequisiteDto } from "./requisites.dto";
+import { ensureRequisiteMonitor, removeRequisiteMonitor } from "./requisite-monitor.service";
 
 async function getExternalUserId(userId: string): Promise<string> {
   const externalClient = await findExternalClientByUserId(userId);
@@ -75,10 +76,12 @@ export async function createRequisite(userId: string, input: CreateRequisiteDto)
 
 export async function editRequisite(userId: string, requisiteId: number, input: EditRequisiteDto) {
   await editOnlyP2PRequisite(await getExternalUserId(userId), requisiteId, input);
+  if (input.status) await ensureRequisiteMonitor(userId, requisiteId, input.status);
   return { success: true as const };
 }
 
 export async function deleteRequisite(userId: string, requisiteId: number) {
   await deleteOnlyP2PRequisite(await getExternalUserId(userId), requisiteId);
+  await removeRequisiteMonitor(userId, requisiteId);
   return { success: true as const };
 }

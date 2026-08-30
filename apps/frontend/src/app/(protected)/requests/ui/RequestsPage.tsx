@@ -36,6 +36,7 @@ export function RequestsPage() {
   const [receivedAmounts, setReceivedAmounts] = useState<Record<string, string>>({});
   const [setup, setSetup] = useState<{ currentStep: 1 | 2 | 3 } | null>(null);
   const [setupError, setSetupError] = useState<string | null>(null);
+  const [now, setNow] = useState(() => Date.now());
 
   const visibleRequests = useMemo(
     () => requests.filter((request) => request.status === activeStatus),
@@ -104,12 +105,22 @@ export function RequestsPage() {
     return () => window.clearInterval(intervalId);
   }, [loadAll, loadRequests]);
 
+  useEffect(() => {
+    if (!requests.some((request) => request.deadline && !request.dateFinished)) return;
+    const intervalId = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(intervalId);
+  }, [requests]);
+
   const handleConfirm = async (request: IncomingRequest) => {
     const customAmount = receivedAmounts[request.id]?.trim();
     const amount = customAmount ? Number(customAmount) : undefined;
 
     if (amount !== undefined && (!Number.isInteger(amount) || amount <= 0)) {
       setError("Введите корректную сумму в рублях");
+      return;
+    }
+
+    if (!window.confirm("Подтверждайте получение только после проверки фактического зачисления денег на счёт.")) {
       return;
     }
 
@@ -235,15 +246,22 @@ export function RequestsPage() {
                       onClick={() => void handleConfirm(request)}
                       disabled={confirmingId === request.id}
                     >
-                      {confirmingId === request.id ? "..." : "Подтвердить"}
+                      {confirmingId === request.id ? "..." : "Деньги получил"}
                     </button>
                   </>
                 )}
 
-                <span className={styles.deadline}>
-                  {formatDeadline(request)}
+                <span className={styles.deadline} aria-live="polite">
+                  {formatDeadline(request, now)}
                 </span>
               </div>
+              {(request.status === "waiting" || (request.status === "cancelled" && request.awaitingProof)) && (
+                 <p className={styles.warning}>
+                   {request.status === "waiting"
+                     ? "Если не выбрать действие до окончания первого срока, заявка перейдёт в окно ожидания решения. Если и там ничего не сделать, она автоматически завершится на полную сумму."
+                     : "Если до окончания срока, указанного сервисом, ничего не сделать, заявка автоматически завершится на полную сумму."} Проверяйте фактическое зачисление денег в банковском приложении, иначе вы можете потерять средства.
+                 </p>
+              )}
             </article>
           ))}
         </div>
@@ -315,16 +333,21 @@ function getStatusLabel(request: IncomingRequest): string {
   return "Завершена";
 }
 
-function formatDeadline(request: IncomingRequest): string {
+function formatDeadline(request: IncomingRequest, now: number): string {
   if (request.dateFinished) {
     return `Завершена ${formatDate(request.dateFinished)}`;
   }
 
   if (!request.deadline) {
-    return "Осталось 00:00";
+    return "Срок не передан сервисом";
   }
 
-  const remainingMs = new Date(request.deadline).getTime() - Date.now();
+  const deadlineMs = new Date(request.deadline).getTime();
+  if (!Number.isFinite(deadlineMs)) {
+    return "Срок недоступен";
+  }
+
+  const remainingMs = deadlineMs - now;
   const totalSeconds = Math.max(0, Math.floor(remainingMs / 1000));
   const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, "0");
   const seconds = (totalSeconds % 60).toString().padStart(2, "0");

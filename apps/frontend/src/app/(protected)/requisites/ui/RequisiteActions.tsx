@@ -9,6 +9,9 @@ import { editRequisite, deleteRequisite } from '@/features/requisites/api/requis
 
 import styles from './RequisiteActions.module.css';
 
+const ACTIVATION_NOTICE_KEY = 'only-p2p-requisite-activation-notice-accepted';
+const ONLY_P2P_RULES_URL = process.env.NEXT_PUBLIC_ONLY_P2P_RULES_URL;
+
 function getErrorMessage(error: unknown, fallback: string): string {
   return error instanceof Error && error.message.trim() ? error.message : fallback;
 }
@@ -30,8 +33,13 @@ export default function RequisiteActions({
 }: RequisiteActionsProps) {
   const [active, setActive] = useState(isActive);
   const [loading, setLoading] = useState(false);
+  const [activationNoticeOpen, setActivationNoticeOpen] = useState(false);
 
-  const handleToggle = async () => {
+  const changeStatus = async (rememberActivationNotice = false) => {
+    if (rememberActivationNotice) {
+      window.localStorage.setItem(ACTIVATION_NOTICE_KEY, '1');
+    }
+
     try {
       setLoading(true);
       const newStatus = active ? 'off' : 'on';
@@ -44,6 +52,20 @@ export default function RequisiteActions({
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleToggle = () => {
+    if (active) {
+      void changeStatus();
+      return;
+    }
+
+    if (window.localStorage.getItem(ACTIVATION_NOTICE_KEY) === '1') {
+      void changeStatus();
+      return;
+    }
+
+    setActivationNoticeOpen(true);
   };
 
   const handleDelete = async () => {
@@ -64,6 +86,7 @@ export default function RequisiteActions({
   };
 
   return (
+    <>
     <div className={styles.container}>
       <span
         className={`${styles.status} ${
@@ -113,5 +136,26 @@ export default function RequisiteActions({
         </span>
       </button>
     </div>
+    {activationNoticeOpen && (
+      <div className={styles.modalBackdrop} role="presentation">
+        <div className={styles.modal} role="dialog" aria-modal="true" aria-labelledby="activation-notice-title">
+          <h2 id="activation-notice-title">Перед включением реквизита</h2>
+          <p>Вы должны быть на связи и иметь доступ к карте. Заранее выключайте реквизит, если не сможете проверить поступление.</p>
+          {ONLY_P2P_RULES_URL ? (
+            <a href={ONLY_P2P_RULES_URL} className={styles.rulesLink} target="_blank" rel="noreferrer">
+              Правила использования OnlyP2P
+            </a>
+          ) : (
+            <span className={styles.rulesUnavailable}>Правила использования OnlyP2P</span>
+          )}
+          <div className={styles.modalActions}>
+            <button type="button" className={styles.modalCancel} onClick={() => setActivationNoticeOpen(false)} disabled={loading}>Отмена</button>
+            <button type="button" className={styles.modalAgree} onClick={() => { setActivationNoticeOpen(false); void changeStatus(); }} disabled={loading}>Согласен</button>
+            <button type="button" className={styles.modalAgree} onClick={() => { setActivationNoticeOpen(false); void changeStatus(true); }} disabled={loading}>Согласен и больше не показывать</button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }

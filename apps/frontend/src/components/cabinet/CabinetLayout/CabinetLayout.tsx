@@ -3,6 +3,8 @@ import styles from './CabinetLayout.module.css';
 import { Sidebar } from './CabinetSidebar';
 import { CabinetHeader } from './CabinetHeader';
 import { MobileBottomNav } from './MobileBottomNav';
+import { RequestAlert } from './RequestAlert';
+import { RequisiteMonitorAlert } from './RequisiteMonitorAlert';
 
 type Props = {
   children: React.ReactNode;
@@ -11,6 +13,8 @@ type Props = {
 export function CabinetLayout({ children }: Props) {
   return (
     <div className={styles.layout}>
+      <RequestAlert />
+      <RequisiteMonitorAlert />
       <Sidebar />
 
       <div className={styles.content}>

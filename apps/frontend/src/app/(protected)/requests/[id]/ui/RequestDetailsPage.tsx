@@ -16,6 +16,23 @@ import styles from "./RequestDetailsPage.module.css";
 import SbpIcon from "../../../requisites/assets/icons/sbp.svg";
 import TBankIcon from "../../../requisites/assets/icons/TBank.svg";
 
+const MOCK_REQUEST_ID = "mock-active-request";
+const MOCK_ACTIVE_REQUEST: IncomingRequest = {
+  id: MOCK_REQUEST_ID,
+  amountRub: 2350,
+  receivedRubAmount: null,
+  requisiteId: -900001,
+  requisite: "••• 4821",
+  fio: "Демо владелец",
+  bank: "Т-Банк",
+  method: "card",
+  status: "waiting",
+  awaitingProof: false,
+  deadline: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+  created: new Date().toISOString(),
+  dateFinished: null,
+};
+
 export function RequestDetailsPage({ requestId }: { requestId: string }) {
   const [request, setRequest] = useState<IncomingRequest | null>(null);
   const [loading, setLoading] = useState(true);
@@ -23,12 +40,21 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [noMoneyOpen, setNoMoneyOpen] = useState(false);
 
   const loadRequest = useCallback(async () => {
     try {
       setError(null);
+      if (requestId === MOCK_REQUEST_ID) {
+        setRequest(MOCK_ACTIVE_REQUEST);
+        setNow(Date.now());
+        return;
+      }
+
       const requests = await getIncomingRequests();
       setRequest(requests.find((item) => item.id === requestId) ?? null);
+      setNow(Date.now());
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Не удалось загрузить заявку");
     } finally {
@@ -46,12 +72,36 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
     return () => window.clearInterval(timer);
   }, [request]);
 
+  useEffect(() => {
+    if (!request || request.status === "finished" || request.id === MOCK_REQUEST_ID) return;
+
+    const interval = window.setInterval(() => void loadRequest(), 15000);
+    const refreshOnReturn = () => {
+      if (document.visibilityState === "visible") void loadRequest();
+    };
+    window.addEventListener("focus", refreshOnReturn);
+    document.addEventListener("visibilitychange", refreshOnReturn);
+
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener("focus", refreshOnReturn);
+      document.removeEventListener("visibilitychange", refreshOnReturn);
+    };
+  }, [loadRequest, request]);
+
   const confirm = async () => {
     if (!request) return;
+    if (request.id === MOCK_REQUEST_ID) {
+      setConfirmOpen(false);
+      setError("Это демонстрационная заявка: действие не отправляется в API.");
+      return;
+    }
+
     try {
       setConfirming(true);
       setError(null);
       await confirmIncomingRequest(request.id);
+      setConfirmOpen(false);
       await loadRequest();
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Не удалось подтвердить получение");
@@ -63,6 +113,12 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
   const uploadProof = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !request) return;
+    if (request.id === MOCK_REQUEST_ID) {
+      setError("Это демонстрационная заявка: файл не отправляется в API.");
+      event.target.value = "";
+      return;
+    }
+
     try {
       setUploading(true);
       setError(null);
@@ -81,10 +137,19 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
   if (!request) return <main className={styles.page}><div className={styles.error}>Заявка не найдена</div></main>;
 
   const canConfirm = request.status === "waiting" || (request.status === "cancelled" && request.awaitingProof);
-  const secondsLeft = request.deadline
-    ? Math.max(0, Math.floor((new Date(request.deadline).getTime() - now) / 1000))
+  const deadlineMs = request.deadline ? new Date(request.deadline).getTime() : NaN;
+  const secondsLeft = Number.isFinite(deadlineMs)
+    ? Math.max(0, Math.floor((deadlineMs - now) / 1000))
     : null;
   const timer = secondsLeft === null ? "—" : `${String(Math.floor(secondsLeft / 60)).padStart(2, "0")}:${String(secondsLeft % 60).padStart(2, "0")}`;
+  const timerLabel = request.status === "finished"
+    ? `Закрыта${request.dateFinished ? ` ${formatDate(request.dateFinished)}` : " сервисом"}`
+    : secondsLeft === null
+      ? "Срок не передан сервисом"
+      : secondsLeft === 0
+        ? "Время истекло, уточняем статус"
+        : `Осталось ${timer}`;
+  const actionAvailable = canConfirm && (secondsLeft === null || secondsLeft > 0);
   const bankIcon = request.method === "sbp" ? SbpIcon : getBankIcon(request.bank);
 
   return (
@@ -101,25 +166,66 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
           </div>
           <div className={styles.timer}>
             <Image src={TimerIcon} alt="Таймер" />
-            {timer}</div>
+            <span aria-live="polite">{timerLabel}</span></div>
         </div>
         <div className={styles.fields}>
           <div><span>Реквизит</span><strong>{request.bank} · {request.requisite}</strong></div>
           <div><span>Владелец реквизита</span><strong>{request.fio}</strong></div>
         </div>
-        {request.status === "finished" ? <p className={styles.success}>Получение денег подтверждено {request.dateFinished ? formatDate(request.dateFinished) : ""}</p> : <p className={styles.notice}>Подтверждайте получение только после фактического поступления денег на счёт.</p>}
-        {canConfirm && (
+        {request.status === "finished" ? <p className={styles.success}>Заявка закрыта сервисом{request.dateFinished ? ` ${formatDate(request.dateFinished)}` : ""}.</p> : request.status === "cancelled" && !request.awaitingProof ? <p className={styles.notice}>Заявка отменена сервисом.</p> : <p className={styles.warning}>{request.status === "waiting" ? "Если не выбрать действие до окончания первого срока, заявка перейдёт в окно ожидания решения. Если и там ничего не сделать, она автоматически завершится на полную сумму." : "Если до окончания срока, указанного сервисом, ничего не сделать, заявка автоматически завершится на полную сумму."} Проверяйте фактическое зачисление денег в банковском приложении, иначе вы можете потерять средства.</p>}
+        {request.status === "cancelled" && request.awaitingProof && (
+          <p className={styles.notice}>
+            Заявка ждёт вашего решения. Если деньги пришли позднее, подтвердите получение. Если денег нет, загрузите видео или PDF-пруф до окончания срока.
+          </p>
+        )}
+        {actionAvailable && (
           <div className={styles.actions}>
-            <button type="button" className={styles.confirm} onClick={() => void confirm()} disabled={confirming}>
-              {confirming ? "Подтверждение..." : "Подтвердить получение"}
+            <button type="button" className={styles.confirm} onClick={() => setConfirmOpen(true)} disabled={confirming}>
+              Деньги получил
             </button>
-            <Link className={styles.noMoney} href={`/support/chat?requestId=${encodeURIComponent(request.id)}`}>
+            <button type="button" className={styles.noMoney} onClick={() => setNoMoneyOpen(true)}>
               Денег нет
-            </Link>
+            </button>
           </div>
         )}
-        {request.status === "cancelled" && request.awaitingProof && <label className={styles.proof}>Загрузить пруф (видео или PDF)<input type="file" accept=".mp4,.mov,.avi,.mkv,.webm,.m4v,.gif,.pdf" onChange={(event) => void uploadProof(event)} disabled={uploading} />{uploading && <span>Отправка...</span>}</label>}
+        {request.status === "cancelled" && request.awaitingProof && <label className={styles.proof}>Загрузить пруф (видео или PDF)<input type="file" accept=".mp4,.mov,.avi,.mkv,.webm,.m4v,.gif,.pdf" onChange={(event) => void uploadProof(event)} disabled={uploading || secondsLeft === 0} />{uploading && <span>Отправка...</span>}</label>}
       </section>
+      {confirmOpen && (
+        <div className={styles.modalBackdrop} role="presentation">
+          <div className={styles.modal} role="dialog" aria-modal="true" aria-labelledby="confirm-receipt-title">
+            <h2 id="confirm-receipt-title">Подтвердить получение денег?</h2>
+            <p>Подтверждайте только после того, как проверили фактическое зачисление на счёт в банковском приложении.</p>
+            <div className={styles.modalActions}>
+              <button type="button" className={styles.cancel} onClick={() => setConfirmOpen(false)} disabled={confirming}>Отмена</button>
+              <button type="button" className={styles.confirm} onClick={() => void confirm()} disabled={confirming}>
+                {confirming ? "Проверяем..." : "Деньги получил"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {noMoneyOpen && (
+        <div className={styles.modalBackdrop} role="presentation">
+          <div className={styles.modal} role="dialog" aria-modal="true" aria-labelledby="no-money-title">
+            <h2 id="no-money-title">Деньги не поступили?</h2>
+            {request.status === "waiting" ? (
+              <p>
+                Не подтверждайте заявку. По документации OnlyP2P после истечения таймера заявка перейдёт в отменённую и откроет окно для позднего подтверждения или загрузки пруфа.
+              </p>
+            ) : (
+              <p>
+                Загрузите видео или PDF-пруф отсутствия платежа до окончания срока. Если нужна помощь оператора, откройте поддержку по этой заявке.
+              </p>
+            )}
+            <div className={styles.modalActions}>
+              <button type="button" className={styles.cancel} onClick={() => setNoMoneyOpen(false)}>Закрыть</button>
+              <Link className={styles.supportLink} href={`/support/chat?requestId=${encodeURIComponent(request.id)}`}>
+                Поддержка
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

@@ -4,6 +4,7 @@ import { createApp } from "./app";
 import { config } from "./config";
 import { connectDatabase, disconnectDatabase } from "./db/prisma";
 import { logger } from "./shared/logger/logger";
+import { startRequisiteMonitoring, stopRequisiteMonitoring } from "./modules/requisites/requisite-monitor.service";
 
 async function bootstrap(): Promise<void> {
   await connectDatabase();
@@ -21,6 +22,7 @@ async function bootstrap(): Promise<void> {
       "backend server started",
     );
   });
+  startRequisiteMonitoring();
 
   function shutdown(signal: NodeJS.Signals): void {
     logger.info({ signal }, "shutdown signal received");
@@ -40,6 +42,7 @@ async function bootstrap(): Promise<void> {
         }
 
         await disconnectDatabase();
+        stopRequisiteMonitoring();
         clearTimeout(forceExitTimer);
         process.exit();
       })();

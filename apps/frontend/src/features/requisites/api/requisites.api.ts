@@ -47,6 +47,13 @@ export async function getRequisites(): Promise<Requisite[]> {
   return response.data;
 }
 
+export interface RequisiteMonitoringPrompt {
+  requisiteId: number;
+  promptedAt: string | null;
+  state: 'waiting_response' | 'auto_disabled';
+  autoDisabledAt: string | null;
+}
+
 export async function createRequisite(input: CreateRequisiteInput): Promise<{ requisiteId: number }> {
   const response = await requestJson<{ success: true; data: { requisiteId: number } }>('/requisites', {
     method: 'POST',
@@ -67,6 +74,21 @@ export async function editRequisite(requisiteId: number, input: EditRequisiteInp
 export async function deleteRequisite(requisiteId: number): Promise<void> {
   await requestJson<{ success: true }>(`/requisites/${requisiteId}`, {
     method: 'DELETE',
+    accessToken: getAuthAccessToken(),
+  });
+}
+
+export async function getRequisiteMonitoringPrompts(): Promise<RequisiteMonitoringPrompt[]> {
+  const response = await requestJson<{ success: true; data: RequisiteMonitoringPrompt[] }>('/requisites/monitoring', {
+    accessToken: getAuthAccessToken(),
+  });
+  return response.data;
+}
+
+export async function answerRequisiteMonitoring(requisiteId: number, keepEnabled: boolean): Promise<void> {
+  await requestJson<{ success: true }>(`/requisites/${requisiteId}/monitoring`, {
+    method: 'POST',
+    body: { keepEnabled },
     accessToken: getAuthAccessToken(),
   });
 }

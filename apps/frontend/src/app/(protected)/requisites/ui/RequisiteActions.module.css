@@ -103,3 +103,19 @@
 
   cursor: pointer;
 }
+
+.modalBackdrop { position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(20, 20, 23, .42); }
+.modal { width: min(100%, 440px); box-sizing: border-box; padding: 22px; border-radius: 12px; background: #fff; box-shadow: 0 18px 60px rgba(20, 20, 23, .2); }
+.modal h2 { margin: 0 0 10px; color: #111; font-size: 18px; }
+.modal p { margin: 0; color: #555; font-size: 14px; line-height: 1.45; }
+.rulesLink { display: inline-block; margin-top: 12px; color: #168fd1; font-size: 13px; }
+.rulesUnavailable { display: inline-block; margin-top: 12px; color: #777; font-size: 13px; }
+.modalActions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.modalActions button { flex: 1 1 130px; min-height: 40px; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+.modalCancel { border: 1px solid #ddd; background: #fff; color: #333; }
+.modalAgree { border: 0; background: #12b36a; color: #fff; }
+
+@media (max-width: 600px) {
+  .modalActions { flex-direction: column; }
+  .modalActions button { width: 100%; }
+}

@@ -53,5 +53,10 @@ export const editRequisiteSchema = z
     }
   });
 
+export const requisiteMonitoringAnswerSchema = z.object({
+  keepEnabled: z.boolean(),
+}).strict();
+
 export type CreateRequisiteDto = z.infer<typeof createRequisiteSchema>;
 export type EditRequisiteDto = z.infer<typeof editRequisiteSchema>;
+export type RequisiteMonitoringAnswerDto = z.infer<typeof requisiteMonitoringAnswerSchema>;
