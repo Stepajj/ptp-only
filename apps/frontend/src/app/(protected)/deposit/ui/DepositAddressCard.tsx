@@ -14,6 +14,7 @@ import styles from "./DepositAddressCard.module.css";
 interface DepositAddressCardProps {
   method: DepositMethod;
   details: DepositDetails;
+  creditStatus: "waiting" | "credited" | "unknown";
 }
 function isUrl(value: string) {
   return value.startsWith("http://") || value.startsWith("https://");
@@ -22,6 +23,7 @@ function isUrl(value: string) {
 export function DepositAddressCard({
   method,
   details,
+  creditStatus,
 }: DepositAddressCardProps) {
   const [copied, setCopied] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
@@ -131,10 +133,14 @@ export function DepositAddressCard({
       </div>
 
       <div className={styles.waiting}>
-        <span className={styles.spinner} />
+        {creditStatus === "waiting" && <span className={styles.spinner} />}
 
         <span>
-          {details.waitingText}
+          {creditStatus === "credited"
+            ? "Средства зачислены на баланс"
+            : creditStatus === "unknown"
+              ? "Не удалось подтвердить статус зачисления"
+              : details.waitingText}
         </span>
       </div>
     </section>

@@ -12,6 +12,7 @@ export interface DepositMethod {
   apiMethod: DepositApiMethod;
   title: string;
   details: string[];
+  minimum: string;
   icon: string;
   variant: DepositMethodVariant;
   href: string;

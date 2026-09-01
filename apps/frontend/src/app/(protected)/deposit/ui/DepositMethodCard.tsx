@@ -33,6 +33,10 @@ export function DepositMethodCard({
               {detail}
             </span>
           ))}
+          <span className={styles.detail}>
+            <span className={styles.dot}>•</span>
+            Минимум {method.minimum}
+          </span>
         </div>
       </div>
 

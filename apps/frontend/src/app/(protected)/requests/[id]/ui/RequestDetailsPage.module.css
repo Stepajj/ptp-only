@@ -17,7 +17,7 @@
 .notice, .success { margin: 14px 0; padding: 12px; border-radius: 8px; font-size: 13px; }
 .notice { background: #e8f7ff; color: #24566d; }
 .success { background: #e9f9ef; color: #19733b; }
-.warning { margin: 14px 0; padding: 12px; border: 1px solid #f5b6b0; border-radius: 8px; background: #fff0ef; color: #b42318; font-size: 13px; line-height: 1.4; }
+.warning { width: 100%; min-width: 0; box-sizing: border-box; overflow-wrap: normal; margin: 14px 0; padding: 12px; border: 1px solid #f5b6b0; border-radius: 8px; background: #fff0ef; color: #b42318; font-size: 13px; line-height: 1.4; }
 .confirm { width: 100%; border: 0; border-radius: 8px; padding: 12px; background: #12b86b; color: #fff; cursor: pointer; }
 .confirm:disabled { opacity: .6; cursor: wait; }
 .actions { display: flex; gap: 8px; }

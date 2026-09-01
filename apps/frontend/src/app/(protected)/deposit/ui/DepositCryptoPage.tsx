@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { getBalance } from "@/features/auth/api/auth.api";
+import { getAuthAccessToken } from "@/features/auth/lib/getAuthAccessToken";
 import { createTopup } from "@/features/deposit/api/deposit.api";
 import { getDepositMethod } from "@/features/deposit/model/deposit.catalog";
 import type { DepositDetails, DepositMethod } from "@/features/deposit/model/deposit.types";
@@ -22,6 +24,8 @@ export function DepositCryptoPage({
   const [details, setDetails] = useState<DepositDetails | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [initialBalance, setInitialBalance] = useState<number | null>(null);
+  const [creditStatus, setCreditStatus] = useState<"waiting" | "credited" | "unknown">("waiting");
 
   const requiresAmount =
     method?.apiMethod === "cb" ||
@@ -32,26 +36,63 @@ export function DepositCryptoPage({
       return;
     }
 
+    let cancelled = false;
+
     async function loadAddress(currentMethod: DepositMethod) {
       try {
         setLoading(true);
         setError(null);
+        const balanceBefore = await readCurrentBalance();
+        if (cancelled) return;
+        setInitialBalance(balanceBefore);
+        setCreditStatus(balanceBefore === null ? "unknown" : "waiting");
         const result = await createTopup({ method: currentMethod.apiMethod });
 
         if (!result.address) {
           throw new Error("Не удалось получить адрес пополнения");
         }
 
-        setDetails(createDepositDetails(currentMethod, result.address));
+        if (!cancelled) {
+          setDetails(createDepositDetails(currentMethod, result.address));
+        }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Не удалось загрузить пополнение");
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : "Не удалось загрузить пополнение");
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
     void loadAddress(method);
+
+    return () => {
+      cancelled = true;
+    };
   }, [method, requiresAmount]);
+
+  useEffect(() => {
+    if (!details || initialBalance === null || creditStatus === "credited") {
+      return;
+    }
+
+    let cancelled = false;
+
+    const checkBalance = async () => {
+      const currentBalance = await readCurrentBalance();
+      if (!cancelled && currentBalance !== null && currentBalance > initialBalance) {
+        setCreditStatus("credited");
+      }
+    };
+
+    void checkBalance();
+    const intervalId = window.setInterval(() => void checkBalance(), 15_000);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(intervalId);
+    };
+  }, [details, initialBalance, creditStatus]);
 
   const handleInvoiceSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -70,6 +111,9 @@ export function DepositCryptoPage({
     try {
       setLoading(true);
       setError(null);
+      const balanceBefore = await readCurrentBalance();
+      setInitialBalance(balanceBefore);
+      setCreditStatus(balanceBefore === null ? "unknown" : "waiting");
       const result = await createTopup({
         method: method.apiMethod,
         amount: parsedAmount,
@@ -152,6 +196,7 @@ export function DepositCryptoPage({
         <DepositAddressCard
           method={method}
           details={details}
+          creditStatus={creditStatus}
         />
       )}
     </main>
@@ -167,10 +212,22 @@ function createDepositDetails(method: DepositMethod, value: string): DepositDeta
     methodId: method.id,
     address: value,
     addressLabel: isInvoice ? "Ссылка на оплату" : "Адрес для пополнения",
-    minimum: isInvoice ? "Зависит от лимитов OnlyP2P" : "По лимитам OnlyP2P",
+    minimum: method.minimum,
     crediting: isInvoice ? "После оплаты инвойса" : "После подтверждения сети",
     networkLabel: method.title,
     badgeIcon: method.icon,
     waitingText: isInvoice ? "Ждём оплату инвойса..." : "Ждём поступление средств...",
   };
+}
+
+async function readCurrentBalance(): Promise<number | null> {
+  const accessToken = getAuthAccessToken();
+  if (!accessToken) return null;
+
+  try {
+    const response = await getBalance(accessToken);
+    return response.data.balance;
+  } catch {
+    return null;
+  }
 }

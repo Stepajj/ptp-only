@@ -40,6 +40,23 @@ function getDisplayInfo(requisite: Requisite): { type: string; value: string } {
       value: formatPhoneNumber(requisite.phone),
     };
   }
+
+  if (requisite.method === 'card') {
+    return {
+      type: 'Карта',
+      value: formatCardNumber(requisite.card),
+    };
+  }
+
+  // When a requisite is off, the API may omit the active method while
+  // retaining the saved card or phone. Show whichever value is available.
+  if (requisite.phone !== '-') {
+    return {
+      type: 'СБП',
+      value: formatPhoneNumber(requisite.phone),
+    };
+  }
+
   return {
     type: 'Карта',
     value: formatCardNumber(requisite.card),
