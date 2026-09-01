@@ -1,7 +1,6 @@
 .card {
   width: 100%;
-  min-height: 85px;
-  height: auto;
+  height: 85px;
   box-sizing: border-box;
 
   display: flex;

@@ -27,6 +27,23 @@ const tabs: Array<{ status: IncomingRequestStatus; label: string }> = [
   { status: "finished", label: "Завершённые" },
 ];
 
+const MOCK_REQUEST_ID = "mock-active-request";
+const MOCK_ACTIVE_REQUEST: IncomingRequest = {
+  id: MOCK_REQUEST_ID,
+  amountRub: 2350,
+  receivedRubAmount: null,
+  requisiteId: -900001,
+  requisite: "••• 4821",
+  fio: "Демо владелец",
+  bank: "Т-Банк",
+  method: "card",
+  status: "waiting",
+  awaitingProof: false,
+  deadline: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+  created: new Date().toISOString(),
+  dateFinished: null,
+};
+
 export function RequestsPage() {
   const [activeStatus, setActiveStatus] = useState<IncomingRequestStatus>("waiting");
   const [requests, setRequests] = useState<IncomingRequest[]>([]);
@@ -58,7 +75,10 @@ export function RequestsPage() {
       if (showLoading) setLoading(true);
       setError(null);
       const data = await getIncomingRequests();
-      setRequests(data);
+      setRequests([
+        ...data.filter((request) => request.id !== MOCK_REQUEST_ID),
+        MOCK_ACTIVE_REQUEST,
+      ]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Не удалось загрузить заявки");
     } finally {
@@ -112,6 +132,11 @@ export function RequestsPage() {
   }, [requests]);
 
   const handleConfirm = async (request: IncomingRequest) => {
+    if (request.id === MOCK_REQUEST_ID) {
+      setError("Это демонстрационная заявка: действие не отправляется в API.");
+      return;
+    }
+
     const customAmount = receivedAmounts[request.id]?.trim();
     const amount = customAmount ? Number(customAmount) : undefined;
 
