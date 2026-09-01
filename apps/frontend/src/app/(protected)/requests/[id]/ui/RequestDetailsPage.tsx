@@ -16,23 +16,6 @@ import styles from "./RequestDetailsPage.module.css";
 import SbpIcon from "../../../requisites/assets/icons/sbp.svg";
 import TBankIcon from "../../../requisites/assets/icons/TBank.svg";
 
-const MOCK_REQUEST_ID = "mock-active-request";
-const MOCK_ACTIVE_REQUEST: IncomingRequest = {
-  id: MOCK_REQUEST_ID,
-  amountRub: 2350,
-  receivedRubAmount: null,
-  requisiteId: -900001,
-  requisite: "••• 4821",
-  fio: "Демо владелец",
-  bank: "Т-Банк",
-  method: "card",
-  status: "waiting",
-  awaitingProof: false,
-  deadline: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-  created: new Date().toISOString(),
-  dateFinished: null,
-};
-
 export function RequestDetailsPage({ requestId }: { requestId: string }) {
   const [request, setRequest] = useState<IncomingRequest | null>(null);
   const [loading, setLoading] = useState(true);
@@ -46,12 +29,6 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
   const loadRequest = useCallback(async () => {
     try {
       setError(null);
-      if (requestId === MOCK_REQUEST_ID) {
-        setRequest(MOCK_ACTIVE_REQUEST);
-        setNow(Date.now());
-        return;
-      }
-
       const requests = await getIncomingRequests();
       setRequest(requests.find((item) => item.id === requestId) ?? null);
       setNow(Date.now());
@@ -73,7 +50,7 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
   }, [request]);
 
   useEffect(() => {
-    if (!request || request.status === "finished" || request.id === MOCK_REQUEST_ID) return;
+    if (!request || request.status === "finished") return;
 
     const interval = window.setInterval(() => void loadRequest(), 15000);
     const refreshOnReturn = () => {
@@ -91,12 +68,6 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
 
   const confirm = async () => {
     if (!request) return;
-    if (request.id === MOCK_REQUEST_ID) {
-      setConfirmOpen(false);
-      setError("Это демонстрационная заявка: действие не отправляется в API.");
-      return;
-    }
-
     try {
       setConfirming(true);
       setError(null);
@@ -113,12 +84,6 @@ export function RequestDetailsPage({ requestId }: { requestId: string }) {
   const uploadProof = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !request) return;
-    if (request.id === MOCK_REQUEST_ID) {
-      setError("Это демонстрационная заявка: файл не отправляется в API.");
-      event.target.value = "";
-      return;
-    }
-
     try {
       setUploading(true);
       setError(null);
