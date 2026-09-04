@@ -36,6 +36,7 @@ model User {
   refreshTokens              RefreshToken[]
   externalClients            ExternalClient[]
   requisiteMonitors          RequisiteMonitor[]
+  requestProofStages         RequestProofStage[]
   settings                   UserSettings?
 
   @@map("users")
@@ -114,4 +115,18 @@ model RequisiteMonitor {
   @@unique([userId, requisiteId])
   @@index([state, promptedAt])
   @@map("requisite_monitors")
+}
+
+model RequestProofStage {
+  id              String   @id @default(uuid()) @db.Uuid
+  userId          String   @map("user_id") @db.Uuid
+  requestId       String   @map("request_id")
+  proofStartedAt  DateTime @map("proof_started_at") @db.Timestamptz(3)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, requestId])
+  @@index([userId, proofStartedAt])
+  @@map("request_proof_stages")
 }

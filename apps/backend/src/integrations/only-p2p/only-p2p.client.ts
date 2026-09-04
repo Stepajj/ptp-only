@@ -89,6 +89,7 @@ export interface OnlyP2PRequest {
   deadline: string | null;
   created: string;
   dateFinished: string | null;
+  deadlineSource: "api" | "fallback" | "proof_stage" | null;
 }
 
 export interface OnlyP2PSupportMessage {
@@ -636,6 +637,13 @@ function parseOnlyP2PRequestsResponse(raw: unknown): OnlyP2PRequest[] {
       deadline: effectiveDeadline,
       created: request.created,
       dateFinished,
+      deadlineSource: explicitDeadline !== null
+        ? "api"
+        : rawStatus === "waiting"
+          ? "fallback"
+          : isProofStage
+            ? "proof_stage"
+            : null,
     };
   });
 }
