@@ -72,3 +72,6 @@ void bootstrap().catch(async (error: unknown) => {
   await disconnectDatabase();
   process.exit(1);
 });
+
+
+logger.info("BACKEND VERSION: 2026-09-04-01");
