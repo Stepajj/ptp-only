@@ -567,16 +567,14 @@ function parseOnlyP2PRequestsResponse(raw: unknown): OnlyP2PRequest[] {
 
     const request = item as Record<string, unknown>;
     const method = request.method;
-    const status = request.status;
+    const rawStatus = request.status;
     const receivedRubAmount = request.received_rub_amount;
     const deadline = request.deadline;
     const expiresAt = request.expires_at;
+    const updated = request.updated;
     const dateFinished = request.date_finished;
-    const effectiveDeadline = typeof deadline === "string"
-      ? deadline
-      : typeof expiresAt === "string"
-        ? expiresAt
-        : null;
+    const isProofStage = request.awaiting_proof === true || rawStatus === "proof_requested";
+    const status = rawStatus === "proof_requested" ? "cancelled" : rawStatus;
 
     if (
       typeof request.id !== "string" ||
@@ -589,18 +587,40 @@ function parseOnlyP2PRequestsResponse(raw: unknown): OnlyP2PRequest[] {
       typeof request.fio !== "string" ||
       typeof request.bank !== "string" ||
       method !== "card" && method !== "sbp" ||
-      status !== "waiting" && status !== "cancelled" && status !== "finished" ||
+      rawStatus !== "waiting" && rawStatus !== "cancelled" && rawStatus !== "finished" && rawStatus !== "proof_requested" ||
       typeof request.awaiting_proof !== "boolean" ||
       typeof deadline !== "string" && deadline !== null && deadline !== undefined ||
       typeof expiresAt !== "string" && expiresAt !== null && expiresAt !== undefined ||
       typeof request.created !== "string" ||
       typeof dateFinished !== "string" && dateFinished !== null ||
-      effectiveDeadline !== null && Number.isNaN(new Date(effectiveDeadline).getTime()) ||
       Number.isNaN(new Date(request.created).getTime()) ||
       typeof dateFinished === "string" && Number.isNaN(new Date(dateFinished).getTime())
     ) {
       throw new AppError({ statusCode: 502, code: "ONLY_P2P_INVALID_RESPONSE", message: "External service returned an invalid request" });
     }
+
+    const createdMs = new Date(request.created).getTime();
+    const deadlineValue = typeof deadline === "string" && deadline.trim() !== ""
+      ? deadline
+      : null;
+    const expiresAtValue = typeof expiresAt === "string" && expiresAt.trim() !== ""
+      ? expiresAt
+      : null;
+    const explicitDeadline = deadlineValue ?? expiresAtValue;
+    const explicitDeadlineMs = explicitDeadline === null ? NaN : new Date(explicitDeadline).getTime();
+    if (explicitDeadline !== null && Number.isNaN(explicitDeadlineMs)) {
+      throw new AppError({ statusCode: 502, code: "ONLY_P2P_INVALID_RESPONSE", message: "External service returned an invalid request deadline" });
+    }
+
+    const fallbackStartMs = typeof updated === "string" && Number.isFinite(new Date(updated).getTime())
+      ? new Date(updated).getTime()
+      : createdMs;
+    const fallbackDurationMs = isProofStage ? 25 * 60 * 1000 : 15 * 60 * 1000;
+    const effectiveDeadline = explicitDeadline
+      ?? (rawStatus === "waiting" || isProofStage
+        ? new Date(fallbackStartMs + fallbackDurationMs).toISOString()
+        : null);
+    const normalizedStatus = status as OnlyP2PRequestStatus;
 
     return {
       id: request.id,
@@ -611,8 +631,8 @@ function parseOnlyP2PRequestsResponse(raw: unknown): OnlyP2PRequest[] {
       fio: request.fio,
       bank: request.bank,
       method,
-      status,
-      awaitingProof: request.awaiting_proof,
+      status: normalizedStatus,
+      awaitingProof: request.awaiting_proof || rawStatus === "proof_requested",
       deadline: effectiveDeadline,
       created: request.created,
       dateFinished,
