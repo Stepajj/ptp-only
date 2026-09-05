@@ -74,4 +74,4 @@ void bootstrap().catch(async (error: unknown) => {
 });
 
 
-logger.info("BACKEND VERSION: 2026-09-04-01 OK");
+logger.info("BACKEND VERSION: 2026-09-04-01 test");
