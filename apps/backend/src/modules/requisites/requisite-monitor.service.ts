@@ -76,7 +76,7 @@ async function monitorUser(userId: string, externalUserId: string): Promise<void
         try {
           await editOnlyP2PRequisite(externalUserId, monitor.requisiteId, { status: "off" });
           await prisma.requisiteMonitor.updateMany({
-            where: { id: monitor.id, state: "waiting_response" },
+            where: { id: monitor.id, state: "disabling" },
             data: { state: "auto_disabled", autoDisabledAt: now },
           });
           logger.info({ userId, requisiteId: monitor.requisiteId }, "requisite auto-disabled after no requests");
