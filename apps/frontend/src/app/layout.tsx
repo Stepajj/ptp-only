@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 import { AuthProvider } from '@/features/auth/providers/AuthProvider';
+import logo from '@/assets/images/logo.svg';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://ptp-only.vercel.app'),
@@ -10,6 +11,11 @@ export const metadata: Metadata = {
     template: '%s | ONLYp2p',
   },
   description: 'Сервис работы с криптовалютой через инфраструктуру OnlyP2P.',
+  icons: {
+    icon: [{ url: logo.src, type: 'image/svg+xml' }],
+    shortcut: [{ url: logo.src, type: 'image/svg+xml' }],
+    apple: [{ url: logo.src, type: 'image/svg+xml' }],
+  },
   openGraph: {
     title: 'ONLYp2p',
     description: 'Сервис работы с криптовалютой через инфраструктуру OnlyP2P.',
