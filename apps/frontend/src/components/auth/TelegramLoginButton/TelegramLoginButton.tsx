@@ -34,6 +34,17 @@ interface TelegramOidcResponse {
   };
 }
 
+function getTelegramAuthErrorMessage(error?: string): string {
+  switch (error) {
+    case "popup_closed":
+      return "Авторизация прервана";
+    case "access_denied":
+      return "Авторизация отменена";
+    default:
+      return "Не удалось завершить авторизацию через Telegram";
+  }
+}
+
 const TELEGRAM_CLIENT_ID = process.env.NEXT_PUBLIC_TELEGRAM_CLIENT_ID;
 console.log('[Telegram Login] TELEGRAM_CLIENT_ID', { TELEGRAM_CLIENT_ID });
 
@@ -86,7 +97,7 @@ export function TelegramLoginButton({ mode, linked = false, onAuth, onLinked }: 
   const handleTelegramAuth = useCallback(
     async (data: TelegramOidcResponse | null) => {
       if (!data || !data.id_token) {
-        setError(data?.error || "Авторизация через Telegram отменена");
+        setError(getTelegramAuthErrorMessage(data?.error));
         return;
       }
 
@@ -217,9 +228,6 @@ export function TelegramLoginButton({ mode, linked = false, onAuth, onLinked }: 
         </button>
       )}
 
-      {linked && (
-        <p className={styles.status} role="status">Telegram подключён к регистрации</p>
-      )}
       {error && <p className={styles.error}>{error}</p>}
     </div>
   );
