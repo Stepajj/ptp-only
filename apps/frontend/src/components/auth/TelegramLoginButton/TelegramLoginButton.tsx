@@ -22,7 +22,8 @@ interface Props {
 }
 
 interface TelegramOidcResponse {
-  id_token: string;
+  id_token?: string;
+  error?: string;
   user?: {
     id: number;
     first_name?: string;
@@ -84,8 +85,8 @@ export function TelegramLoginButton({ mode, linked = false, onAuth, onLinked }: 
 
   const handleTelegramAuth = useCallback(
     async (data: TelegramOidcResponse | null) => {
-      if (!data) {
-        setError("Авторизация через Telegram отменена");
+      if (!data || !data.id_token) {
+        setError(data?.error || "Авторизация через Telegram отменена");
         return;
       }
 
@@ -217,7 +218,7 @@ export function TelegramLoginButton({ mode, linked = false, onAuth, onLinked }: 
       )}
 
       {linked && (
-        <p className={styles.status}>Telegram будет привязан после регистрации</p>
+        <p className={styles.status} role="status">Telegram подключён к регистрации</p>
       )}
       {error && <p className={styles.error}>{error}</p>}
     </div>

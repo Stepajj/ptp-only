@@ -18,6 +18,31 @@
   font-weight: 600;
 }
 
+.content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.close {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.close:hover {
+  background: rgba(143, 29, 22, .1);
+}
+
 .alert a {
   color: inherit;
   white-space: nowrap;
@@ -30,5 +55,10 @@
     left: 16px;
     max-width: none;
     justify-content: space-between;
+  }
+
+  .content {
+    flex: 1;
+    flex-wrap: wrap;
   }
 }

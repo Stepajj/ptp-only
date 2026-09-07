@@ -15,10 +15,9 @@ export function RequisiteMonitorAlert() {
   const dismissed = useRef(new Set<string>());
 
   const getDismissKey = (prompt: RequisiteMonitoringPrompt) =>
-    `${prompt.requisiteId}:${prompt.autoDisabledAt ?? 'unknown'}`;
+    `${prompt.requisiteId}:${prompt.state}:${prompt.autoDisabledAt ?? prompt.promptedAt ?? 'unknown'}`;
 
-  const dismissAutoDisabled = (prompt: RequisiteMonitoringPrompt) => {
-    if (prompt.state !== 'auto_disabled') return;
+  const dismissPrompt = (prompt: RequisiteMonitoringPrompt) => {
     const key = getDismissKey(prompt);
     dismissed.current.add(key);
     try {
@@ -33,7 +32,6 @@ export function RequisiteMonitorAlert() {
     try {
       const next = await getRequisiteMonitoringPrompts();
       const visible = next.filter((prompt) => {
-        if (prompt.state !== 'auto_disabled') return true;
         const key = getDismissKey(prompt);
         if (dismissed.current.has(key)) return false;
         try {
@@ -94,10 +92,18 @@ export function RequisiteMonitorAlert() {
             {prompt.state === 'waiting_response' && <button type="button" onClick={() => void answer(prompt.requisiteId, false)} disabled={workingId === prompt.requisiteId}>Выключить</button>}
             <Link
               href={`/requisites/${prompt.requisiteId}`}
-              onClick={() => dismissAutoDisabled(prompt)}
+              onClick={() => dismissPrompt(prompt)}
             >
               Настройки
             </Link>
+            <button
+              type="button"
+              className={styles.close}
+              aria-label="Закрыть уведомление"
+              onClick={() => dismissPrompt(prompt)}
+            >
+              ×
+            </button>
           </div>
         </div>
       ))}

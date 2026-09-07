@@ -10,6 +10,8 @@ import styles from './RequestAlert.module.css';
 
 export function RequestAlert() {
   const [waitingCount, setWaitingCount] = useState(0);
+  const [waitingSignature, setWaitingSignature] = useState('');
+  const [dismissedSignature, setDismissedSignature] = useState<string | null>(null);
   const knownWaitingIds = useRef<Set<string> | null>(null);
 
   const load = useCallback(async () => {
@@ -20,8 +22,14 @@ export function RequestAlert() {
       const waiting = requests.filter((request) => request.status === 'waiting');
       const waitingIds = new Set(waiting.map((request) => request.id));
       const previousIds = knownWaitingIds.current;
+      const signature = [...waitingIds].sort().join('|');
+      const previousSignature = previousIds ? [...previousIds].sort().join('|') : null;
 
       setWaitingCount(waiting.length);
+      setWaitingSignature(signature);
+      if (waiting.length === 0 || previousSignature !== null && previousSignature !== signature) {
+        setDismissedSignature(null);
+      }
       knownWaitingIds.current = waitingIds;
 
       if (!previousIds || waiting.length === 0 || typeof window === 'undefined') return;
@@ -47,10 +55,22 @@ export function RequestAlert() {
 
   if (waitingCount === 0) return null;
 
+  if (dismissedSignature === waitingSignature) return null;
+
   return (
     <aside className={styles.alert} role="alert">
-      <span>Ожидают обработки: {waitingCount}</span>
-      <Link href="/requests">Открыть заявки</Link>
+      <div className={styles.content}>
+        <span>Ожидают обработки: {waitingCount}</span>
+        <Link href="/requests">Открыть заявки</Link>
+      </div>
+      <button
+        type="button"
+        className={styles.close}
+        aria-label="Закрыть уведомление"
+        onClick={() => setDismissedSignature(waitingSignature)}
+      >
+        ×
+      </button>
     </aside>
   );
 }
