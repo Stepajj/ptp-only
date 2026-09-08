@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 import { AuthProvider } from '@/features/auth/providers/AuthProvider';
-import logo from '@/assets/images/logo.svg';
+import logo from '@/assets/images/P2PLOGOFAV.svg';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://ptp-only.vercel.app'),

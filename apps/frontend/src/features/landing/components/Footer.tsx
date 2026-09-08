@@ -35,7 +35,7 @@ export function Footer() {
       <StaggerContainer as="footer" className={styles.footer} variant="section">
         <StaggerGroup className={styles.content}>
           <StaggerItem className={styles.brand}>
-            <Image src={logo} alt="Логотип" width={56} height={44} />
+            <Image src={logo} alt="Логотип" width={100} />
 
             <p className={styles.description}>
               Сервис по продаже криптовалюты

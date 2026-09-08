@@ -242,21 +242,21 @@
     }
 
     .partnerBadge {
-        font-size: 7px;
+        font-size: 9px;
     }
 
     .partnerTitle {
         max-width: 230px;
         margin-top: 10px;
-        font-size: 16px;
-        line-height: 1.05;
+        font-size: 22px;
+        line-height: 1.1;
         letter-spacing: 0;
     }
 
     .partnerText {
         margin-top: 9px;
-        font-size: 8px;
-        line-height: 1.4;
+        font-size: 12px;
+        line-height: 1.5;
     }
 
     .partnerButton {
@@ -264,7 +264,7 @@
         margin-top: 12px;
         padding: 8px 10px;
         border-radius: 6px;
-        font-size: 8px;
+        font-size: 11px;
     }
 
     .partnerButton img {
