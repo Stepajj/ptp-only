@@ -910,6 +910,41 @@ export async function sendOnlyP2PSupportMessage(externalUserId: string, text: st
   });
 }
 
+export async function sendOnlyP2PSupportFile(
+  externalUserId: string,
+  file: { buffer: Buffer; mimetype: string; originalname: string },
+  caption: string,
+): Promise<void> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), config.onlyP2P.timeoutMs);
+
+  try {
+    const form = new FormData();
+    form.append("api_id", config.onlyP2P.apiId);
+    form.append("secret_key", config.onlyP2P.secretKey);
+    form.append("user_id", externalUserId);
+    form.append("caption", caption);
+    form.append("file", new Blob([new Uint8Array(file.buffer)], { type: file.mimetype || "application/octet-stream" }), file.originalname);
+
+    const response = await fetch(buildOnlyP2PUrl("/op2p_api/support_file"), {
+      method: "POST",
+      body: form,
+      signal: controller.signal,
+    });
+    const rawBody = await response.text();
+    if (!response.ok) {
+      throw new AppError({ statusCode: 502, code: "ONLY_P2P_REQUEST_FAILED", message: "External service request failed" });
+    }
+    const baseResponse = parseOnlyP2PBaseResponse(rawBody);
+    if (!baseResponse.success) throw onlyP2PError(baseResponse.error);
+  } catch (error) {
+    if (error instanceof AppError) throw error;
+    throw new AppError({ statusCode: 502, code: "ONLY_P2P_UNAVAILABLE", message: "External service is unavailable", isOperational: true });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 export async function getOnlyP2PSupportMessages(
   externalUserId: string,
   afterId?: number,

@@ -2,8 +2,8 @@ import type { RequestHandler } from "express";
 
 import { AppError } from "../../shared/errors/app-error";
 import { parseBody } from "../../shared/validation/parse-body";
-import { afterIdSchema, supportMessageSchema } from "./support.dto";
-import { listSupportMessages, sendSupportMessage } from "./support.service";
+import { afterIdSchema, supportFileCaptionSchema, supportMessageSchema } from "./support.dto";
+import { listSupportMessages, sendSupportFile, sendSupportMessage } from "./support.service";
 
 function getUserId(request: Parameters<RequestHandler>[0]): string {
   if (!request.auth?.id) throw new AppError({ statusCode: 401, code: "UNAUTHORIZED", message: "Authentication required" });
@@ -20,4 +20,17 @@ export const sendSupportMessageController: RequestHandler = async (request, resp
   try {
     response.status(200).json(await sendSupportMessage(getUserId(request), parseBody(supportMessageSchema, request.body as unknown)));
   } catch (error) { next(error); }
+};
+
+export const sendSupportFileController: RequestHandler = async (request, response, next) => {
+  try {
+    if (!request.file) {
+      throw new AppError({ statusCode: 400, code: "FILE_REQUIRED", message: "File is required" });
+    }
+
+    const caption = supportFileCaptionSchema.parse(request.body as unknown);
+    response.status(200).json(await sendSupportFile(getUserId(request), request.file, caption.caption));
+  } catch (error) {
+    next(error);
+  }
 };

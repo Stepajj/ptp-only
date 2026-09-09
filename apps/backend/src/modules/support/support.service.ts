@@ -1,6 +1,7 @@
 import {
   getOnlyP2PSupportMessages,
   sendOnlyP2PSupportMessage,
+  sendOnlyP2PSupportFile,
 } from "../../integrations/only-p2p/only-p2p.client";
 import { AppError } from "../../shared/errors/app-error";
 import { findExternalClientByUserId } from "../auth/auth.repository";
@@ -30,5 +31,14 @@ export async function listSupportMessages(userId: string, afterId?: number) {
 
 export async function sendSupportMessage(userId: string, input: SupportMessageDto) {
   await sendOnlyP2PSupportMessage(await getExternalUserId(userId), input.text);
+  return { success: true as const };
+}
+
+export async function sendSupportFile(
+  userId: string,
+  file: { buffer: Buffer; mimetype: string; originalname: string },
+  caption: string,
+) {
+  await sendOnlyP2PSupportFile(await getExternalUserId(userId), file, caption);
   return { success: true as const };
 }
