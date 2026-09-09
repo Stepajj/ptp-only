@@ -49,7 +49,7 @@ export default function SupportChatInput({
     >
       <input ref={fileInputRef} className={styles.fileInput} type="file" onChange={handleFileChange} disabled={isSending} />
       <button type="button" className={styles.attachButton} onClick={() => fileInputRef.current?.click()} disabled={isSending} aria-label="Прикрепить файл">
-        Прикрепить
+        +
       </button>
       <input
         className={styles.input}
