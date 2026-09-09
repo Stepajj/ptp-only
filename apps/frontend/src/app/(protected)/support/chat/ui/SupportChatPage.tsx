@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 
 import {
   getSupportMessages,
+  sendSupportFile,
   sendSupportMessage,
 } from '@/features/support/api/support.api';
 import type { SupportMessage } from '@/features/support/model/support.types';
@@ -96,11 +97,13 @@ export default function SupportChatPage() {
     };
   }, [lastMessageId, loadMessages]);
 
-  const handleSendMessage = async (text: string) => {
+  const handleSendMessage = async (text: string, file: File | null) => {
     setIsSending(true);
 
     try {
-      const response = await sendSupportMessage(text);
+      const response = file
+        ? await sendSupportFile(file, text)
+        : await sendSupportMessage(text);
 
       if (!response.success) {
         return;

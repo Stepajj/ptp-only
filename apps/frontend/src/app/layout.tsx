@@ -5,7 +5,7 @@ import { AuthProvider } from '@/features/auth/providers/AuthProvider';
 import logo from '@/assets/images/P2PLOGOFAV.svg';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://ptp-only.vercel.app'),
+  metadataBase: new URL('https://p2pru.com'),
   title: {
     default: 'ONLYp2p',
     template: '%s | ONLYp2p',
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     title: 'ONLYp2p',
     description: 'Сервис работы с криптовалютой через инфраструктуру OnlyP2P.',
     type: 'website',
-    url: 'https://ptp-only.vercel.app',
+    url: 'https://p2pru.com',
     locale: 'ru_RU',
   },
 };

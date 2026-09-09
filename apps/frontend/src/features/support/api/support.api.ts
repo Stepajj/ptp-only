@@ -24,3 +24,18 @@ export async function sendSupportMessage(
     accessToken: getAuthAccessToken(),
   });
 }
+
+export async function sendSupportFile(
+  file: File,
+  caption: string,
+): Promise<SupportSendResponse> {
+  const body = new FormData();
+  body.append('file', file);
+  body.append('caption', caption);
+
+  return requestJson<SupportSendResponse>('/support/files', {
+    method: 'POST',
+    body,
+    accessToken: getAuthAccessToken(),
+  });
+}

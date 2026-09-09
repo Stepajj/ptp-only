@@ -8,7 +8,12 @@
   padding: 20px;
 
   border-top: 1px solid rgba(222, 222, 222, 1);
+  flex-wrap: wrap;
 }
+
+.fileInput { display: none; }
+.attachButton { flex: 0 0 auto; height: 35px; padding: 0 12px; border: 1px solid rgba(0,0,0,.12); border-radius: 10px; background: #fff; color: #222; cursor: pointer; }
+.fileName { flex: 1 0 100%; min-width: 0; overflow: hidden; color: rgba(0,0,0,.55); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
 
 .input {
   flex: 1;
@@ -82,6 +87,7 @@
 
 @media (max-width: 700px) {
   .footer { gap: 8px; padding: 10px; }
+  .attachButton { height: 42px; padding: 0 10px; font-size: 12px; }
   .input { height: 42px; padding: 10px 12px; font-size: 14px; }
   .button { flex: 0 0 92px; min-width: 92px; height: 42px; padding: 10px 8px; font-size: 12px; }
 }

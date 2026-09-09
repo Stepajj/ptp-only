@@ -12,6 +12,7 @@ import styles from './AddRequisiteForm.module.css';
 export default function AddRequisiteForm() {
   const router = useRouter();
   const [banks, setBanks] = useState<Bank[]>([]);
+  const [bankQuery, setBankQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -25,6 +26,12 @@ export default function AddRequisiteForm() {
     limitAmountMinutes: '',
     exactAmountOnly: false,
   });
+
+  const filteredBanks = banks.filter((bank) =>
+    bank.name.toLocaleLowerCase('ru-RU').includes(bankQuery.trim().toLocaleLowerCase('ru-RU')),
+  );
+
+  const selectedBank = banks.find((bank) => String(bank.id) === formData.bankId);
 
   useEffect(() => {
     async function loadBanks() {
@@ -155,24 +162,47 @@ export default function AddRequisiteForm() {
           <label htmlFor="bank" className={styles.label}>
             Банк
           </label>
-          <select
+          <input
             id="bank"
             name="bank"
-            className={styles.select}
-            value={formData.bankId}
-            required
-            onChange={(e) => setFormData({ ...formData, bankId: e.target.value })}
+            type="search"
+            className={styles.input}
+            value={bankQuery}
+            placeholder={selectedBank?.name ?? 'Начните вводить название банка'}
+            autoComplete="off"
+            onChange={(event) => {
+              setBankQuery(event.target.value);
+              if (formData.bankId) {
+                setFormData({ ...formData, bankId: '' });
+              }
+            }}
             disabled={loading}
-          >
-            <option value="" disabled>
-              Выберите свой банк
-            </option>
-            {banks.map((bank) => (
-              <option key={bank.id} value={bank.id}>
+            aria-required="true"
+            aria-describedby="bank-selection-status"
+          />
+          <div className={styles.bankResults} role="listbox" aria-label="Список банков">
+            {filteredBanks.length ? filteredBanks.map((bank) => (
+              <button
+                key={bank.id}
+                type="button"
+                className={`${styles.bankOption} ${formData.bankId === String(bank.id) ? styles.bankOptionSelected : ''}`}
+                onClick={() => {
+                  setFormData({ ...formData, bankId: String(bank.id) });
+                  setBankQuery('');
+                }}
+                disabled={loading}
+                role="option"
+                aria-selected={formData.bankId === String(bank.id)}
+              >
                 {bank.name}
-              </option>
-            ))}
-          </select>
+              </button>
+            )) : (
+              <span className={styles.bankEmpty}>Банк не найден</span>
+            )}
+          </div>
+          <span id="bank-selection-status" className={styles.bankSelection}>
+            {selectedBank ? `Выбран: ${selectedBank.name}` : 'Выберите банк из списка'}
+          </span>
         </div>
 
         <div className={styles.field}>
