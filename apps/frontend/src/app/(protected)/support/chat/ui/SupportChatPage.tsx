@@ -25,6 +25,7 @@ export default function SupportChatPage() {
   const [messages, setMessages] = useState<SupportMessage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
 
   const lastMessageId = useMemo(() => {
     if (!messages.length) {
@@ -39,7 +40,7 @@ export default function SupportChatPage() {
       const response = await getSupportMessages(afterId);
 
       if (!response.success) {
-        return;
+        throw new Error('Сервис не подтвердил отправку файла');
       }
 
       if (afterId === undefined) {
@@ -85,10 +86,6 @@ export default function SupportChatPage() {
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
-      if (lastMessageId === undefined) {
-        return;
-      }
-
       loadMessages(lastMessageId);
     }, 3000);
 
@@ -99,6 +96,7 @@ export default function SupportChatPage() {
 
   const handleSendMessage = async (text: string, file: File | null) => {
     setIsSending(true);
+    setSendError(null);
 
     try {
       const response = file
@@ -109,9 +107,11 @@ export default function SupportChatPage() {
         return;
       }
 
-      await loadMessages(lastMessageId);
+      await loadMessages();
     } catch (error) {
       console.error('Failed to send support message:', error);
+      setSendError(error instanceof Error ? error.message : 'Не удалось отправить сообщение');
+      throw error;
     } finally {
       setIsSending(false);
     }
@@ -134,6 +134,8 @@ export default function SupportChatPage() {
           messages={messages}
           isLoading={isLoading}
         />
+
+        {sendError && <p className={styles.sendError}>{sendError}</p>}
 
         <SupportChatInput
           isSending={isSending}

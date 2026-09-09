@@ -58,6 +58,8 @@
   min-height: 480px;
 }
 
+.sendError { flex: 0 0 auto; margin: 0 20px 12px; color: #d83b45; font-size: 13px; line-height: 1.35; }
+
 @media (max-width: 700px) {
   .page {
     height: calc(100dvh - 62px - 85px);

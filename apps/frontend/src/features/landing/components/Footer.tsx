@@ -27,6 +27,13 @@ const footerColumns = [
       { label: "OnlyP2P", href: "https://onlypays.net" },
     ],
   },
+  {
+    title: "Документы",
+    links: [
+      { label: "Условия использования", href: "/terms" },
+      { label: "Политика конфиденциальности", href: "/privacy" },
+    ],
+  },
 ];
 
 export function Footer() {

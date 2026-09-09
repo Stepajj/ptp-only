@@ -26,7 +26,11 @@ export default function SupportChatInput({
       return;
     }
 
-    await onSend(text, file);
+    try {
+      await onSend(text, file);
+    } catch {
+      return;
+    }
 
     setValue('');
     setFile(null);
