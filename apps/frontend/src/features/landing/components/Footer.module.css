@@ -94,14 +94,14 @@
     }
 
     .brand img {
-        width: 45px;
+    
         height: auto;
     }
 
     .description {
         max-width: 210px;
-        font-size: 9px;
-        line-height: 1.55;
+        font-size: 12px;
+        line-height: 1.6;
         letter-spacing: 0;
     }
 
@@ -111,8 +111,8 @@
 
     .title,
     .link {
-        font-size: 9px;
-        line-height: 1.35;
+        font-size: 12px;
+        line-height: 1.45;
         letter-spacing: 0;
     }
 
