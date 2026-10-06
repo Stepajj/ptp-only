@@ -1,50 +1,39 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
-
-import { MotionButton } from '@/components/motion/MotionButton';
+import { bootstrapAuth } from '@/features/auth/lib/bootstrapAuth';
 import { useAuthStore } from '@/features/auth/model/auth.store';
-
 import { UserAvatar } from './UserAvatar';
-
 import styles from './Header.module.css';
 
-export function HeaderActions() {
+let publicAuthBootstrap: Promise<void> | null = null;
+
+function ensurePublicAuthBootstrap() {
+  if (!publicAuthBootstrap) publicAuthBootstrap = bootstrapAuth();
+  return publicAuthBootstrap;
+}
+
+export function HeaderActions({ compact = false }: { compact?: boolean }) {
   const user = useAuthStore((state) => state.user);
 
-  if (!user) {
-    return (
-      <div className={styles.actions}>
-        <Link href="/login" className={styles.actionLink}>
-          <MotionButton
-            type="button"
-            className={styles.loginButton}
-          >
-            Войти
-          </MotionButton>
-        </Link>
+  useEffect(() => {
+    if (!useAuthStore.getState().user) void ensurePublicAuthBootstrap().catch(() => undefined);
+  }, []);
 
-        <Link href="/register" className={styles.actionLink}>
-          <MotionButton
-            type="button"
-            className={styles.registerButton}
-          >
-            Создать аккаунт
-          </MotionButton>
-        </Link>
-      </div>
-    );
+  if (compact) {
+    return user ? <><Link href="/deposit">Пополнить</Link><Link href="/profile">Профиль</Link></> : <><Link href="/login">Войти</Link><Link href="/register" data-cta-destination="web" data-cta-placement="header">Создать аккаунт</Link></>;
   }
 
-  return (
+  return user ? (
     <div className={styles.actions}>
-      <Link href="/deposit" className={styles.actionLink}>
-        <MotionButton type="button" className={styles.registerButton}>
-          Пополнить
-        </MotionButton>
-      </Link>
-
+      <Link href="/deposit" className={`${styles.actionLink} ${styles.registerButton}`}>Пополнить</Link>
       <UserAvatar />
+    </div>
+  ) : (
+    <div className={styles.actions}>
+      <Link href="/login" className={`${styles.actionLink} ${styles.loginButton}`}>Войти</Link>
+      <Link href="/register" data-cta-destination="web" data-cta-placement="header" className={`${styles.actionLink} ${styles.registerButton}`}>Создать аккаунт</Link>
     </div>
   );
 }

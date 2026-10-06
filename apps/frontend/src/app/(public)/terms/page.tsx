@@ -1,12 +1,14 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
-import styles from "../legal.module.css";
+import styles from "../../legal.module.css";
 
 export const metadata: Metadata = {
   title: "Условия использования",
   description: "Условия использования OnlyP2P.",
   alternates: { canonical: "/terms" },
+  openGraph: { type: 'article', title: 'Условия использования OnlyP2P', description: 'Действующие условия использования сайта и функций OnlyP2P.', url: '/terms', siteName: 'OnlyP2P', locale: 'ru_RU', images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'OnlyP2P' }] },
+  twitter: { card: 'summary_large_image', title: 'Условия использования OnlyP2P', description: 'Действующие условия использования сайта и функций OnlyP2P.', images: ['/og-image.jpg'] },
 };
 
 export default function TermsPage() {

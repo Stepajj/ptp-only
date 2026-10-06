@@ -16,6 +16,15 @@
     margin-top: 70px;
 }
 
+.detailedLink {
+    display: inline-flex;
+    margin: 26px 30px 0;
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+.detailedLink:focus-visible { outline: 3px solid #ffbf47; outline-offset: 3px; }
+
 .card {
     display: flex;
     flex-direction: column;

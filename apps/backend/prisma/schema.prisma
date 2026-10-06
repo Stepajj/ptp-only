@@ -17,27 +17,114 @@ enum ExternalProvider {
   ONLY_P2P
 }
 
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ContentType {
+  ARTICLE
+  FAQ
+  HOW_IT_WORKS
+  METHODS
+  SECURITY
+  ABOUT
+}
+
+enum ContentAuditAction {
+  CREATED
+  UPDATED
+  PUBLISHED
+  UNPUBLISHED
+  ARCHIVED
+  RESTORED
+  SLUG_CHANGED
+  MEDIA_UPLOADED
+  DELETED
+}
+
+model ContentPage {
+  id           String            @id @default(uuid()) @db.Uuid
+  type         ContentType
+  slug         String            @unique
+  status       ContentStatus     @default(DRAFT)
+  title        String
+  h1           String
+  description  String
+  summary      String
+  body         String            @db.Text
+  author       String
+  authorType   String            @default("Organization") @map("author_type")
+  checkedAt    DateTime?         @map("checked_at") @db.Timestamptz(3)
+  sources      String[]          @default([])
+  relatedSlugs String[]          @default([]) @map("related_slugs")
+  cta          String?
+  publishedAt  DateTime?         @map("published_at") @db.Timestamptz(3)
+  createdAt    DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime          @updatedAt @map("updated_at") @db.Timestamptz(3)
+  revisions    ContentRevision[]
+  auditEvents  ContentAuditLog[]
+
+  @@index([status, publishedAt])
+  @@map("content_pages")
+}
+
+model ContentRevision {
+  id        String      @id @default(uuid()) @db.Uuid
+  pageId    String      @map("page_id") @db.Uuid
+  version   Int
+  snapshot  Json
+  createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  page      ContentPage @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@unique([pageId, version])
+  @@map("content_revisions")
+}
+
+model ContentSlugRedirect {
+  id        String   @id @default(uuid()) @db.Uuid
+  oldSlug   String   @unique @map("old_slug")
+  newSlug   String   @map("new_slug")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  @@map("content_slug_redirects")
+}
+
+model ContentAuditLog {
+  id        String             @id @default(uuid()) @db.Uuid
+  pageId    String?            @map("page_id") @db.Uuid
+  action    ContentAuditAction
+  actor     String
+  slug      String
+  createdAt DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+  page      ContentPage?       @relation(fields: [pageId], references: [id], onDelete: SetNull)
+
+  @@index([pageId, createdAt])
+  @@map("content_audit_log")
+}
+
 model User {
-  id                         String            @id @default(uuid()) @db.Uuid
-  status                     UserStatus        @default(ACTIVE)
-  emailVerifiedAt            DateTime?         @map("email_verified_at") @db.Timestamptz(3)
-  pendingOnlyP2pExternalUserId String?         @unique @map("pending_only_p2p_external_user_id")
-  telegramId                 String?           @unique @map("telegram_id")
-  telegramUsername           String?           @map("telegram_username")
-  telegramFirstName          String?           @map("telegram_first_name")
-  telegramPhotoUrl           String?           @map("telegram_photo_url")
-  telegramLinkedAt           DateTime?         @map("telegram_linked_at")
-  displayName                String?           @map("display_name")
-  avatarUrl                  String?           @map("avatar_url")
-  createdAt                  DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt                  DateTime          @updatedAt @map("updated_at") @db.Timestamptz(3)
-  deletedAt                  DateTime?         @map("deleted_at") @db.Timestamptz(3)
-  credential                 UserCredential?
-  refreshTokens              RefreshToken[]
-  externalClients            ExternalClient[]
-  requisiteMonitors          RequisiteMonitor[]
-  requestProofStages         RequestProofStage[]
-  settings                   UserSettings?
+  id                           String              @id @default(uuid()) @db.Uuid
+  status                       UserStatus          @default(ACTIVE)
+  emailVerifiedAt              DateTime?           @map("email_verified_at") @db.Timestamptz(3)
+  pendingOnlyP2pExternalUserId String?             @unique @map("pending_only_p2p_external_user_id")
+  telegramId                   String?             @unique @map("telegram_id")
+  telegramUsername             String?             @map("telegram_username")
+  telegramFirstName            String?             @map("telegram_first_name")
+  telegramPhotoUrl             String?             @map("telegram_photo_url")
+  telegramLinkedAt             DateTime?           @map("telegram_linked_at")
+  displayName                  String?             @map("display_name")
+  avatarUrl                    String?             @map("avatar_url")
+  createdAt                    DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt                    DateTime            @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt                    DateTime?           @map("deleted_at") @db.Timestamptz(3)
+  credential                   UserCredential?
+  refreshTokens                RefreshToken[]
+  externalClients              ExternalClient[]
+  requisiteMonitors            RequisiteMonitor[]
+  requestProofStages           RequestProofStage[]
+  settings                     UserSettings?
 
   @@map("users")
 }
@@ -101,16 +188,16 @@ model UserSettings {
 }
 
 model RequisiteMonitor {
-  id              String   @id @default(uuid()) @db.Uuid
-  userId          String   @map("user_id") @db.Uuid
-  requisiteId     Int      @map("requisite_id")
-  state           String   @default("monitoring")
-  noRequestsSince DateTime @map("no_requests_since") @db.Timestamptz(3)
+  id              String    @id @default(uuid()) @db.Uuid
+  userId          String    @map("user_id") @db.Uuid
+  requisiteId     Int       @map("requisite_id")
+  state           String    @default("monitoring")
+  noRequestsSince DateTime  @map("no_requests_since") @db.Timestamptz(3)
   promptedAt      DateTime? @map("prompted_at") @db.Timestamptz(3)
   autoDisabledAt  DateTime? @map("auto_disabled_at") @db.Timestamptz(3)
-  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, requisiteId])
   @@index([state, promptedAt])
@@ -118,13 +205,13 @@ model RequisiteMonitor {
 }
 
 model RequestProofStage {
-  id              String   @id @default(uuid()) @db.Uuid
-  userId          String   @map("user_id") @db.Uuid
-  requestId       String   @map("request_id")
-  proofStartedAt  DateTime @map("proof_started_at") @db.Timestamptz(3)
-  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String   @id @default(uuid()) @db.Uuid
+  userId         String   @map("user_id") @db.Uuid
+  requestId      String   @map("request_id")
+  proofStartedAt DateTime @map("proof_started_at") @db.Timestamptz(3)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, requestId])
   @@index([userId, proofStartedAt])

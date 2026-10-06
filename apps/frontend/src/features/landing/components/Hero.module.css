@@ -64,22 +64,28 @@ vertical-align: middle;
   text-decoration: none;
 }
 
-.actions button {
+.actions .actionLink {
   padding: 12px 25px;
   border-radius: 10px;
   font-size: 16px;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: transform .2s ease, box-shadow .2s ease;
 }
 
+.actions .actionLink:hover { transform: scale(1.03); }
+.actions .actionLink:active { transform: scale(.98); }
 
 
-.actions > .actionLink:first-child button {
+
+.actions > .actionLink:first-child {
   background: linear-gradient(90deg, #18ADEE 0%, #FA90D9 100%);
   border: 0;
   color: rgba(255, 255, 255, 1);
 }
 
-.actions > .actionLink:last-child button {
+.actions > .actionLink:last-child {
   color: rgba(3, 6, 29, 1);
   border: 1px solid rgba(3, 6, 29, 0.1);
   background: #fff;
@@ -157,9 +163,9 @@ letter-spacing: -0.4px;
 }
 
 .heroImage {
-  width: 1136px;
-  height: 712px;
-  margin-top: 50px;
+  width: min(100%, 1136px);
+  height: auto;
+  margin: 50px auto;
   border-radius: 15px;
 }
 

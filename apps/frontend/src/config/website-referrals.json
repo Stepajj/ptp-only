@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "site": "https://p2pru.com/",
+  "reserved_at_msk": "2026-09-27T19:40:00+03:00",
+  "purpose": "WEBSITE_ONLY",
+  "default_key": "other",
+  "entries": [
+    {
+      "key": "google_organic",
+      "label": "Google: органический поиск",
+      "ref_id": "op2p_5580761573",
+      "url": "https://t.me/OnLy_Pays_bot?start=op2p_5580761573"
+    },
+    {
+      "key": "yandex_organic",
+      "label": "Яндекс: органический поиск",
+      "ref_id": "op2p_8061229283",
+      "url": "https://t.me/OnLy_Pays_bot?start=op2p_8061229283"
+    },
+    {
+      "key": "bing_organic",
+      "label": "Bing: органический поиск",
+      "ref_id": "op2p_8988270808",
+      "url": "https://t.me/OnLy_Pays_bot?start=op2p_8988270808"
+    },
+    {
+      "key": "ai_referral",
+      "label": "Распознанные переходы из ИИ",
+      "ref_id": "op2p_6047714955",
+      "url": "https://t.me/OnLy_Pays_bot?start=op2p_6047714955"
+    },
+    {
+      "key": "other",
+      "label": "Прямые, прочие и нераспознанные входы",
+      "ref_id": "op2p_7705018108",
+      "url": "https://t.me/OnLy_Pays_bot?start=op2p_7705018108"
+    }
+  ]
+}

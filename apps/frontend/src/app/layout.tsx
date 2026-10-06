@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
-import { AuthProvider } from '@/features/auth/providers/AuthProvider';
 import logo from '@/assets/images/P2PLOGOFAV.svg';
 
 export const metadata: Metadata = {
@@ -23,6 +22,7 @@ export const metadata: Metadata = {
     url: 'https://p2pru.com',
     locale: 'ru_RU',
   },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
@@ -33,9 +33,7 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        {children}
       </body>
     </html>
   );

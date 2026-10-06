@@ -1,13 +1,10 @@
 import { Container } from "@/components/Container/Container";
 import { AnimatedCard } from "@/components/motion/AnimatedCard";
-import {
-  StaggerContainer,
-  StaggerGroup,
-  StaggerItem,
-} from "@/components/motion/StaggerContainer";
+import { StaggerContainer, StaggerGroup, StaggerItem } from "@/components/motion/StaggerContainer";
 
 import styles from "./SixSteps.module.css";
 import { SectionHeader } from "./SectionHeader";
+import Link from 'next/link';
 
 const steps = [
   {
@@ -43,7 +40,7 @@ const steps = [
   },
 ];
 
-export function SixSteps() {
+export function SixSteps({ showDetailedGuideLink = false }: { showDetailedGuideLink?: boolean }) {
   return (
     <section id="how-it-works" className={styles.sixSteps}>
       <Container>
@@ -60,7 +57,6 @@ export function SixSteps() {
               </>
             </SectionHeader>
           </StaggerItem>
-
           <StaggerGroup className={styles.grid}>
             {steps.map((step) => (
               <AnimatedCard
@@ -83,6 +79,7 @@ export function SixSteps() {
               </AnimatedCard>
             ))}
           </StaggerGroup>
+          {showDetailedGuideLink && <StaggerItem><Link href="/how-it-works" className={styles.detailedLink}>Подробная инструкция «Как это работает»</Link></StaggerItem>}
         </StaggerContainer>
       </Container>
     </section>

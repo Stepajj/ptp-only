@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: 'Вход',
   description: 'Вход в личный кабинет ONLYp2p.',
   alternates: { canonical: '/login' },
+  robots: { index: false, follow: true },
 };
 
 export default function LoginPage() {

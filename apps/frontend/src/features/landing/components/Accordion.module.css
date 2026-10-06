@@ -34,16 +34,26 @@
     cursor: pointer;
 
     text-align: left;
+    list-style: none;
 
     transition: opacity .25s ease;
 }
 
-.trigger:hover {
-    opacity: .75;
+.trigger::-webkit-details-marker { display: none; }
+.trigger::marker { content: ''; }
+.trigger:focus-visible { outline: 2px solid rgba(2, 101, 253, 1); outline-offset: 5px; border-radius: 2px; }
+.item[open] .icon { transform: rotate(45deg); }
+.icon { transition: transform .35s ease; }
+.content { padding-bottom: 4px; }
+.item[open] .content { animation: faq-reveal .35s ease both; }
+
+@keyframes faq-reveal {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.trigger:focus-visible {
-    outline: none;
+.trigger:hover {
+    opacity: .75;
 }
 
 .question {
@@ -76,14 +86,6 @@
     transform-origin: center;
 }
 
-.content {
-    overflow: hidden;
-}
-
-.contentInner {
-    overflow: hidden;
-}
-
 .answer {
     margin-top: 16px;
 
@@ -95,5 +97,3 @@
     line-height: 22px;
     letter-spacing: -0.4px;
 }
-
-

@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "Регистрация",
   description: "Создание аккаунта ONLYp2p.",
   alternates: { canonical: "/register" },
+  robots: { index: false, follow: true },
 };
 
 export default function RegisterPage() {

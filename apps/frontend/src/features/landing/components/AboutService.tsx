@@ -1,8 +1,5 @@
 import { Container } from "@/components/Container/Container";
-import {
-  StaggerContainer,
-  StaggerItem,
-} from "@/components/motion/StaggerContainer";
+import { StaggerContainer, StaggerItem } from "@/components/motion/StaggerContainer";
 
 import styles from "./AboutService.module.css";
 import { SectionHeader } from "./SectionHeader";

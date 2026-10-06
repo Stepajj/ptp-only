@@ -5,10 +5,13 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
+    "cms:dev": "tsx watch src/cms-server.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "lint": "eslint .",
     "verify:only-p2p": "tsx src/scripts/verify-only-p2p.ts",
+    "cms:traffic-report": "node src/scripts/summarize-public-traffic.mjs",
+    "cms:backup": "node src/scripts/cms-backup.mjs",
     "db:up": "docker compose -f ../../docker-compose.yml up -d postgres",
     "db:down": "docker compose -f ../../docker-compose.yml down",
     "prisma:generate": "prisma generate",

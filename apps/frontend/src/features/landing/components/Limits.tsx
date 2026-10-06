@@ -2,11 +2,7 @@ import { Container } from "@/components/Container/Container";
 import { AnimatedCard } from "@/components/motion/AnimatedCard";
 import Image from "next/image";
 import Arrow from "@/assets/images/arrow.svg";
-import {
-  StaggerContainer,
-  StaggerGroup,
-  StaggerItem,
-} from "@/components/motion/StaggerContainer";
+import { StaggerContainer, StaggerGroup, StaggerItem } from "@/components/motion/StaggerContainer";
 
 
 import styles from "./Limits.module.css";
@@ -49,7 +45,6 @@ export function Limits() {
               </>
             </SectionHeader>
           </StaggerItem>
-
           <StaggerItem>
             <div className={styles.content}>
               <div className={styles.info}>
