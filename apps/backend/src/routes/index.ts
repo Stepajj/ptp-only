@@ -10,6 +10,7 @@ import { requisitesRouter } from "../modules/requisites/requisites.routes";
 import { requestsRouter } from "../modules/requests/requests.routes";
 import { topupRouter } from "../modules/topup/topup.routes";
 import { supportRouter } from "../modules/support/support.routes";
+import { cmsRouter } from "../modules/cms/cms.routes";
 
 export const routes = Router();
 
@@ -23,6 +24,7 @@ routes.use("/requests", requestsRouter);
 
 routes.use("/topup", topupRouter);
 routes.use("/support", supportRouter);
+routes.use("/cms", cmsRouter);
 
 routes.get("/me", authenticate, currentUserController);
 
