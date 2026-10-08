@@ -82,6 +82,15 @@ export function PublicAnalytics() {
     const idMatchesHost = isProductionHost
       ? measurementId === productionMeasurementId
       : measurementId !== productionMeasurementId;
+    if (!idMatchesHost) return;
+
+    // Prepare the gtag queue before rendering the external script. Otherwise
+    // the asynchronously loaded script can run before the queue is initialized.
+    if (!window.__op2pGtagInitialized) {
+      gtag('js', new Date());
+      gtag('config', measurementId, { send_page_view: false });
+      window.__op2pGtagInitialized = true;
+    }
     setTagEnabled(idMatchesHost);
   }, []);
 
@@ -99,11 +108,6 @@ export function PublicAnalytics() {
     const location = pageLocation();
     const referrer = previousLocation.current || safeExternalOrigin(document.referrer) || '';
     if (!tagEnabled) return;
-    if (!window.__op2pGtagInitialized) {
-      gtag('js', new Date());
-      gtag('config', measurementId, { send_page_view: false, page_location: location, page_referrer: referrer });
-      window.__op2pGtagInitialized = true;
-    }
     if (previousLocation.current !== location) {
       gtag('set', { page_location: location, page_referrer: referrer });
       gtag('event', 'page_view', { page_location: location, page_title: document.title, page_referrer: referrer, send_to: measurementId });
