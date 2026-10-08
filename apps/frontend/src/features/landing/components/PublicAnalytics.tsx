@@ -64,7 +64,7 @@ function rememberAttribution(key: RefKey) {
 }
 function gtag(...args: unknown[]) {
   window.dataLayer = window.dataLayer || [];
-  window.gtag = window.gtag || function (...items: unknown[]) { window.dataLayer.push(items); };
+  window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
   window.gtag(...args);
 }
 function pageLocation() { return `${window.location.origin}${window.location.pathname}`; }
