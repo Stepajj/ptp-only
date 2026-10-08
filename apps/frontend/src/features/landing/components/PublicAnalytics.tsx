@@ -2,10 +2,12 @@
 
 import Script from 'next/script';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { referralUrls, type RefKey } from '@/features/content/referrals';
 
-const measurementId = 'G-04SZWLQLH2';
+const productionMeasurementId = 'G-04SZWLQLH2';
+const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim() || '';
+const validMeasurementId = /^G-[A-Z0-9]+$/.test(measurementId);
 type Attribution = { key: RefKey; last_seen_ms: number };
 declare global { interface Window { dataLayer: unknown[]; gtag?: (...args: unknown[]) => void; __op2pReferral?: Attribution; __op2pGtagInitialized?: boolean } }
 
@@ -71,6 +73,18 @@ export function PublicAnalytics() {
   const pathname = usePathname();
   const attributionInitialized = useRef(false);
   const previousLocation = useRef<string | null>(null);
+  const [tagEnabled, setTagEnabled] = useState(false);
+
+  useEffect(() => {
+    if (!validMeasurementId) return;
+    const host = window.location.hostname.toLowerCase();
+    const isProductionHost = host === 'p2pru.com' || host === 'www.p2pru.com';
+    const idMatchesHost = isProductionHost
+      ? measurementId === productionMeasurementId
+      : measurementId !== productionMeasurementId;
+    setTagEnabled(idMatchesHost);
+  }, []);
+
   useEffect(() => {
     if (!attributionInitialized.current) {
       const referral = classifySource();
@@ -84,6 +98,7 @@ export function PublicAnalytics() {
     document.querySelectorAll<HTMLAnchorElement>('[data-cta-destination="bot"]').forEach((anchor) => { anchor.href = referralUrls[referral]; });
     const location = pageLocation();
     const referrer = previousLocation.current || safeExternalOrigin(document.referrer) || '';
+    if (!tagEnabled) return;
     if (!window.__op2pGtagInitialized) {
       gtag('js', new Date());
       gtag('config', measurementId, { send_page_view: false, page_location: location, page_referrer: referrer });
@@ -94,7 +109,7 @@ export function PublicAnalytics() {
       gtag('event', 'page_view', { page_location: location, page_title: document.title, page_referrer: referrer, send_to: measurementId });
     }
     previousLocation.current = location;
-  }, [pathname]);
+  }, [pathname, tagEnabled]);
 
   useEffect(() => {
     const onClick = (event: MouseEvent) => {
@@ -109,13 +124,14 @@ export function PublicAnalytics() {
       const expired = previous && Date.now() - previous.last_seen_ms >= 30 * 60 * 1000;
       const referral = destinationType === 'bot' ? (expired ? classifySource(false, false) : (previous?.key || 'other')) : undefined;
       if (referral) { rememberAttribution(referral); anchor.href = referralUrls[referral]; }
+      if (!tagEnabled) return;
       const pageId = window.location.pathname.replace(/[^a-z0-9_/-]/gi, '').slice(0, 100) || '/';
       const parameters = { page_id: pageId, placement, destination_type: destinationType, send_to: measurementId, ...(referral ? { site_channel: referral, ref_key: referral } : {}) };
       gtag('event', 'cta_click', parameters);
     };
     document.addEventListener('click', onClick);
     return () => document.removeEventListener('click', onClick);
-  }, []);
+  }, [tagEnabled]);
 
-  return <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`} />;
+  return tagEnabled ? <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`} /> : null;
 }
