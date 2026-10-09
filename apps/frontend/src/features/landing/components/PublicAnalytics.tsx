@@ -145,13 +145,21 @@ export function PublicAnalytics() {
   }, [consent, isProtectedRoute]);
 
   useEffect(() => {
-    if (consent !== 'granted' || !tagEnabled) return;
-    const location = pageLocation();
-    if (previousLocation.current === location) return;
-    const referrer = previousLocation.current || safeExternalOrigin(document.referrer) || '';
-    gtag('set', { page_location: location, page_referrer: referrer });
-    gtag('event', 'page_view', { page_location: location, page_title: document.title, page_referrer: referrer, ref_key: window.__op2pReferral?.key || 'other' });
-    previousLocation.current = location;
+    if (consent !== 'granted' || !tagEnabled || isProtectedRoute) return;
+    const sendPageView = (force = false) => {
+      const location = pageLocation();
+      if (!force && previousLocation.current === location) return;
+      const referrer = previousLocation.current || safeExternalOrigin(document.referrer) || '';
+      gtag('set', { page_location: location, page_referrer: referrer });
+      gtag('event', 'page_view', { page_location: location, page_title: document.title, page_referrer: referrer, ref_key: window.__op2pReferral?.key || 'other' });
+      previousLocation.current = location;
+    };
+    sendPageView();
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) sendPageView(true);
+    };
+    window.addEventListener('pageshow', onPageShow);
+    return () => window.removeEventListener('pageshow', onPageShow);
   }, [pathname, consent, tagEnabled, isProtectedRoute]);
 
   useEffect(() => {
