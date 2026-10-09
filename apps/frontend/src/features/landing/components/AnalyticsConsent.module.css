@@ -1,0 +1,31 @@
+.banner {
+  position: fixed;
+  z-index: 1000;
+  inset: auto 16px 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: 980px;
+  margin-inline: auto;
+  padding: 20px 24px;
+  color: #101828;
+  background: #fff;
+  border: 1px solid #dce4f0;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px #1018282b;
+}
+.copy { max-width: 610px; }
+.copy p { margin: 6px 0; color: #596579; font-size: 14px; line-height: 1.5; }
+.policy { color: #1267e8; font-size: 14px; }
+.actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.actions button, .manage { min-height: 40px; padding: 9px 14px; border-radius: 9px; font: inherit; cursor: pointer; }
+.accept { color: white; background: #1468e8; border: 1px solid #1468e8; }
+.reject { color: #253047; background: white; border: 1px solid #cbd5e1; }
+.manage { position: fixed; z-index: 999; right: 12px; bottom: 10px; min-height: 32px; padding: 5px 10px; color: #526078; background: #fff; border: 1px solid #dce4f0; font-size: 12px; }
+.actions button:focus-visible, .manage:focus-visible, .policy:focus-visible { outline: 3px solid #63a1ff; outline-offset: 2px; }
+@media (max-width: 640px) {
+  .banner { inset: auto 10px 52px; display: block; padding: 16px; }
+  .actions { justify-content: stretch; margin-top: 12px; }
+  .actions button { flex: 1; }
+}

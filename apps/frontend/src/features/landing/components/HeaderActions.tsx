@@ -22,7 +22,7 @@ export function HeaderActions({ compact = false }: { compact?: boolean }) {
   }, []);
 
   if (compact) {
-    return user ? <><Link href="/deposit">Пополнить</Link><Link href="/profile">Профиль</Link></> : <><Link href="/login">Войти</Link><Link href="/register" data-cta-destination="web" data-cta-placement="header">Создать аккаунт</Link></>;
+    return user ? <><Link href="/deposit">Пополнить</Link><Link href="/profile">Профиль</Link></> : <><Link href="/login" data-cta-destination="web" data-cta-placement="header">Войти</Link><Link href="/register" data-cta-destination="web" data-cta-placement="header">Создать аккаунт</Link></>;
   }
 
   return user ? (
@@ -32,7 +32,7 @@ export function HeaderActions({ compact = false }: { compact?: boolean }) {
     </div>
   ) : (
     <div className={styles.actions}>
-      <Link href="/login" className={`${styles.actionLink} ${styles.loginButton}`}>Войти</Link>
+      <Link href="/login" data-cta-destination="web" data-cta-placement="header" className={`${styles.actionLink} ${styles.loginButton}`}>Войти</Link>
       <Link href="/register" data-cta-destination="web" data-cta-placement="header" className={`${styles.actionLink} ${styles.registerButton}`}>Создать аккаунт</Link>
     </div>
   );

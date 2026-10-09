@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { PublicAnalytics } from '@/features/landing/components/PublicAnalytics';
 import { Header } from '@/features/landing/components/Header';
 import { Footer } from '@/features/landing/components/Footer';
 
@@ -10,7 +9,6 @@ export const metadata: Metadata = {
 
 export default function PublicLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return <>
-    <PublicAnalytics />
     <Header />
     {children}
     <Footer />

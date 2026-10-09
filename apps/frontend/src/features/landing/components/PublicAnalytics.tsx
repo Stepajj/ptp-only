@@ -4,6 +4,7 @@ import Script from 'next/script';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { referralUrls, type RefKey } from '@/features/content/referrals';
+import { useAnalyticsConsent } from './AnalyticsConsent';
 
 const productionMeasurementId = 'G-04SZWLQLH2';
 const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim() || '';
@@ -20,47 +21,51 @@ const hosts: Record<Exclude<RefKey, 'other'>, string[]> = {
 const aiCampaignSources = ['chatgpt', 'chatgpt.com', 'openai', 'perplexity', 'perplexity.ai', 'gemini', 'claude', 'grok', 'deepseek'];
 const paidMediums = ['cpc', 'ppc', 'paid', 'paid_search', 'paidsearch', 'paid_social', 'paidsocial', 'cpm', 'display', 'retargeting', 'remarketing'];
 const paidParams = ['gclid', 'dclid', 'gbraid', 'wbraid', 'yclid', 'msclkid'];
-const storageAllowed = process.env.NEXT_PUBLIC_ANALYTICS_STORAGE_ALLOWED === 'true';
+const attributionStorageKey = 'op2p_referral';
+const attributionTtlMs = 30 * 60 * 1000;
 
 function safeExternalOrigin(raw: string): string | undefined {
   try { const parsed = new URL(raw); return ['http:', 'https:'].includes(parsed.protocol) ? parsed.origin : undefined; } catch { return undefined; }
 }
-function classifySource(includeReferrer = true, includeCampaign = true): RefKey {
+function removeAttribution() {
+  delete window.__op2pReferral;
+  try { sessionStorage.removeItem(attributionStorageKey); } catch { /* Storage may be unavailable. */ }
+}
+function readStoredAttribution(): Attribution | undefined {
+  try {
+    const value = JSON.parse(sessionStorage.getItem(attributionStorageKey) || 'null') as Attribution | null;
+    if (value && Object.hasOwn(referralUrls, value.key) && Number.isFinite(value.last_seen_ms)) {
+      if (Date.now() - value.last_seen_ms < attributionTtlMs) return value;
+    }
+    if (value) sessionStorage.removeItem(attributionStorageKey);
+  } catch { /* Storage may be unavailable. */ }
+  return undefined;
+}
+function classifySource(): RefKey {
   const params = new URLSearchParams(window.location.search);
   const source = (params.get('utm_source') || '').trim().toLowerCase();
   const medium = (params.get('utm_medium') || '').trim().toLowerCase();
-  if (includeCampaign && (paidParams.some((key) => params.has(key)) || paidMediums.includes(medium))) return 'other';
-  if (includeCampaign && [...params.keys()].some((key) => key.toLowerCase().startsWith('utm_'))) {
+  if (paidParams.some((key) => params.has(key)) || paidMediums.includes(medium)) return 'other';
+  if ([...params.keys()].some((key) => key.toLowerCase().startsWith('utm_'))) {
     if (medium === 'organic' && ['google', 'google.com'].includes(source)) return 'google_organic';
     if (medium === 'organic' && ['yandex', 'yandex.ru', 'ya.ru'].includes(source)) return 'yandex_organic';
     if (medium === 'organic' && ['bing', 'bing.com'].includes(source)) return 'bing_organic';
     if (aiCampaignSources.includes(source) && ['', 'referral', 'ai', 'organic'].includes(medium)) return 'ai_referral';
     return 'other';
   }
-  if (includeReferrer) {
-    const origin = safeExternalOrigin(document.referrer);
-    if (origin && new URL(origin).host !== window.location.host) {
-      const host = new URL(origin).hostname;
-      for (const key of Object.keys(hosts) as Array<Exclude<RefKey, 'other'>>) if (hosts[key].includes(host)) return key;
-      return 'other';
-    }
+  const origin = safeExternalOrigin(document.referrer);
+  if (origin && new URL(origin).host !== window.location.host) {
+    const host = new URL(origin).hostname;
+    for (const key of Object.keys(hosts) as Array<Exclude<RefKey, 'other'>>) if (hosts[key].includes(host)) return key;
+    return 'other';
   }
-  const previous = window.__op2pReferral || readStoredAttribution();
-  if (previous && Date.now() - previous.last_seen_ms < 30 * 60 * 1000) return previous.key;
-  return 'other';
+  return readStoredAttribution()?.key || 'other';
 }
-function readStoredAttribution(): Attribution | undefined {
-  if (!storageAllowed) return undefined;
-  try {
-    const value = JSON.parse(sessionStorage.getItem('op2p_referral') || 'null') as Attribution | null;
-    if (value && Object.hasOwn(referralUrls, value.key) && Number.isFinite(value.last_seen_ms) && Date.now() - value.last_seen_ms < 30 * 60 * 1000) return value;
-  } catch { /* Storage may be unavailable. */ }
-  return undefined;
-}
-function rememberAttribution(key: RefKey) {
+function touchAttribution(key: RefKey) {
   const value = { key, last_seen_ms: Date.now() };
   window.__op2pReferral = value;
-  if (storageAllowed) try { sessionStorage.setItem('op2p_referral', JSON.stringify(value)); } catch { /* Keep the in-memory selection. */ }
+  try { sessionStorage.setItem(attributionStorageKey, JSON.stringify(value)); } catch { /* Keep the selection in memory for this tab. */ }
+  return value;
 }
 function gtag(...args: unknown[]) {
   window.dataLayer = window.dataLayer || [];
@@ -71,49 +76,83 @@ function pageLocation() { return `${window.location.origin}${window.location.pat
 
 export function PublicAnalytics() {
   const pathname = usePathname();
-  const attributionInitialized = useRef(false);
+  const { consent } = useAnalyticsConsent();
   const previousLocation = useRef<string | null>(null);
   const [tagEnabled, setTagEnabled] = useState(false);
+  const isProtectedRoute = ['/admin', '/dashboard', '/deposit', '/history', '/partnership', '/preview', '/profile', '/requests', '/requisites', '/support', '/zxc', '/transactions'].some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 
   useEffect(() => {
-    if (!validMeasurementId) return;
+    if (isProtectedRoute) {
+      setTagEnabled(false);
+      previousLocation.current = null;
+      if (window.__op2pGtagInitialized) gtag('consent', 'update', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+      return;
+    }
+    if (consent !== 'granted' || !validMeasurementId) {
+      setTagEnabled(false);
+      if (consent === 'denied') {
+        removeAttribution();
+        document.querySelectorAll<HTMLAnchorElement>('a[data-cta-destination="bot"]').forEach((anchor) => { anchor.href = referralUrls.other; });
+        if (window.__op2pGtagInitialized) gtag('consent', 'update', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+      }
+      previousLocation.current = null;
+      return;
+    }
+
     const host = window.location.hostname.toLowerCase();
     const isProductionHost = host === 'p2pru.com' || host === 'www.p2pru.com';
-    const idMatchesHost = isProductionHost
-      ? measurementId === productionMeasurementId
-      : measurementId !== productionMeasurementId;
+    const idMatchesHost = isProductionHost ? measurementId === productionMeasurementId : measurementId !== productionMeasurementId;
     if (!idMatchesHost) return;
 
-    // Prepare the gtag queue before rendering the external script. Otherwise
-    // the asynchronously loaded script can run before the queue is initialized.
     if (!window.__op2pGtagInitialized) {
       gtag('js', new Date());
+      gtag('consent', 'default', { analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+      // Public routes emit one sanitized page_view below. Browser-history pageviews
+      // must also be disabled in this GA4 stream to avoid Enhanced Measurement duplicates.
       gtag('config', measurementId, { send_page_view: false });
       window.__op2pGtagInitialized = true;
+    } else {
+      gtag('consent', 'update', { analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
     }
-    setTagEnabled(idMatchesHost);
-  }, []);
+    setTagEnabled(true);
+  }, [consent, isProtectedRoute]);
 
   useEffect(() => {
-    if (!attributionInitialized.current) {
-      const referral = classifySource();
-      rememberAttribution(referral);
-      attributionInitialized.current = true;
-    }
-    const previous = window.__op2pReferral;
-    const expired = previous && Date.now() - previous.last_seen_ms >= 30 * 60 * 1000;
-    const referral = expired ? classifySource(false, false) : (previous?.key || 'other');
-    rememberAttribution(referral);
-    document.querySelectorAll<HTMLAnchorElement>('[data-cta-destination="bot"]').forEach((anchor) => { anchor.href = referralUrls[referral]; });
+    if (consent !== 'granted' || isProtectedRoute) return;
+    let referral = readStoredAttribution()?.key;
+    if (!referral) referral = classifySource();
+    touchAttribution(referral);
+    document.querySelectorAll<HTMLAnchorElement>('a[data-cta-destination="bot"]').forEach((anchor) => { anchor.href = referralUrls[referral]; });
+  }, [pathname, consent, isProtectedRoute]);
+
+  useEffect(() => {
+    if (consent !== 'granted' || isProtectedRoute) return;
+    let lastTouchMs = 0;
+    const touch = () => {
+      const now = Date.now();
+      if (now - lastTouchMs < 60_000) return;
+      lastTouchMs = now;
+      const current = readStoredAttribution() || window.__op2pReferral;
+      if (!current || now - current.last_seen_ms >= attributionTtlMs) {
+        removeAttribution();
+        return;
+      }
+      touchAttribution(current.key);
+    };
+    const events: Array<keyof WindowEventMap> = ['pointerdown', 'keydown', 'scroll', 'touchstart'];
+    for (const eventName of events) window.addEventListener(eventName, touch, { passive: true });
+    return () => { for (const eventName of events) window.removeEventListener(eventName, touch); };
+  }, [consent, isProtectedRoute]);
+
+  useEffect(() => {
+    if (consent !== 'granted' || !tagEnabled) return;
     const location = pageLocation();
+    if (previousLocation.current === location) return;
     const referrer = previousLocation.current || safeExternalOrigin(document.referrer) || '';
-    if (!tagEnabled) return;
-    if (previousLocation.current !== location) {
-      gtag('set', { page_location: location, page_referrer: referrer });
-      gtag('event', 'page_view', { page_location: location, page_title: document.title, page_referrer: referrer, send_to: measurementId });
-    }
+    gtag('set', { page_location: location, page_referrer: referrer });
+    gtag('event', 'page_view', { page_location: location, page_title: document.title, page_referrer: referrer, ref_key: window.__op2pReferral?.key || 'other' });
     previousLocation.current = location;
-  }, [pathname, tagEnabled]);
+  }, [pathname, consent, tagEnabled, isProtectedRoute]);
 
   useEffect(() => {
     const onClick = (event: MouseEvent) => {
@@ -123,19 +162,33 @@ export function PublicAnalytics() {
       if (!anchor) return;
       const destinationType = anchor.dataset.ctaDestination;
       const placement = anchor.dataset.ctaPlacement;
-      if (!['web', 'bot'].includes(destinationType || '') || !['header', 'footer', 'article', 'faq', 'hero', 'methods'].includes(placement || '')) return;
-      const previous = window.__op2pReferral;
-      const expired = previous && Date.now() - previous.last_seen_ms >= 30 * 60 * 1000;
-      const referral = destinationType === 'bot' ? (expired ? classifySource(false, false) : (previous?.key || 'other')) : undefined;
-      if (referral) { rememberAttribution(referral); anchor.href = referralUrls[referral]; }
+      if (!['web', 'bot'].includes(destinationType || '') || !['header', 'footer', 'article', 'faq', 'hero', 'methods', 'auth'].includes(placement || '')) return;
+      if (isProtectedRoute) return;
+
+      if (consent !== 'granted') {
+        if (destinationType === 'bot') anchor.href = referralUrls.other;
+        return;
+      }
+      const referral = readStoredAttribution()?.key || classifySource();
+      touchAttribution(referral);
+      if (destinationType === 'bot') anchor.href = referralUrls[referral];
       if (!tagEnabled) return;
       const pageId = window.location.pathname.replace(/[^a-z0-9_/-]/gi, '').slice(0, 100) || '/';
-      const parameters = { page_id: pageId, placement, destination_type: destinationType, send_to: measurementId, ...(referral ? { site_channel: referral, ref_key: referral } : {}) };
-      gtag('event', 'cta_click', parameters);
+      const destinationPath = destinationType === 'bot'
+        ? 'telegram'
+        : anchor.origin === window.location.origin ? anchor.pathname : 'external';
+      gtag('event', 'cta_click', {
+        page_id: pageId,
+        placement,
+        destination_type: destinationType,
+        destination_path: destinationPath,
+        ref_key: referral,
+        ...(destinationType === 'bot' ? { site_channel: referral } : {}),
+      });
     };
     document.addEventListener('click', onClick);
     return () => document.removeEventListener('click', onClick);
-  }, [tagEnabled]);
+  }, [consent, tagEnabled, isProtectedRoute]);
 
   return tagEnabled ? <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`} /> : null;
 }

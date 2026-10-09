@@ -36,6 +36,8 @@ export function AuthTabs() {
         <Link
           key={tab.href}
           href={tab.href}
+          data-cta-destination="web"
+          data-cta-placement="auth"
           className={`${styles.tab} ${
             activeIndex === index ? styles.active : ''
           }`}

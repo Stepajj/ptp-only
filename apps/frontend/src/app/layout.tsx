@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 import logo from '@/assets/images/P2PLOGOFAV.svg';
+import { AnalyticsShell } from '@/features/landing/components/AnalyticsShell';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://p2pru.com'),
@@ -33,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body>
-        {children}
+        <AnalyticsShell>{children}</AnalyticsShell>
       </body>
     </html>
   );
