@@ -1,7 +1,7 @@
 'use client';
 
 import Script from 'next/script';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { referralUrls, type RefKey } from '@/features/content/referrals';
 import { useAnalyticsConsent } from './AnalyticsConsent';
@@ -61,6 +61,15 @@ function classifySource(): RefKey {
   }
   return readStoredAttribution()?.key || 'other';
 }
+function hasExplicitCampaign() {
+  const params = new URLSearchParams(window.location.search);
+  return paidParams.some((key) => params.has(key)) || [...params.keys()].some((key) => key.toLowerCase().startsWith('utm_'));
+}
+function sourceForCurrentVisit(): RefKey {
+  // A newly tagged campaign takes precedence over the category saved from an earlier visit.
+  if (hasExplicitCampaign()) return classifySource();
+  return readStoredAttribution()?.key || classifySource();
+}
 function touchAttribution(key: RefKey) {
   const value = { key, last_seen_ms: Date.now() };
   window.__op2pReferral = value;
@@ -76,6 +85,7 @@ function pageLocation() { return `${window.location.origin}${window.location.pat
 
 export function PublicAnalytics() {
   const pathname = usePathname();
+  const search = useSearchParams().toString();
   const { consent } = useAnalyticsConsent();
   const previousLocation = useRef<string | null>(null);
   const [tagEnabled, setTagEnabled] = useState(false);
@@ -119,11 +129,10 @@ export function PublicAnalytics() {
 
   useEffect(() => {
     if (consent !== 'granted' || isProtectedRoute) return;
-    let referral = readStoredAttribution()?.key;
-    if (!referral) referral = classifySource();
+    const referral = sourceForCurrentVisit();
     touchAttribution(referral);
     document.querySelectorAll<HTMLAnchorElement>('a[data-cta-destination="bot"]').forEach((anchor) => { anchor.href = referralUrls[referral]; });
-  }, [pathname, consent, isProtectedRoute]);
+  }, [pathname, search, consent, isProtectedRoute]);
 
   useEffect(() => {
     if (consent !== 'granted' || isProtectedRoute) return;
@@ -177,7 +186,7 @@ export function PublicAnalytics() {
         if (destinationType === 'bot') anchor.href = referralUrls.other;
         return;
       }
-      const referral = readStoredAttribution()?.key || classifySource();
+      const referral = sourceForCurrentVisit();
       touchAttribution(referral);
       if (destinationType === 'bot') anchor.href = referralUrls[referral];
       if (!tagEnabled) return;
