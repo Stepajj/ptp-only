@@ -2,11 +2,11 @@ import { LandingPage } from "@/features/landing/LandingPage";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Криптовалютные операции через OnlyP2P",
-  description: "Пополнение, реквизиты, входящие заявки и поддержка через инфраструктуру OnlyP2P.",
+  title: "Продать криптовалюту за рубли с доплатой +7%",
+  description: "Продайте USDT, BTC или LTC через OnlyP2P. Доплата +7% при конвертации, рублёвый баланс, получение переводов на карту или СБП.",
   alternates: { canonical: "/" },
-  openGraph: { type: 'website', title: 'Криптовалютные операции через OnlyP2P', description: 'Пополнение, реквизиты, входящие заявки и поддержка через инфраструктуру OnlyP2P.', url: '/', siteName: 'OnlyP2P', locale: 'ru_RU', images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'OnlyP2P' }] },
-  twitter: { card: 'summary_large_image', title: 'Криптовалютные операции через OnlyP2P', description: 'Пополнение, реквизиты, входящие заявки и поддержка через инфраструктуру OnlyP2P.', images: ['/og-image.jpg'] },
+  openGraph: { type: 'website', title: 'Продать криптовалюту за рубли с доплатой +7% | OnlyP2P', description: 'Продайте USDT, BTC или LTC через OnlyP2P. Доплата +7% при конвертации, рублёвый баланс, получение переводов на карту или СБП.', url: '/', siteName: 'OnlyP2P', locale: 'ru_RU', images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'OnlyP2P' }] },
+  twitter: { card: 'summary_large_image', title: 'Продать криптовалюту за рубли с доплатой +7% | OnlyP2P', description: 'Продайте USDT, BTC или LTC через OnlyP2P. Доплата +7% при конвертации, рублёвый баланс, получение переводов на карту или СБП.', images: ['/og-image.jpg'] },
 };
 
 export default function Home() {

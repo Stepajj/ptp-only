@@ -1,33 +1,30 @@
 import { Container } from "@/components/Container/Container";
 import { AnimatedCard } from "@/components/motion/AnimatedCard";
-import Image from "next/image";
-import Arrow from "@/assets/images/arrow.svg";
 import { StaggerContainer, StaggerGroup, StaggerItem } from "@/components/motion/StaggerContainer";
-
-
+import Link from "next/link";
 import styles from "./Limits.module.css";
 import { SectionHeader } from "./SectionHeader";
 
 const cards = [
   {
-    label: "Начисляем  ",
-    value: "+7%",
-    text: "При пополнении баланса",
+    label: "Криптовалюта",
+    value: "BTC · LTC",
+    text: "Способы пополнения баланса",
   },
   {
-    label: "Мин. сумма заявки",
-    value: "1 000₽",
-    text: "нижний порог",
+    label: "Криптовалюта",
+    value: "USDT TRC20",
+    text: "Проверьте сеть перед отправкой",
   },
   {
-    label: "Макс. сумма заявки",
-    value: "50 000₽",
-    text: "на одну заявку",
+    label: "Сторонний сервис",
+    value: "CryptoBot",
+    text: "Доступный способ пополнения",
   },
   {
-    label: "Лимит в сутки",
-    value: "100 000₽",
-    text: "на один реквизит",
+    label: "Сторонний сервис",
+    value: "xRocket",
+    text: "Доступный способ пополнения",
   },
 ];
 
@@ -37,31 +34,26 @@ export function Limits() {
       <Container>
         <StaggerContainer variant="section">
           <StaggerItem>
-            <SectionHeader badge="ТАРИФЫ И ЛИМИТЫ">
-              <>
-                Прозрачные условия,
-                <br />
-                без скрытых комиссий
-              </>
+            <SectionHeader badge="УСЛОВИЯ КОНВЕРТАЦИИ">
+              <>Способы пополнения и получения рублей</>
             </SectionHeader>
           </StaggerItem>
           <StaggerItem>
             <div className={styles.content}>
               <div className={styles.info}>
-                <h3 className={styles.infoTitle}>ВАША ВЫГОДА</h3>
+                <h3 className={styles.infoTitle}>ЧТО ОЗНАЧАЕТ ДОПЛАТА</h3>
 
                 <div className={styles.percent}>+7%</div>
 
                 <p className={styles.infoText}>
-                  Баланс, пополнение, реквизиты и заявки
-                  <br />
-                  работают через официальный API сервиса.
+                  Доплата применяется при продаже криптовалюты с зачислением рублей на баланс OnlyP2P. Рубли на балансе и деньги, полученные на карту, — разные этапы операции.
                 </p>
+                <Link className={styles.moreLink} href="/blog/doplata-7-procentov">Подробнее о доплате +7%</Link>
               </div>
 
               <StaggerGroup className={styles.grid}>
                 {cards.map((card) => (
-                  <AnimatedCard key={card.label} className={styles.card}>
+                  <AnimatedCard key={card.value} className={styles.card}>
                     <span className={styles.cardLabel}>{card.label}</span>
 
                     <strong className={styles.cardValue}>{card.value}</strong>
@@ -74,27 +66,30 @@ export function Limits() {
           </StaggerItem>
 
           <StaggerItem>
+            <p className={styles.methodsNote}>
+              Рубли можно получать на подключённые банковские реквизиты — карту или СБП. Перед операцией проверьте доступность выбранного способа в своём интерфейсе.{' '}
+              <Link href="/methods">Способы пополнения и получения рублей</Link>
+            </p>
+          </StaggerItem>
+
+          <StaggerItem>
             <div className={styles.partnerBanner}>
               <div className={styles.partnerContent}>
-                <span className={styles.partnerBadge}>WHITE LABEL</span>
+                <span className={styles.partnerBadge}>НАЧАЛО РАБОТЫ</span>
 
                 <h3 className={styles.partnerTitle}>
-                  Запустите собственный
-                  <br />
-                  P2P-обменник под своим брендом
+                  Начните с условий вашей операции
                 </h3>
 
                 <p className={styles.partnerText}>
-                  Сервис работает поверх готовой инфраструктуры — вы получаете такой же
-                  сервис
-                  <br />
-                  со своим логотипом и доменом. Без разработки с нуля.
+                  Посмотрите способы пополнения и порядок получения рублей. Для работы с балансом и заявками создайте аккаунт или войдите в личный кабинет.
                 </p>
               </div>
 
-              <a href="https://t.me/O_onlypays" target="_blank" rel="noreferrer" className={styles.partnerButton}>
-                Узнать про партнёрство <Image alt="Arrow icon" src={Arrow}/>
-              </a>
+              <div className={styles.partnerActions}>
+                <Link href="/register" className={styles.partnerButton}>Создать аккаунт</Link>
+                <Link href="/login" className={styles.partnerSecondaryButton}>Войти</Link>
+              </div>
             </div>
           </StaggerItem>
         </StaggerContainer>

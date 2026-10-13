@@ -106,6 +106,9 @@ body {
 .related-content li a { display: inline-flex; padding: 4px 0; font-weight: 500; }
 .blog-catalog { padding-bottom: 110px; }
 .blog-hero { margin-bottom: 54px; }
+.blog-intro-links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 18px; color: #1677ee; font-size: 15px; line-height: 1.5; }
+.blog-intro-links a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.blog-intro-links a:focus-visible { outline: 3px solid #ffbf47; outline-offset: 3px; }
 .blog-catalog-section { max-width: 980px; margin: 0 auto; }
 .content-page .blog-section-title { margin: 0 0 20px; font-size: 24px; }
 .article-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 22px; }
@@ -361,6 +364,7 @@ body {
   .content-body > p:first-child { font-size: 17px; }
   .content-sources, .related-content { padding: 18px; }
   .blog-hero { margin-bottom: 36px; }
+  .blog-intro-links { gap: 6px 9px; margin-top: 14px; font-size: 14px; }
   .article-list { grid-template-columns: 1fr; gap: 12px; }
   .article-list > li article { min-height: 220px; padding: 22px; border-radius: 17px; }
   .blog-empty { padding: 24px 20px; border-radius: 17px; }

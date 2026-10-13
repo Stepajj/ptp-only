@@ -1,42 +1,31 @@
 import { Container } from "@/components/Container/Container";
 import { AnimatedCard } from "@/components/motion/AnimatedCard";
 import { StaggerContainer, StaggerGroup, StaggerItem } from "@/components/motion/StaggerContainer";
+import Link from "next/link";
 
 import styles from "./SixSteps.module.css";
 import { SectionHeader } from "./SectionHeader";
-import Link from 'next/link';
 
 const steps = [
   {
     number: "01",
-    title: "Пополни баланс криптой",
-    text: "BTC, LTC, USDT (TRC-20), CryptoBot или xRocket.",
+    title: "Пополните баланс",
+    text: "Выберите доступный способ и проверьте реквизиты перед отправкой.",
   },
   {
     number: "02",
-    title: "Подключи карту или СБП",
-    text: "Добавь реквизит и задай лимиты по сумме заявки.",
+    title: "Подключите карту или СБП",
+    text: "Добавьте реквизиты для получения рублей и настройте доступные лимиты.",
   },
   {
     number: "03",
-    title: "Принимай переводы",
-    text: "Плательщики переводят деньги на твои реквизиты автоматически.",
+    title: "Следите за заявками",
+    text: "Проверяйте сумму и срок ответа в личном кабинете.",
   },
   {
     number: "04",
-    title: "Подтверди получение",
-    text: "Деньги пришли — жми «Получил», рублёвый баланс списывается.",
-  },
-  {
-    number: "05",
-    title: "Заверши заявку",
-    text: "После подтверждения получения данные операции обновляются в сервисе.",
-  },
-  {
-    number: "06",
-    title: "PROFIT",
-    text: "Контролируй операции, баланс и историю в личном кабинете.",
-    highlight: true,
+    title: "Подтвердите поступление",
+    text: "После зачисления денег в банке подтвердите оплату в заявке. Соответствующая сумма списывается с рублёвого баланса OnlyP2P.",
   },
 ];
 
@@ -50,26 +39,16 @@ export function SixSteps({ showDetailedGuideLink = false }: { showDetailedGuideL
               badge="КАК ЭТО РАБОТАЕТ"
               badgeStyle={{ border: "1px solid rgba(61, 128, 245, 0.3)" }}
             >
-              <>
-                Шесть шагов
-                до прибыли
-                <br />
-              </>
+              <>От криптовалюты к рублям на карте</>
             </SectionHeader>
           </StaggerItem>
           <StaggerGroup className={styles.grid}>
             {steps.map((step) => (
               <AnimatedCard
                 key={step.number}
-                className={`${styles.card} ${
-                  step.highlight ? styles.highlight : ""
-                }`}
+                className={styles.card}
               >
-                <div
-                  className={
-                    step.highlight ? styles.numberGradient : styles.number
-                  }
-                >
+                <div className={styles.number}>
                   {step.number}
                 </div>
 
@@ -79,7 +58,13 @@ export function SixSteps({ showDetailedGuideLink = false }: { showDetailedGuideL
               </AnimatedCard>
             ))}
           </StaggerGroup>
-          {showDetailedGuideLink && <StaggerItem><Link href="/how-it-works" className={styles.detailedLink}>Подробная инструкция «Как это работает»</Link></StaggerItem>}
+          {showDetailedGuideLink && (
+            <StaggerItem>
+              <Link href="/how-it-works" className={styles.detailedLink}>
+                Подробная инструкция «Как это работает»
+              </Link>
+            </StaggerItem>
+          )}
         </StaggerContainer>
       </Container>
     </section>

@@ -5,16 +5,16 @@ import styles from "./Stats.module.css";
 
 const stats = [
   {
-    value: "6 лет",
-    description: "стабильной работы на рынке",
-  },
-  {
-    value: "73 000",
-    description: "активных пользователей",
+    value: "BTC · LTC",
+    description: "Доступны для пополнения",
   },
   {
     value: "+7%",
-    description: "к биржевому курсу при пополнении",
+    description: "Доплата при конвертации в рубли",
+  },
+  {
+    value: "Карта · СБП",
+    description: "Для получения рублей на подключённые реквизиты",
   },
 ];
 

@@ -48,6 +48,30 @@
     color: rgba(0,0,0,.8);
 }
 
+.moreLink {
+    display: inline-flex;
+    margin-top: 14px;
+    color: #1677ee;
+    font-size: 14px;
+    line-height: 1.5;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.methodsNote {
+    max-width: 760px;
+    margin-top: 28px;
+    color: rgba(0, 0, 0, .75);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.methodsNote a {
+    color: #1677ee;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
 .grid {
     display: grid;
     grid-template-columns: repeat(2,1fr);
@@ -107,6 +131,13 @@
     flex-direction: column;
 
     flex: 1;
+}
+
+.partnerActions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
 }
 
 .partnerBadge {
@@ -175,10 +206,29 @@
     cursor: pointer;
 
     transition: opacity .2s;
+    text-decoration: none;
 }
 
 .partnerButton:hover {
     opacity: .9;
+}
+
+.partnerSecondaryButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 25px;
+    border: 1px solid rgba(255, 255, 255, .35);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background .2s;
+}
+
+.partnerSecondaryButton:hover {
+    background: rgba(255, 255, 255, .08);
 }
 
 @media (max-width: 700px) {
@@ -209,6 +259,17 @@
         font-size: 14px;
         line-height: 1.45;
         letter-spacing: 0;
+    }
+
+    .moreLink {
+        margin-top: 10px;
+        font-size: 13px;
+    }
+
+    .methodsNote {
+        margin-top: 20px;
+        font-size: 13px;
+        line-height: 1.55;
     }
 
     .grid {
@@ -262,6 +323,18 @@
     .partnerButton {
         width: 100%;
         margin-top: 12px;
+        padding: 8px 10px;
+        border-radius: 6px;
+        font-size: 11px;
+    }
+
+    .partnerActions {
+        margin-top: 12px;
+        gap: 8px;
+    }
+
+    .partnerSecondaryButton {
+        width: 100%;
         padding: 8px 10px;
         border-radius: 6px;
         font-size: 11px;
